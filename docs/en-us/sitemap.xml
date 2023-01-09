@@ -2,6 +2,56 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://kzs.moe/</loc>
+    <lastmod>2023-01-09T23:33:54+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://kzs.moe/zh-cn/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="ja"
+                href="https://kzs.moe/ja/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="https://kzs.moe/"
+                />
+  </url><url>
+    <loc>https://kzs.moe/posts/</loc>
+    <lastmod>2023-01-09T23:33:54+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://kzs.moe/zh-cn/posts/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="https://kzs.moe/posts/"
+                />
+  </url><url>
+    <loc>https://kzs.moe/2023/01/09/%E9%85%8D%E7%BD%AEneovim.html/</loc>
+    <lastmod>2023-01-09T23:33:54+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://kzs.moe/zh-cn/2023/01/09/%E9%85%8D%E7%BD%AEneovim.html/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="https://kzs.moe/2023/01/09/%E9%85%8D%E7%BD%AEneovim.html/"
+                />
+  </url><url>
     <loc>https://kzs.moe/search/</loc>
     <lastmod>2023-01-09T08:10:08+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -32,26 +82,6 @@
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://kzs.moe/</loc>
-    <lastmod>2023-01-09T05:47:23+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh-cn"
-                href="https://kzs.moe/zh-cn/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="ja"
-                href="https://kzs.moe/ja/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en-us"
-                href="https://kzs.moe/"
-                />
-  </url><url>
     <loc>https://kzs.moe/2023/01/09/hello_hugo.html/</loc>
     <lastmod>2023-01-09T05:47:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -65,21 +95,6 @@
                 rel="alternate"
                 hreflang="en-us"
                 href="https://kzs.moe/2023/01/09/hello_hugo.html/"
-                />
-  </url><url>
-    <loc>https://kzs.moe/posts/</loc>
-    <lastmod>2023-01-09T05:47:23+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh-cn"
-                href="https://kzs.moe/zh-cn/posts/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en-us"
-                href="https://kzs.moe/posts/"
                 />
   </url><url>
     <loc>https://kzs.moe/categories/</loc>

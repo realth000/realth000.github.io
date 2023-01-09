@@ -13,9 +13,335 @@
         <link>https://kzs.moe/zh-cn/</link>
         <managingEditor>realth000</managingEditor>
         <description>A simple, performance-first, SEO-friendly Hugo theme</description>
-        <lastBuildDate>Mon, 09 Jan 2023 05:47:15 +0800</lastBuildDate>
+        <lastBuildDate>Mon, 09 Jan 2023 23:30:12 +0800</lastBuildDate>
         <language>en-us</language>
         <generator>Hugo -- gohugo.io</generator><item>
+            <title>配置neovim</title>
+            <link>https://kzs.moe/zh-cn/2023/01/09/%E9%85%8D%E7%BD%AEneovim.html/</link>
+            <pubDate>Mon, 09 Jan 2023 23:30:12 +0800</pubDate>
+            <guid>https://kzs.moe/zh-cn/2023/01/09/%E9%85%8D%E7%BD%AEneovim.html/</guid><description>
+
+&lt;h1 class=&#34;group &#34; id=&#34;配置neovim&#34;
+    &gt;配置neovim&lt;a href=&#34;#%e9%85%8d%e7%bd%aeneovim&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h1&gt;
+
+&lt;p&gt;&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://neovim.io/&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;neovim&lt;/a
+&gt;
+是一款强大且轻量的基于vim的tui编辑器，相比vim有更现代的设置和插件系统。今天neovim的生态已然非常广泛。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;安装neovim&#34;
+    &gt;安装neovim&lt;a href=&#34;#%e5%ae%89%e8%a3%85neovim&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;linux&#34;
+    &gt;Linux&lt;a href=&#34;#linux&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/neovim/neovim/releases/tag/stable&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;neovim release page&lt;/a
+&gt;
+上提供了*.deb和*.tar.gz，安装非常方便。
+&lt;ul&gt;
+&lt;li&gt;不推荐通过&lt;code&gt;apt&lt;/code&gt;等包管理软件安装neovim，版本太老。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;windows&#34;
+    &gt;Windows&lt;a href=&#34;#windows&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;release page上提供了Windows可用的*.zip，使用Qt制作了GUI。&lt;/li&gt;
+&lt;li&gt;然而GUI太不vim了，想在Linux的shell里使用vim怎么办？可以采用wezterm + msys2 + 从源码编译neovim的组合技，可以复刻Linux shell中90%的操作。
+&lt;ul&gt;
+&lt;li&gt;编译方法见&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/neovim/neovim/wiki/Building-Neovim#windows--msys2--mingw&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;neovim wiki&lt;/a
+&gt;
+，大概命令如下：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;pacman -S mingw-w64-x86_64-&lt;span style=&#34;color:#ff79c6&#34;&gt;{&lt;/span&gt;gcc,libtool,cmake,make,perl,python2,pkg-config,ninja,diffutils&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;mkdir .deps
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;cd&lt;/span&gt; .deps
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;cmake -G Ninja ..&lt;span style=&#34;color:#f1fa8c&#34;&gt;\c&lt;/span&gt;make.deps&lt;span style=&#34;color:#f1fa8c&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&lt;/span&gt;ninja
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;cd&lt;/span&gt; ..
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;mkdir build
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;cd&lt;/span&gt; build
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;cmake -G Ninja -D &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;CMAKE_BUILD_TYPE&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;RelWithDebInfo ..
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ninja
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ninja install
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;亲测在Win10上一次编过，编完以后neovim的二进制会install到shell启动默认目录下的nvim-win64/bin内。找不到的话用Everything找一下就行了。加到PATH里即可顺利玩耍。&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;关于neovim插件&#34;
+    &gt;关于neovim插件&lt;a href=&#34;#%e5%85%b3%e4%ba%8eneovim%e6%8f%92%e4%bb%b6&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;STOP！我说停停，到这里解释一下neovim插件相关的概念，为啥呢？网上教装插件的教程不少，但可能是我太笨吧，看完了也看得云里雾里，包括原生vim的插件也是很迷。&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;neovim的插件&#34;
+    &gt;(neo)vim的插件&lt;a href=&#34;#neovim%e7%9a%84%e6%8f%92%e4%bb%b6&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;插件指的是给(neo)vim提供额外功能的“软件”，一般是vimscript（适用于vim）和lua（适用于neovim）编写的，这两种都是脚本语言，下载插件也就是下载源码，一般从github上克隆到指定目录即可。&lt;/li&gt;
+&lt;li&gt;neovim也可以使用vimscript制作的插件，但是vimscript的效率比较低，装多了卡，而且远不如lua好理解，哪怕一点也不懂lua（比如我），看一看也能照猫画虎写，不推荐在neovim里用太多vimscript编写的插件。&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;neovim的插件管理器&#34;
+    &gt;(neo)vim的插件管理器&lt;a href=&#34;#neovim%e7%9a%84%e6%8f%92%e4%bb%b6%e7%ae%a1%e7%90%86%e5%99%a8&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;插件管理器是指提供下载插件、管理插件加载的特殊插件，一般也是从github上安装，直接&lt;code&gt;curl&lt;/code&gt;下来就行。&lt;/li&gt;
+&lt;li&gt;&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/junegunn/vim-plug&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;vim-plug&lt;/a
+&gt;
+是一款插件管理器，可以用于vim和neovim。在vim上算最好用的插件，但是在neovim里并不推荐，因为它用的是vimscript，和满处lua的neovim有点格格不入。&lt;/li&gt;
+&lt;li&gt;&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/wbthomason/packer.nvim&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;packer.vim&lt;/a
+&gt;
+也是一款插件管理器，可以用于neovim，采用lua编写，配置的可读性强，好上手，neovim上首推。&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;安装neovim插件&#34;
+    &gt;安装neovim插件&lt;a href=&#34;#%e5%ae%89%e8%a3%85neovim%e6%8f%92%e4%bb%b6&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;安装packervim&#34;
+    &gt;安装packer.vim&lt;a href=&#34;#%e5%ae%89%e8%a3%85packervim&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;先安装插件管理器才方便装插件嘛，直接进行一个命令行的装：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;git clone --depth &lt;span style=&#34;color:#bd93f9&#34;&gt;1&lt;/span&gt; https://github.com/wbthomason/packer.nvim&lt;span style=&#34;color:#f1fa8c&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&lt;/span&gt; ~/.local/share/nvim/site/pack/packer/start/packer.nvim
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;至此，packer安装完成，那么如何通过它管理插件呢？
+Linux上neovim会从&lt;code&gt;~/.config/nvim/init.lua&lt;/code&gt;或者&lt;code&gt;~/.config/nvim/init.vim&lt;/code&gt;读取配置，用lua写配置就是前者的路径了。
+实际上配置路径好像很多，但是用这两个就行。
+&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;&lt;del&gt;Windows的配置文件路径以后会补充，现在可以去官网看&lt;/del&gt;
+&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;先进到&lt;code&gt;~/.config/nvim/&lt;/code&gt;文件夹里，不出意外里面有一个叫做&lt;code&gt;lua&lt;/code&gt;的文件夹，用来存放我们将要写的lua脚本。
+&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;把它想象成“项目根目录”，比如：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;我写了一个&lt;code&gt;lua/basic.lua&lt;/code&gt;，那么在加载&lt;code&gt;basic.lua&lt;/code&gt;时应该写类似&lt;code&gt;#include&amp;lt;basic.lua&amp;gt;&lt;/code&gt;而不是&lt;code&gt;#include&amp;lt;lua/basic.lua&amp;gt;&lt;/code&gt;。
+&lt;br&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;没有这个文件夹就自己建一个。
+&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;看过一些neovim配置示例，按惯例：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;init.lua&lt;/code&gt;（&lt;code&gt;~/.config/nvim/init.lua&lt;/code&gt;）里只写要加载哪些lua脚本，比如包含vim行号搜索缩进等基本配置的&lt;code&gt;basic.lua&lt;/code&gt;、包含想加载的插件的&lt;code&gt;plugins.lua&lt;/code&gt;，举个例子：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-lua&#34; data-lang=&#34;lua&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;require(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;basic.lua&amp;#39;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;require(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;plugins.lua&amp;#39;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;basic.lua&lt;/code&gt;（&lt;code&gt;~/.config/nvim/lua/basic.lua&lt;/code&gt;）加载vim基本配置，举个栗子：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-lua&#34; data-lang=&#34;lua&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;vim.opt.nu &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;vim.opt.rnu &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;vim.opt.hls &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;vim.opt.incsearch &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;相当于vim的&lt;code&gt;~/.vimrc&lt;/code&gt;里的：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;set nu
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;set rnu
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;set hls
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;set incsearch
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;不能说一模一样，只能说完全相同。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;plugins.lua&lt;/code&gt;（&lt;code&gt;~/.config/nvim/lua/plugins.lua&lt;/code&gt;）里面写想加载的插件及其配置，还是举例子：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;8
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-lua&#34; data-lang=&#34;lua&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; require(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;packer&amp;#39;&lt;/span&gt;).startup(&lt;span style=&#34;color:#ff79c6&#34;&gt;function&lt;/span&gt;()
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#6272a4&#34;&gt;-- 加载packer&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  use &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;wbthomason/packer.vim&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#6272a4&#34;&gt;-- 加载主题 可以用大括号包起来&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  use { &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;navarasu/onedark.vim&amp;#39;&lt;/span&gt; }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#6272a4&#34;&gt;-- 加载onedark主题的配置文件：~/.config/nvim/lua/plugins_config/one-dark.lua&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  require(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;plugins_config.one-dark&amp;#39;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#6272a4&#34;&gt;-- 以下省略&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;写好配置了，然后怎么安装呢？
+&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;运行&lt;code&gt;nvim&lt;/code&gt;，然后输入vim的命令：&lt;code&gt;:PackerSync&lt;/code&gt;即可自动从github上下载插件并把旧插件升到最新版本。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;安装lsp&#34;
+    &gt;安装LSP&lt;a href=&#34;#%e5%ae%89%e8%a3%85lsp&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;neovim安装LSP比较方便，LSP是指&amp;quot;Language Server Protocol&amp;quot;，虽然是协议，可以理解为一种在后台进行静态代码分析的server，提供显示代码错误、代码补全建议的功能，非常好用。
+&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;Idea、VS Code太重了，难道我写个demo还要打开这些笨蛋看着内存疯狂上涨吗？
+&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;如果把vim和LSP结合在一起，岂不是双倍快乐？大项目不谈，写个小demo又会带来更多快乐。&lt;/p&gt;
+&lt;p&gt;neovim可以安装LSP，vim也可以，可惜后者似乎安装有些麻烦，还是前者吧，这也是我想从vim转到neovim的原因之一。&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;lsp插件组成&#34;
+    &gt;LSP插件组成&lt;a href=&#34;#lsp%e6%8f%92%e4%bb%b6%e7%bb%84%e6%88%90&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;虽然叫LSP插件组成，这里实际是想讲整个LSP套件的组成，需要哪些插件。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;LSP Server：刚才说了，我们想要的显示代码错误、代码补全建议的功能就是它提供的。
+&lt;ul&gt;
+&lt;li&gt;需要指出的是，不同的语言需要启用不同的LSP，比如C/CPP可以用Clangd，Go可以用gopls，Rust可以用rust-analyzer，Python可以用pyright。&lt;/li&gt;
+&lt;li&gt;需要安装。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;LSP Client：大概是处理Server发来的信息呗，这部分不用管，neovim自带整个功能。
+&lt;ul&gt;
+&lt;li&gt;不需要安装。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;LSP Server管理器：一个neovim插件，可以方便的管理各种LSP Server。
+&lt;ul&gt;
+&lt;li&gt;需要安装。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;LSP Server下载器：neovim&amp;rsquo;插件，提供下载LSP Server功能。
+&lt;ul&gt;
+&lt;li&gt;需要安装。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;代码补全建议插件：neovim不带这部分，LSP Server也不包含这部分，所以需要额外下一个neovim插件：
+&lt;ul&gt;
+&lt;li&gt;需要安装。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;放到今天的示例里，对应关系为：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;LSP Server：按需下载，列表在&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;nvim-lspconfig的文档&lt;/a
+&gt;
+。&lt;/li&gt;
+&lt;li&gt;LSP Server管理器：&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/neovim/nvim-lspconfig&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;nvim-lspconfig&lt;/a
+&gt;
+。&lt;/li&gt;
+&lt;li&gt;LSP Server下载器：&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/williamboman/mason.nvim&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;mason.vim&lt;/a
+&gt;
+。&lt;/li&gt;
+&lt;li&gt;代码补全建议插件：&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/hrsh7th/nvim-cmp&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;nvim-cmp&lt;/a
+&gt;
+。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;最后提供一个示例：&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/realth000/config/tree/master/014-nvim&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;realth000/config&lt;/a
+&gt;
+&lt;/p&gt;
+</description></item><item>
             <title>Hello_hugo</title>
             <link>https://kzs.moe/zh-cn/2023/01/09/hello_hugo.html/</link>
             <pubDate>Mon, 09 Jan 2023 05:47:15 +0800</pubDate>
