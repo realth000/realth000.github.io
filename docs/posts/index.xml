@@ -6,7 +6,16 @@
     <description>Recent content in Posts on Distant Vicinity</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 09 Jan 2023 23:30:12 +0800</lastBuildDate><atom:link href="https://kzs.moe/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 10 Jan 2023 22:09:12 +0800</lastBuildDate><atom:link href="https://kzs.moe/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>CMake实践记录</title>
+      <link>https://kzs.moe/2023/01/10/cmake%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95.html/</link>
+      <pubDate>Tue, 10 Jan 2023 22:09:12 +0800</pubDate>
+      
+      <guid>https://kzs.moe/2023/01/10/cmake%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95.html/</guid>
+      <description>作为一门比shell的语法还x疼的“语言”，不动动笔杆子真不行。 以下基本以flameshot 为例来学习。 覆盖掉CMakeCache中缓存的o</description>
+    </item>
+    
     <item>
       <title>配置neovim</title>
       <link>https://kzs.moe/2023/01/09/%E9%85%8D%E7%BD%AEneovim.html/</link>
@@ -23,6 +32,15 @@
       
       <guid>https://kzs.moe/2023/01/09/hello_hugo.html/</guid>
       <description>Hello Hugo</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://kzs.moe/1/01/01/.html/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://kzs.moe/1/01/01/.html/</guid>
+      <description>[CMake] CMake实践记录 作为一门比shell的语法还x疼的“语言”，不动动笔杆子真不行。 以下基本以flameshot 为例来学习。 覆盖掉CMake</description>
     </item>
     
   </channel>

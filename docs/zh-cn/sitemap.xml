@@ -2,8 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://kzs.moe/zh-cn/2023/01/10/cmake%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95.html/</loc>
+    <lastmod>2023-01-10T22:10:54+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="https://kzs.moe/2023/01/10/cmake%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95.html/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://kzs.moe/zh-cn/2023/01/10/cmake%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95.html/"
+                />
+  </url><url>
     <loc>https://kzs.moe/zh-cn/</loc>
-    <lastmod>2023-01-09T23:33:41+08:00</lastmod>
+    <lastmod>2023-01-10T22:10:54+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -23,7 +38,7 @@
                 />
   </url><url>
     <loc>https://kzs.moe/zh-cn/posts/</loc>
-    <lastmod>2023-01-09T23:33:41+08:00</lastmod>
+    <lastmod>2023-01-10T22:10:54+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
