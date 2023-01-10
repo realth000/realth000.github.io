@@ -13,9 +13,264 @@
         <link>https://kzs.moe/</link>
         <managingEditor>realth000</managingEditor>
         <description>A simple, performance-first, SEO-friendly Hugo theme</description>
-        <lastBuildDate>Mon, 09 Jan 2023 23:30:12 +0800</lastBuildDate>
+        <lastBuildDate>Tue, 10 Jan 2023 22:09:12 +0800</lastBuildDate>
         <language>en-us</language>
         <generator>Hugo -- gohugo.io</generator><item>
+            <title>CMake实践记录</title>
+            <link>https://kzs.moe/2023/01/10/cmake%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95.html/</link>
+            <pubDate>Tue, 10 Jan 2023 22:09:12 +0800</pubDate>
+            <guid>https://kzs.moe/2023/01/10/cmake%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95.html/</guid><description>&lt;p&gt;作为一门比shell的语法还x疼的“语言”，不动动笔杆子真不行。&lt;/p&gt;
+&lt;p&gt;以下基本以&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/flameshot-org/flameshot&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;flameshot&lt;/a
+&gt;
+为例来学习。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;覆盖掉cmakecache中缓存的option&#34;
+    &gt;覆盖掉CMakeCache中缓存的option&lt;a href=&#34;#%e8%a6%86%e7%9b%96%e6%8e%89cmakecache%e4%b8%ad%e7%bc%93%e5%ad%98%e7%9a%84option&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;不推荐使用&lt;code&gt;option(OPTION_NAME &amp;quot;Option description&amp;quot; OPTION_STATE)&lt;/code&gt;，因为更改option状态时会被CMakeCache里的旧Option状态覆盖，且对subdirectory内的CMakeLists.txt作用效果不好。&lt;/p&gt;
+&lt;p&gt;推荐做法：&lt;code&gt;set(OPTION_NAME OPTION_STATE CACHE OPTION_TYPE &amp;quot;Option description&amp;quot; FORCE)&lt;/code&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;OPTION_NAME：option名称。&lt;/li&gt;
+&lt;li&gt;OPTION_STATE：option状态，一般为&lt;code&gt;ON&lt;/code&gt;或&lt;code&gt;OFF&lt;/code&gt;，推荐使用全大写。&lt;/li&gt;
+&lt;li&gt;CACHE：表示写入到CMakeCache里。&lt;/li&gt;
+&lt;li&gt;FORCE：表示强制覆盖CMakeCache里的值。&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;cmakeliststxt内添加编译时变量&#34;
+    &gt;CMakeLists.txt内添加编译时变量&lt;a href=&#34;#cmakeliststxt%e5%86%85%e6%b7%bb%e5%8a%a0%e7%bc%96%e8%af%91%e6%97%b6%e5%8f%98%e9%87%8f&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;语法：&lt;code&gt;add_compile_options(&amp;quot;...&amp;quot;)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;例如MSVC开启强制utf-8：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;add_compile_options(&amp;#34;$&amp;lt;$&amp;lt;C_COMPILER_ID:MSVC&amp;gt;:/utf-8&amp;gt;&amp;#34;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;add_compile_options(&amp;#34;$&amp;lt;$&amp;lt;CXX_COMPILER_ID:MSVC&amp;gt;:/utf-8&amp;gt;&amp;#34;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;题外话，对应的在QMake内开启的方法为在&lt;code&gt;.pro&lt;/code&gt;内添加：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;win32-msvc* {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  QMAKE_CXXFLAGS += /utf-8
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h2 class=&#34;group &#34; id=&#34;添加宏marco&#34;
+    &gt;添加宏（MARCO）&lt;a href=&#34;#%e6%b7%bb%e5%8a%a0%e5%ae%8fmarco&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;语法：&lt;code&gt;add_definitions(-DMARCO_NAME)&lt;/code&gt;
+相当于编译时有了宏MARCO_NAME。&lt;/p&gt;
+&lt;p&gt;那么如何把宏去掉呢？&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;remove_definitions(-DMARCO_NAME)&lt;/code&gt;&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;includeoutputlink的顺序&#34;
+    &gt;include、output、link的顺序&lt;a href=&#34;#includeoutputlink%e7%9a%84%e9%a1%ba%e5%ba%8f&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;先&lt;code&gt;include_directories&lt;/code&gt;，然后&lt;code&gt;add_excutable&lt;/code&gt;，再&lt;code&gt;add_subdirectories&lt;/code&gt;，最后&lt;code&gt;target_link_libraries&lt;/code&gt;。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;cmake使用qt5库&#34;
+    &gt;CMake使用Qt5库&lt;a href=&#34;#cmake%e4%bd%bf%e7%94%a8qt5%e5%ba%93&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;需要按以下几步走。&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;打开额外compiler开关&#34;
+    &gt;打开额外Compiler开关&lt;a href=&#34;#%e6%89%93%e5%bc%80%e9%a2%9d%e5%a4%96compiler%e5%bc%80%e5%85%b3&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-cmake&#34; data-lang=&#34;cmake&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;set&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;CMAKE_AUTOMOC&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;ON&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;set&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;CMAKE_AUTORCC&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;ON&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;set&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;CMAKE_AUTOUIC&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;ON&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;分别编译Qt的元对象系统（信号槽，或者说使用了&lt;code&gt;Q_OBJECT&lt;/code&gt;宏的地方）、Qt的资源文件&lt;code&gt;*.qrc&lt;/code&gt;和Qt的UI文件&lt;code&gt;*.ui&lt;/code&gt;。&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;设定cmake的modules&#34;
+    &gt;设定CMake的Modules&lt;a href=&#34;#%e8%ae%be%e5%ae%9acmake%e7%9a%84modules&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;在尽量开头的位置设置&lt;code&gt;CMAKE_PREFIX_PATH&lt;/code&gt;到Qt自带的cmake目录，如：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;set(CMAKE_PATH_PREFIX /opt/Qt5.15.2/5.15.2/gcc_64/lib/cmake)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;实际操作过程中推荐这样写：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;set(CMAKE_PATH_PREFIX ${QT_CMAKE_PATH})&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;并在执行&lt;code&gt;cmake&lt;/code&gt;前&lt;code&gt;export&lt;/code&gt;下：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;export QT_CMAKE_PATH=/opt/Qt5.15.2/5.15.2/gcc_64/lib/cmake&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;（Windows下，使用QtCreator不需要&lt;code&gt;export&lt;/code&gt;，如果用命令行的话使用git的bash，有&lt;code&gt;export&lt;/code&gt;）&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;检查qt库cmake-modules的安装情况&#34;
+    &gt;检查Qt库(CMake modules)的安装情况&lt;a href=&#34;#%e6%a3%80%e6%9f%a5qt%e5%ba%93cmake-modules%e7%9a%84%e5%ae%89%e8%a3%85%e6%83%85%e5%86%b5&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;以使用QtCore、QtGui、QtWidgets为例，设定了&lt;code&gt;CMAKE_PATH_PREFIX&lt;/code&gt;后：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;find_package(Qt5 CONFIG REQUIRED Core Gui Widgets)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;PS：似乎还有一种语法：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)&lt;/code&gt;&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;链接qt动态库&#34;
+    &gt;链接Qt动态库&lt;a href=&#34;#%e9%93%be%e6%8e%a5qt%e5%8a%a8%e6%80%81%e5%ba%93&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;基本在最后位置：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;target_link_libraries(${BIN_NAME} Qt5::Core Qt5::Gui Qt5::Widgets)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;上面的语句默认链接debug版本的动态库，若要链接release版本，增加&lt;code&gt;optimized&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;target_link_libraries(${BIN_NAME} optimized Qt5::Core Qt5::Gui Qt5::Widgets)&lt;/code&gt;&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;包含子目录&#34;
+    &gt;包含子目录&lt;a href=&#34;#%e5%8c%85%e5%90%ab%e5%ad%90%e7%9b%ae%e5%bd%95&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;在上层目录中，首先&lt;code&gt;add_executable(BIN_NAME)&lt;/code&gt;，之后&lt;code&gt;add_subdirectories(sub_dir)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;在子目录&lt;code&gt;sub_dir&lt;/code&gt;中，&lt;code&gt;target_sources(BIN_NAME srcfile1 srcfile2 ...)&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;target_sources的用法&#34;
+    &gt;target_sources的用法&lt;a href=&#34;#target_sources%e7%9a%84%e7%94%a8%e6%b3%95&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;target_sources&lt;/code&gt;不仅是添加源文件，同样可以添加&lt;code&gt;*.qrc&lt;/code&gt;、&lt;code&gt;*.ui&lt;/code&gt;（前提是相关Compiler已打开）。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;区分系统平台&#34;
+    &gt;区分系统平台&lt;a href=&#34;#%e5%8c%ba%e5%88%86%e7%b3%bb%e7%bb%9f%e5%b9%b3%e5%8f%b0&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;立即推：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;8
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-cmake&#34; data-lang=&#34;cmake&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;if&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;WIN32&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;# do something...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;elif&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;UNIX&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;# do something...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;elif&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;APPLE&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;# do someting...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;else&lt;/span&gt;()
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;# 醒醒吧
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;endif&lt;/span&gt;()
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h2 class=&#34;group &#34; id=&#34;qtcreator中could-not-load-cache的解决方法&#34;
+    &gt;QtCreator中could not load cache的解决方法&lt;a href=&#34;#qtcreator%e4%b8%adcould-not-load-cache%e7%9a%84%e8%a7%a3%e5%86%b3%e6%96%b9%e6%b3%95&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;可怜的qtc，bug满身，对Qml而言是，对CMake更是。&lt;/p&gt;
+&lt;p&gt;现在还坚持用qtc的原因只有方便看文档和上色丰富简单又好看了吧。&lt;/p&gt;
+&lt;p&gt;清除-重新构建后总是报错：could not load cache怎么办？&lt;/p&gt;
+&lt;p&gt;找到左边项目-CMake-&lt;code&gt;Re-configure with Initial Parameters&lt;/code&gt;，点一下即可重新编译。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;windows平台rc文件的使用&#34;
+    &gt;Windows平台rc文件的使用&lt;a href=&#34;#windows%e5%b9%b3%e5%8f%b0rc%e6%96%87%e4%bb%b6%e7%9a%84%e4%bd%bf%e7%94%a8&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;使用&lt;code&gt;target_sources&lt;/code&gt;添加即可。&lt;/p&gt;
+&lt;p&gt;注意：编码格式在设置了UTF-8以后无比不要用UTF-8-BOM，否则在编译时会报错。&lt;/p&gt;
+&lt;p&gt;关于&lt;code&gt;*.rc&lt;/code&gt;文件的格式，参考&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/flameshot-org/flameshot/blob/master/data/flameshot.rc&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;flameshot.rc&lt;/a
+&gt;
+&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;windows平台关闭控制台&#34;
+    &gt;Windows平台关闭控制台&lt;a href=&#34;#windows%e5%b9%b3%e5%8f%b0%e5%85%b3%e9%97%ad%e6%8e%a7%e5%88%b6%e5%8f%b0&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;使用&lt;code&gt;WIN32&lt;/code&gt;参数：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;add_executable(KeyContainer WIN32)&lt;/code&gt;&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;解决cannot-find-source-file-maincpp&#34;
+    &gt;解决Cannot find source file: main.cpp&lt;a href=&#34;#%e8%a7%a3%e5%86%b3cannot-find-source-file-maincpp&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;目录结构如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;├─CMakeLists.txt
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;└─src
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    │─CMakeLists.txt
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    └─core
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        │─CMakeLists.txt
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        │─main.cpp
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;CMakeLists一层一层add_subdirectory。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;add_executable&lt;/code&gt;时报错：Cannot find source file: main.cpp。&lt;/p&gt;
+&lt;p&gt;意外发现将CMake最低要求版本&lt;code&gt;cmake_minimum_required&lt;/code&gt;设置到&amp;gt;=3.13，qtc默认给的是3.5。&lt;/p&gt;
+&lt;p&gt;题外话：直接在文件夹里cmake .没有这个报错，所以……彩鸡qtc。&lt;/p&gt;
+</description></item><item>
             <title>配置neovim</title>
             <link>https://kzs.moe/2023/01/09/%E9%85%8D%E7%BD%AEneovim.html/</link>
             <pubDate>Mon, 09 Jan 2023 23:30:12 +0800</pubDate>
@@ -346,5 +601,267 @@ Linux上neovim会从&lt;code&gt;~/.config/nvim/init.lua&lt;/code&gt;或者&lt;co
             <link>https://kzs.moe/2023/01/09/hello_hugo.html/</link>
             <pubDate>Mon, 09 Jan 2023 05:47:15 +0800</pubDate>
             <guid>https://kzs.moe/2023/01/09/hello_hugo.html/</guid><description>&lt;p&gt;Hello Hugo&lt;/p&gt;
+</description></item><item>
+            <title></title>
+            <link>https://kzs.moe/1/01/01/.html/</link>
+            <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+            <guid>https://kzs.moe/1/01/01/.html/</guid><description>
+
+&lt;h1 class=&#34;group &#34; id=&#34;cmake-cmake实践记录&#34;
+    &gt;[CMake] CMake实践记录&lt;a href=&#34;#cmake-cmake%e5%ae%9e%e8%b7%b5%e8%ae%b0%e5%bd%95&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h1&gt;
+
+&lt;p&gt;作为一门比shell的语法还x疼的“语言”，不动动笔杆子真不行。&lt;/p&gt;
+&lt;p&gt;以下基本以&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/flameshot-org/flameshot&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;flameshot&lt;/a
+&gt;
+为例来学习。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;覆盖掉cmakecache中缓存的option&#34;
+    &gt;覆盖掉CMakeCache中缓存的option&lt;a href=&#34;#%e8%a6%86%e7%9b%96%e6%8e%89cmakecache%e4%b8%ad%e7%bc%93%e5%ad%98%e7%9a%84option&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;不推荐使用&lt;code&gt;option(OPTION_NAME &amp;quot;Option description&amp;quot; OPTION_STATE)&lt;/code&gt;，因为更改option状态时会被CMakeCache里的旧Option状态覆盖，且对subdirectory内的CMakeLists.txt作用效果不好。&lt;/p&gt;
+&lt;p&gt;推荐做法：&lt;code&gt;set(OPTION_NAME OPTION_STATE CACHE OPTION_TYPE &amp;quot;Option description&amp;quot; FORCE)&lt;/code&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;OPTION_NAME：option名称。&lt;/li&gt;
+&lt;li&gt;OPTION_STATE：option状态，一般为&lt;code&gt;ON&lt;/code&gt;或&lt;code&gt;OFF&lt;/code&gt;，推荐使用全大写。&lt;/li&gt;
+&lt;li&gt;CACHE：表示写入到CMakeCache里。&lt;/li&gt;
+&lt;li&gt;FORCE：表示强制覆盖CMakeCache里的值。&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;cmakeliststxt内添加编译时变量&#34;
+    &gt;CMakeLists.txt内添加编译时变量&lt;a href=&#34;#cmakeliststxt%e5%86%85%e6%b7%bb%e5%8a%a0%e7%bc%96%e8%af%91%e6%97%b6%e5%8f%98%e9%87%8f&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;语法：&lt;code&gt;add_compile_options(&amp;quot;...&amp;quot;)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;例如MSVC开启强制utf-8：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;add_compile_options(&amp;#34;$&amp;lt;$&amp;lt;C_COMPILER_ID:MSVC&amp;gt;:/utf-8&amp;gt;&amp;#34;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;add_compile_options(&amp;#34;$&amp;lt;$&amp;lt;CXX_COMPILER_ID:MSVC&amp;gt;:/utf-8&amp;gt;&amp;#34;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;题外话，对应的在QMake内开启的方法为在&lt;code&gt;.pro&lt;/code&gt;内添加：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;win32-msvc* {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  QMAKE_CXXFLAGS += /utf-8
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h2 class=&#34;group &#34; id=&#34;添加宏marco&#34;
+    &gt;添加宏（MARCO）&lt;a href=&#34;#%e6%b7%bb%e5%8a%a0%e5%ae%8fmarco&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;语法：&lt;code&gt;add_definitions(-DMARCO_NAME)&lt;/code&gt;
+相当于编译时有了宏MARCO_NAME。&lt;/p&gt;
+&lt;p&gt;那么如何把宏去掉呢？&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;remove_definitions(-DMARCO_NAME)&lt;/code&gt;&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;includeoutputlink的顺序&#34;
+    &gt;include、output、link的顺序&lt;a href=&#34;#includeoutputlink%e7%9a%84%e9%a1%ba%e5%ba%8f&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;先&lt;code&gt;include_directories&lt;/code&gt;，然后&lt;code&gt;add_excutable&lt;/code&gt;，再&lt;code&gt;add_subdirectories&lt;/code&gt;，最后&lt;code&gt;target_link_libraries&lt;/code&gt;。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;cmake使用qt5库&#34;
+    &gt;CMake使用Qt5库&lt;a href=&#34;#cmake%e4%bd%bf%e7%94%a8qt5%e5%ba%93&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;需要按以下几步走。&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;打开额外compiler开关&#34;
+    &gt;打开额外Compiler开关&lt;a href=&#34;#%e6%89%93%e5%bc%80%e9%a2%9d%e5%a4%96compiler%e5%bc%80%e5%85%b3&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-cmake&#34; data-lang=&#34;cmake&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;set&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;CMAKE_AUTOMOC&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;ON&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;set&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;CMAKE_AUTORCC&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;ON&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;set&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;CMAKE_AUTOUIC&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;ON&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;分别编译Qt的元对象系统（信号槽，或者说使用了&lt;code&gt;Q_OBJECT&lt;/code&gt;宏的地方）、Qt的资源文件&lt;code&gt;*.qrc&lt;/code&gt;和Qt的UI文件&lt;code&gt;*.ui&lt;/code&gt;。&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;设定cmake的modules&#34;
+    &gt;设定CMake的Modules&lt;a href=&#34;#%e8%ae%be%e5%ae%9acmake%e7%9a%84modules&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;在尽量开头的位置设置&lt;code&gt;CMAKE_PREFIX_PATH&lt;/code&gt;到Qt自带的cmake目录，如：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;set(CMAKE_PATH_PREFIX /opt/Qt5.15.2/5.15.2/gcc_64/lib/cmake)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;实际操作过程中推荐这样写：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;set(CMAKE_PATH_PREFIX ${QT_CMAKE_PATH})&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;并在执行&lt;code&gt;cmake&lt;/code&gt;前&lt;code&gt;export&lt;/code&gt;下：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;export QT_CMAKE_PATH=/opt/Qt5.15.2/5.15.2/gcc_64/lib/cmake&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;（Windows下，使用QtCreator不需要&lt;code&gt;export&lt;/code&gt;，如果用命令行的话使用git的bash，有&lt;code&gt;export&lt;/code&gt;）&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;检查qt库cmake-modules的安装情况&#34;
+    &gt;检查Qt库(CMake modules)的安装情况&lt;a href=&#34;#%e6%a3%80%e6%9f%a5qt%e5%ba%93cmake-modules%e7%9a%84%e5%ae%89%e8%a3%85%e6%83%85%e5%86%b5&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;以使用QtCore、QtGui、QtWidgets为例，设定了&lt;code&gt;CMAKE_PATH_PREFIX&lt;/code&gt;后：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;find_package(Qt5 CONFIG REQUIRED Core Gui Widgets)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;PS：似乎还有一种语法：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)&lt;/code&gt;&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;链接qt动态库&#34;
+    &gt;链接Qt动态库&lt;a href=&#34;#%e9%93%be%e6%8e%a5qt%e5%8a%a8%e6%80%81%e5%ba%93&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;基本在最后位置：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;target_link_libraries(${BIN_NAME} Qt5::Core Qt5::Gui Qt5::Widgets)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;上面的语句默认链接debug版本的动态库，若要链接release版本，增加&lt;code&gt;optimized&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;target_link_libraries(${BIN_NAME} optimized Qt5::Core Qt5::Gui Qt5::Widgets)&lt;/code&gt;&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;包含子目录&#34;
+    &gt;包含子目录&lt;a href=&#34;#%e5%8c%85%e5%90%ab%e5%ad%90%e7%9b%ae%e5%bd%95&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;在上层目录中，首先&lt;code&gt;add_executable(BIN_NAME)&lt;/code&gt;，之后&lt;code&gt;add_subdirectories(sub_dir)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;在子目录&lt;code&gt;sub_dir&lt;/code&gt;中，&lt;code&gt;target_sources(BIN_NAME srcfile1 srcfile2 ...)&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;target_sources的用法&#34;
+    &gt;target_sources的用法&lt;a href=&#34;#target_sources%e7%9a%84%e7%94%a8%e6%b3%95&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;target_sources&lt;/code&gt;不仅是添加源文件，同样可以添加&lt;code&gt;*.qrc&lt;/code&gt;、&lt;code&gt;*.ui&lt;/code&gt;（前提是相关Compiler已打开）。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;区分系统平台&#34;
+    &gt;区分系统平台&lt;a href=&#34;#%e5%8c%ba%e5%88%86%e7%b3%bb%e7%bb%9f%e5%b9%b3%e5%8f%b0&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;立即推：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;8
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-cmake&#34; data-lang=&#34;cmake&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;if&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;WIN32&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;# do something...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;elif&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;UNIX&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;# do something...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;elif&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;APPLE&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;# do someting...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;else&lt;/span&gt;()
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;# 醒醒吧
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;endif&lt;/span&gt;()
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h2 class=&#34;group &#34; id=&#34;qtcreator中could-not-load-cache的解决方法&#34;
+    &gt;QtCreator中could not load cache的解决方法&lt;a href=&#34;#qtcreator%e4%b8%adcould-not-load-cache%e7%9a%84%e8%a7%a3%e5%86%b3%e6%96%b9%e6%b3%95&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;可怜的qtc，bug满身，对Qml而言是，对CMake更是。&lt;/p&gt;
+&lt;p&gt;现在还坚持用qtc的原因只有方便看文档和上色丰富简单又好看了吧。&lt;/p&gt;
+&lt;p&gt;清除-重新构建后总是报错：could not load cache怎么办？&lt;/p&gt;
+&lt;p&gt;找到左边项目-CMake-&lt;code&gt;Re-configure with Initial Parameters&lt;/code&gt;，点一下即可重新编译。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;windows平台rc文件的使用&#34;
+    &gt;Windows平台rc文件的使用&lt;a href=&#34;#windows%e5%b9%b3%e5%8f%b0rc%e6%96%87%e4%bb%b6%e7%9a%84%e4%bd%bf%e7%94%a8&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;使用&lt;code&gt;target_sources&lt;/code&gt;添加即可。&lt;/p&gt;
+&lt;p&gt;注意：编码格式在设置了UTF-8以后无比不要用UTF-8-BOM，否则在编译时会报错。&lt;/p&gt;
+&lt;p&gt;关于&lt;code&gt;*.rc&lt;/code&gt;文件的格式，参考&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/flameshot-org/flameshot/blob/master/data/flameshot.rc&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;flameshot.rc&lt;/a
+&gt;
+&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;windows平台关闭控制台&#34;
+    &gt;Windows平台关闭控制台&lt;a href=&#34;#windows%e5%b9%b3%e5%8f%b0%e5%85%b3%e9%97%ad%e6%8e%a7%e5%88%b6%e5%8f%b0&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;使用&lt;code&gt;WIN32&lt;/code&gt;参数：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;add_executable(KeyContainer WIN32)&lt;/code&gt;&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;解决cannot-find-source-file-maincpp&#34;
+    &gt;解决Cannot find source file: main.cpp&lt;a href=&#34;#%e8%a7%a3%e5%86%b3cannot-find-source-file-maincpp&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;目录结构如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;├─CMakeLists.txt
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;└─src
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    │─CMakeLists.txt
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    └─core
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        │─CMakeLists.txt
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        │─main.cpp
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;CMakeLists一层一层add_subdirectory。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;add_executable&lt;/code&gt;时报错：Cannot find source file: main.cpp。&lt;/p&gt;
+&lt;p&gt;意外发现将CMake最低要求版本&lt;code&gt;cmake_minimum_required&lt;/code&gt;设置到&amp;gt;=3.13，qtc默认给的是3.5。&lt;/p&gt;
+&lt;p&gt;题外话：直接在文件夹里cmake .没有这个报错，所以……彩鸡qtc。&lt;/p&gt;
 </description></item></channel>
 </rss>
