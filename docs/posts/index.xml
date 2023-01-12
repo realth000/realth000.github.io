@@ -5,12 +5,21 @@
     <link>https://kzs.moe/posts/</link>
     <description>Recent content in Posts on Distant Vicinity</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Tue, 10 Jan 2023 22:09:12 +0800</lastBuildDate><atom:link href="https://kzs.moe/posts/index.xml" rel="self" type="application/rss+xml" />
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 12 Jan 2023 22:42:50 +0800</lastBuildDate><atom:link href="https://kzs.moe/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Qt多语言翻译（国际化）</title>
+      <link>https://kzs.moe/2023/01/12/qt%E5%A4%9A%E8%AF%AD%E8%A8%80%E7%BF%BB%E8%AF%91%E5%9B%BD%E9%99%85%E5%8C%96.html/</link>
+      <pubDate>Thu, 12 Jan 2023 22:42:50 +0800</pubDate>
+      
+      <guid>https://kzs.moe/2023/01/12/qt%E5%A4%9A%E8%AF%AD%E8%A8%80%E7%BF%BB%E8%AF%91%E5%9B%BD%E9%99%85%E5%8C%96.html/</guid>
+      <description>如果想支持多语言，也就是添加翻译，需要使用qlinguist相关的内容。 在qt中实现的大体流程为：根据源代码生成.ts文件，根据添加翻译后的</description>
+    </item>
+    
     <item>
       <title>CMake实践记录</title>
       <link>https://kzs.moe/2023/01/10/cmake%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95.html/</link>
-      <pubDate>Tue, 10 Jan 2023 22:09:12 +0800</pubDate>
+      <pubDate>Tue, 10 Jan 2023 22:09:07 +0800</pubDate>
       
       <guid>https://kzs.moe/2023/01/10/cmake%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95.html/</guid>
       <description>作为一门比shell的语法还x疼的“语言”，不动动笔杆子真不行。 以下基本以flameshot 为例来学习。 覆盖掉CMakeCache中缓存的o</description>
@@ -32,15 +41,6 @@
       
       <guid>https://kzs.moe/2023/01/09/hello_hugo.html/</guid>
       <description>Hello Hugo</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://kzs.moe/1/01/01/.html/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://kzs.moe/1/01/01/.html/</guid>
-      <description>[CMake] CMake实践记录 作为一门比shell的语法还x疼的“语言”，不动动笔杆子真不行。 以下基本以flameshot 为例来学习。 覆盖掉CMake</description>
     </item>
     
   </channel>

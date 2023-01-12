@@ -8,12 +8,12 @@
     <xhtml:link
                 rel="alternate"
                 hreflang="en-us"
-                href="https://kzs.moe/categories/"
+                href="https://kzs.moe/en-us/categories/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://kzs.moe/zh-cn/categories/"
+                href="https://kzs.moe/categories/"
                 />
     <xhtml:link
                 rel="alternate"
@@ -27,12 +27,12 @@
     <xhtml:link
                 rel="alternate"
                 hreflang="en-us"
-                href="https://kzs.moe/"
+                href="https://kzs.moe/en-us/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://kzs.moe/zh-cn/"
+                href="https://kzs.moe/"
                 />
     <xhtml:link
                 rel="alternate"
@@ -46,12 +46,12 @@
     <xhtml:link
                 rel="alternate"
                 hreflang="en-us"
-                href="https://kzs.moe/tags/"
+                href="https://kzs.moe/en-us/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://kzs.moe/zh-cn/tags/"
+                href="https://kzs.moe/tags/"
                 />
     <xhtml:link
                 rel="alternate"
