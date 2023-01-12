@@ -1,0 +1,36 @@
+{
+    "theme_color": "#2babe2",
+    "background_color": "#ffffff",
+    "display": "standalone",
+    "scope": "/",
+    "start_url": "/en-us/",
+    "name": "Distant Vicinity",
+    "short_name": "Ice-Hazymoon",
+    "description": "Distant Vicinity",
+    "icons": [
+        {
+            "src": "/icon_hu936fc60b0f1f12998ad21ff5b44e3900_24758_192x192_resize_catmullrom_3.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icon_hu936fc60b0f1f12998ad21ff5b44e3900_24758_256x256_resize_catmullrom_3.png",
+            "sizes": "256x256",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icon_hu936fc60b0f1f12998ad21ff5b44e3900_24758_384x384_resize_catmullrom_3.png",
+            "sizes": "384x384",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icon_hu936fc60b0f1f12998ad21ff5b44e3900_24758_512x512_resize_catmullrom_3.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

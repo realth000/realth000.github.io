@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Distant Vicinity</title>
+    <link>https://kzs.moe/en-us/posts/</link>
+    <description>Recent content in Posts on Distant Vicinity</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 12 Jan 2023 22:42:50 +0800</lastBuildDate><atom:link href="https://kzs.moe/en-us/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Qt多语言翻译（国际化）</title>
+      <link>https://kzs.moe/en-us/2023/01/12/qt%E5%A4%9A%E8%AF%AD%E8%A8%80%E7%BF%BB%E8%AF%91%E5%9B%BD%E9%99%85%E5%8C%96.html/</link>
+      <pubDate>Thu, 12 Jan 2023 22:42:50 +0800</pubDate>
+      
+      <guid>https://kzs.moe/en-us/2023/01/12/qt%E5%A4%9A%E8%AF%AD%E8%A8%80%E7%BF%BB%E8%AF%91%E5%9B%BD%E9%99%85%E5%8C%96.html/</guid>
+      <description>如果想支持多语言，也就是添加翻译，需要使用qlinguist相关的内容。 在qt中实现的大体流程为：根据源代码生成.ts文件，根据添加翻译后的</description>
+    </item>
+    
+    <item>
+      <title>CMake实践记录</title>
+      <link>https://kzs.moe/en-us/2023/01/10/cmake%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95.html/</link>
+      <pubDate>Tue, 10 Jan 2023 22:09:12 +0800</pubDate>
+      
+      <guid>https://kzs.moe/en-us/2023/01/10/cmake%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95.html/</guid>
+      <description>作为一门比shell的语法还x疼的“语言”，不动动笔杆子真不行。 以下基本以flameshot 为例来学习。 覆盖掉CMakeCache中缓存的o</description>
+    </item>
+    
+    <item>
+      <title>配置neovim</title>
+      <link>https://kzs.moe/en-us/2023/01/09/%E9%85%8D%E7%BD%AEneovim.html/</link>
+      <pubDate>Mon, 09 Jan 2023 23:30:12 +0800</pubDate>
+      
+      <guid>https://kzs.moe/en-us/2023/01/09/%E9%85%8D%E7%BD%AEneovim.html/</guid>
+      <description>配置neovim neovim 是一款强大且轻量的基于vim的tui编辑器，相比vim有更现代的设置和插件系统。今天neovim的生态已然非常广泛。 安装n</description>
+    </item>
+    
+    <item>
+      <title>Hello_hugo</title>
+      <link>https://kzs.moe/en-us/2023/01/09/hello_hugo.html/</link>
+      <pubDate>Mon, 09 Jan 2023 05:47:15 +0800</pubDate>
+      
+      <guid>https://kzs.moe/en-us/2023/01/09/hello_hugo.html/</guid>
+      <description>Hello Hugo</description>
+    </item>
+    
+  </channel>
+</rss>

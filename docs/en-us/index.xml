@@ -1,0 +1,1119 @@
+<rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+>
+
+    <channel>
+        <title>Distant Vicinity</title>
+        <atom:link href="%7balternate%20%7bRSS%20application/rss&#43;xml%20%20index%20alternate%20%20false%20false%20true%20false%20false%200%7d%20/en-us/index.xml%20https://kzs.moe/en-us/index.xml%7d" rel="self" type="application/rss+xml" />
+        <link>https://kzs.moe/en-us/</link>
+        <managingEditor>realth000</managingEditor>
+        <description>A simple, performance-first, SEO-friendly Hugo theme</description>
+        <lastBuildDate>Thu, 12 Jan 2023 22:42:50 +0800</lastBuildDate>
+        <language>zh-cn</language>
+        <generator>Hugo -- gohugo.io</generator><item>
+            <title>Qt多语言翻译（国际化）</title>
+            <link>https://kzs.moe/en-us/2023/01/12/qt%E5%A4%9A%E8%AF%AD%E8%A8%80%E7%BF%BB%E8%AF%91%E5%9B%BD%E9%99%85%E5%8C%96.html/</link>
+            <pubDate>Thu, 12 Jan 2023 22:42:50 +0800</pubDate>
+            <guid>https://kzs.moe/en-us/2023/01/12/qt%E5%A4%9A%E8%AF%AD%E8%A8%80%E7%BF%BB%E8%AF%91%E5%9B%BD%E9%99%85%E5%8C%96.html/</guid><description>&lt;p&gt;如果想支持多语言，也就是添加翻译，需要使用qlinguist相关的内容。&lt;/p&gt;
+&lt;p&gt;在qt中实现的大体流程为：根据源代码生成&lt;code&gt;.ts&lt;/code&gt;文件，根据添加翻译后的&lt;code&gt;.ts&lt;/code&gt;文件生成&lt;code&gt;.qm&lt;/code&gt;文件，在源文件中&lt;code&gt;setupUi&lt;/code&gt;之前使用&lt;code&gt;QTranslator&lt;/code&gt;加载&lt;code&gt;.qm&lt;/code&gt;文件（翻译文件）。&lt;/p&gt;
+&lt;p&gt;源码中所有希望添加进翻译文件的字符串都需要使用&lt;code&gt;tr()&lt;/code&gt;括起来，&lt;code&gt;.ui&lt;/code&gt;文件中的不需要，qml文件中使用&lt;code&gt;qsTr()&lt;/code&gt;包裹。&lt;/p&gt;
+&lt;p&gt;由于与涉及到不同的build system以及&lt;code&gt;.qm&lt;/code&gt;文件的加载方式，具体的实现方法非常乱。&lt;/p&gt;
+&lt;p&gt;梳理花了很大一番功夫。&lt;/p&gt;
+&lt;p&gt;以下学习过程基于&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/flameshot-org/flameshot&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;flameshot&lt;/a
+&gt;
+和&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/qbittorrent/qBittorrent&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;qBittorrent&lt;/a
+&gt;
+两个项目。&lt;/p&gt;
+&lt;p&gt;由于缺包等原因，我本地的环境没法编译qBittorrent工程，仅看源码来学习。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;实现方式&#34;
+    &gt;实现方式&lt;a href=&#34;#%e5%ae%9e%e7%8e%b0%e6%96%b9%e5%bc%8f&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+
+
+&lt;h4 class=&#34;group &#34; id=&#34;翻译文件的加载方式&#34;
+    &gt;翻译文件的加载方式&lt;a href=&#34;#%e7%bf%bb%e8%af%91%e6%96%87%e4%bb%b6%e7%9a%84%e5%8a%a0%e8%bd%bd%e6%96%b9%e5%bc%8f&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h4&gt;
+
+&lt;p&gt;在翻译文件&lt;code&gt;.qm&lt;/code&gt;的加载方式上，有两个选择：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;可以选择把文件单独放到一个文件夹（如&lt;code&gt;/translations&lt;/code&gt;），程序加载时使用相对路径加载（如&lt;code&gt;/translation/appname_zh_CN.qm&lt;/code&gt;）。&lt;/li&gt;
+&lt;li&gt;也可以选择放进资源文件&lt;code&gt;.qrc&lt;/code&gt;里，使用qrc的路径加载（如&lt;code&gt;:/translation/app_name_zh_CN.qm&lt;/code&gt;）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;前者的好处是翻译文件独立，修改翻译文件时不需要重新编译程序，坏处是翻译文件暴露在外，可能会遇到丢失、乱码等情况。更常见的情况是修改并生成文件后，忘了把新版的文件放到&lt;code&gt;translation&lt;/code&gt;文件夹里。&lt;/p&gt;
+&lt;p&gt;后者的好处是可以使用qrc资源系统控制，不暴露在外，只要重新生成即可不需要手动放到translation文件夹，坏处是一旦修改文件就需要重新编译程序，而且包含所有翻译语言的翻译文件的话程序体积会略微大一点。&lt;/p&gt;
+
+
+&lt;h4 class=&#34;group &#34; id=&#34;两套构建系统对翻译文件的处理&#34;
+    &gt;两套构建系统对翻译文件的处理&lt;a href=&#34;#%e4%b8%a4%e5%a5%97%e6%9e%84%e5%bb%ba%e7%b3%bb%e7%bb%9f%e5%af%b9%e7%bf%bb%e8%af%91%e6%96%87%e4%bb%b6%e7%9a%84%e5%a4%84%e7%90%86&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h4&gt;
+
+
+
+&lt;h5 class=&#34;group &#34; id=&#34;cmake&#34;
+    &gt;CMake&lt;a href=&#34;#cmake&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h5&gt;
+
+&lt;p&gt;在CMake里，如果想加载翻译文件，需要&lt;code&gt;LinguistTools&lt;/code&gt;模块：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-Cmake&#34; data-lang=&#34;Cmake&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;find_package&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;Qt5&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;CONFIG&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;REQUIRED&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;LinguistTools&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;幸运的是&lt;code&gt;LinguistTools&lt;/code&gt;模块不是一个单独的动态库，应该是包含在Qt5Core内的。&lt;/p&gt;
+&lt;p&gt;生成并加载翻译文件需要使用&lt;code&gt;qt5_add_translation&lt;/code&gt;或者&lt;code&gt;qt5_create_translation&lt;/code&gt;两个function，且以来qrc系统，即要求CMake的&lt;code&gt;AUTORCC&lt;/code&gt;打开。&lt;/p&gt;
+
+
+&lt;h5 class=&#34;group &#34; id=&#34;qmake&#34;
+    &gt;QMake&lt;a href=&#34;#qmake&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h5&gt;
+
+&lt;p&gt;QMake需要使用Qt的&lt;code&gt;lrelease&lt;/code&gt;工具生成ts文件，人工填写ts文件内的翻译，再使用&lt;code&gt;lrelease&lt;/code&gt;生成&lt;code&gt;.qm&lt;/code&gt;文件，其实CMake底层也是调用的这个工具。&lt;/p&gt;
+&lt;p&gt;加载翻译文件需要用INSTALLATIONS变量 += 上所有的&lt;code&gt;.ts&lt;/code&gt;文件。&lt;/p&gt;
+
+
+&lt;h4 class=&#34;group &#34; id=&#34;希望尽可能的自动化&#34;
+    &gt;希望尽可能的自动化&lt;a href=&#34;#%e5%b8%8c%e6%9c%9b%e5%b0%bd%e5%8f%af%e8%83%bd%e7%9a%84%e8%87%aa%e5%8a%a8%e5%8c%96&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h4&gt;
+
+&lt;p&gt;编译过程需要手动操作的话非常恶星，总是希望整个构建过程能自动化就自动化。&lt;/p&gt;
+&lt;p&gt;需要自动化的点有：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;自动根据&lt;code&gt;.ts&lt;/code&gt;文件生成&lt;code&gt;.qm&lt;/code&gt;文件，这个步骤尽量每次都做，以保证翻译最新。至少在手动修改了&lt;code&gt;.ts&lt;/code&gt;文件后下一次编译时能自动生成&lt;code&gt;.qm&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;自动加载&lt;code&gt;.qm&lt;/code&gt;文件，这个既是指上一步中生成的&lt;code&gt;.qm&lt;/code&gt;能自动放在需要它的位置上，同时还包括程序加载翻译文件时选择当前系统语言。当然也可以加一个选择语言的配置，但能够选择性的加载翻译文件同样是必须的。&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;两个示例项目做了什么&#34;
+    &gt;两个示例项目做了什么&lt;a href=&#34;#%e4%b8%a4%e4%b8%aa%e7%a4%ba%e4%be%8b%e9%a1%b9%e7%9b%ae%e5%81%9a%e4%ba%86%e4%bb%80%e4%b9%88&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+
+
+&lt;h4 class=&#34;group &#34; id=&#34;flameshot&#34;
+    &gt;flameshot&lt;a href=&#34;#flameshot&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h4&gt;
+
+&lt;p&gt;&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/flameshot-org/flameshot&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;flameshot&lt;/a
+&gt;
+只支持CMake构建，对翻译文件的整个处理也比较简单。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;在&lt;code&gt;src/CMakeLists.txt&lt;/code&gt;中包含进&lt;code&gt;.ts&lt;/code&gt;：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-cmake&#34; data-lang=&#34;cmake&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;set&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;FLAMESHOT_TS_FILES&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;CMAKE_SOURCE_DIR&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;/data/translations/Internationalization_ca.ts&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;CMAKE_SOURCE_DIR&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;/data/translations/Internationalization_cs.ts&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f1fa8c&#34;&gt;...&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;CMAKE_SOURCE_DIR&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;/data/translations/Internationalization_zh_TW.ts&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;紧接着生成翻译文件：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-cmake&#34; data-lang=&#34;cmake&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#f1fa8c&#34;&gt;GENERATE_TS&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;qt5_create_translation&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;QM_FILES&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;CMAKE_SOURCE_DIR&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;FLAMESHOT_TS_FILES&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;else&lt;/span&gt; ()
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;qt5_add_translation&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;QM_FILES&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;FLAMESHOT_TS_FILES&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;endif&lt;/span&gt; ()
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;根据&lt;code&gt;GENERATE_TS&lt;/code&gt;状态的不同分别调用&lt;code&gt;qt5_create_translation&lt;/code&gt;和&lt;code&gt;qt5_add_translation&lt;/code&gt;，&lt;code&gt;GENERATE_TS&lt;/code&gt;本身只是一个手动控制的开关：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-cmake&#34; data-lang=&#34;cmake&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;option&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;GENERATE_TS&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;Regenerate translation source files&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;OFF&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;最后安装翻译文件到指定位置：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-cmake&#34; data-lang=&#34;cmake&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;install&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;FILES&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;QM_FILES&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;DESTINATION&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;CMAKE_INSTALL_DATAROOTDIR&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;/flameshot/translations&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;加载翻译文件的方式如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;QTranslator translator, qtTranslator;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;QStringList trPaths &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; PathInfo&lt;span style=&#34;color:#ff79c6&#34;&gt;::&lt;/span&gt;translationsPaths();
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#ff79c6&#34;&gt;const&lt;/span&gt; QString&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;path&lt;/span&gt; : trPaths) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd&#34;&gt;bool&lt;/span&gt; match &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; translator.load(QLocale(),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                                 QStringLiteral(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;Internationalization&amp;#34;&lt;/span&gt;),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                                 QStringLiteral(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;_&amp;#34;&lt;/span&gt;),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                                 path);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#ff79c6&#34;&gt;if&lt;/span&gt; (match) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#ff79c6&#34;&gt;break&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;qtTranslator.load(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    QLocale&lt;span style=&#34;color:#ff79c6&#34;&gt;::&lt;/span&gt;system(),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;qt&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;_&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    QLibraryInfo&lt;span style=&#34;color:#ff79c6&#34;&gt;::&lt;/span&gt;location(QLibraryInfo&lt;span style=&#34;color:#ff79c6&#34;&gt;::&lt;/span&gt;TranslationsPath));
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;app.installTranslator(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;translator);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;app.installTranslator(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;qtTranslator);
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;用了两个translator，一个加载Qt自带语句的翻译，一个是加载项目自己加入的需要的翻译。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;qbittorrent&#34;
+    &gt;qBittorrent&lt;a href=&#34;#qbittorrent&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/qbittorrent/qBittorrent&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;qBittorrent&lt;/a
+&gt;
+同时支持使用QMake和Cmake构建，对翻译的处理较为复杂。&lt;/p&gt;
+
+
+&lt;h4 class=&#34;group &#34; id=&#34;cmake-1&#34;
+    &gt;CMake&lt;a href=&#34;#cmake-1&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;在&lt;code&gt;app/CMakeLists.txt&lt;/code&gt;中包含&lt;code&gt;.ts&lt;/code&gt;文件并生成翻译文件：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-cmake&#34; data-lang=&#34;cmake&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;# translations
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;include&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;QbtTranslations&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;file&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;GLOB&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;QBT_TS_FILES&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;../lang/*.ts&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;qbt_add_translations&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;qBittorrent&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;QRC_FILE&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;../lang/lang.qrc&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;TS_FILES&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;QBT_TS_FILES&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;qbt_add_translations&lt;/code&gt;是qBittorrent自定义的一个函数，反正非常复杂就对了，杀鸡焉用牛刀，撤。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+
+
+&lt;h4 class=&#34;group &#34; id=&#34;qmake-1&#34;
+    &gt;QMake&lt;a href=&#34;#qmake-1&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h4&gt;
+
+&lt;p&gt;在&lt;code&gt;src.pro&lt;/code&gt;中，仅有以下几行代码即可：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-cmake&#34; data-lang=&#34;cmake&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;isEmpty&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;QMAKE_LRELEASE&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    win32: QMAKE_LRELEASE = $$[QT_INSTALL_BINS]/lrelease.exe
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    else: QMAKE_LRELEASE = $$[QT_INSTALL_BINS]/lrelease
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    unix {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;equals&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;QT_MAJOR_VERSION,&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;5&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            !&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;exists&lt;/span&gt;($$&lt;span style=&#34;color:#f1fa8c&#34;&gt;QMAKE_LRELEASE&lt;/span&gt;): QMAKE_LRELEASE = lrelease-qt5
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    else {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        !&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;exists&lt;/span&gt;($$&lt;span style=&#34;color:#f1fa8c&#34;&gt;QMAKE_LRELEASE&lt;/span&gt;): QMAKE_LRELEASE = lrelease
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;lrelease.input = TS_SOURCES
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;lrelease.output = ${QMAKE_FILE_PATH}/${QMAKE_FILE_BASE}.qm
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;lrelease.commands = @echo &amp;#34;lrelease ${QMAKE_FILE_NAME}&amp;#34; &amp;amp;&amp;amp; $$QMAKE_LRELEASE -silent ${QMAKE_FILE_NAME} -qm ${QMAKE_FILE_OUT}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;lrelease.CONFIG += no_link target_predeps
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;QMAKE_EXTRA_COMPILERS += lrelease
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;TRANSLATIONS = $$&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;files&lt;/span&gt;($$&lt;span style=&#34;color:#f1fa8c&#34;&gt;PWD/lang/qbittorrent_*.ts&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;TS_SOURCES += $$TRANSLATIONS
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;最前面的一个大的if来设定生成翻译文件所用的&lt;code&gt;lrelease&lt;/code&gt;工具，中间&lt;code&gt;lrelease&lt;/code&gt;这个target用来配置生成翻译文件的动作，最后两行定义好&lt;code&gt;TRANSLATIONS&lt;/code&gt;和&lt;code&gt;TS_SOURCES&lt;/code&gt;两个变量。&lt;/p&gt;
+&lt;p&gt;非常简单明了。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;最终实现&#34;
+    &gt;最终实现&lt;a href=&#34;#%e6%9c%80%e7%bb%88%e5%ae%9e%e7%8e%b0&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;选择的实现方法&#34;
+    &gt;选择的实现方法&lt;a href=&#34;#%e9%80%89%e6%8b%a9%e7%9a%84%e5%ae%9e%e7%8e%b0%e6%96%b9%e6%b3%95&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;尽量想同时用QMake和CMake支持加载翻译文件，毕竟QMake有时候还挺好用&lt;span class=&#34;heimu&#34; title=&#34;嘘&#34;&gt;，你Qt6的QMake停止更新关我Qt5的用户什么事&lt;/span&gt;。&lt;/li&gt;
+&lt;li&gt;选择将翻译文件放到&lt;code&gt;.qrc&lt;/code&gt;里，原因嘛，单独放外面太蠢，QMake似乎没法通过在&lt;code&gt;.pro&lt;/code&gt;文件里写自定义命令的方式安装到translation文件夹里，调用起来也麻烦。&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;预备工作&#34;
+    &gt;预备工作&lt;a href=&#34;#%e9%a2%84%e5%a4%87%e5%b7%a5%e4%bd%9c&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;首次生成翻译文件时，我们是连&lt;code&gt;.ts&lt;/code&gt;都没有的，所有需要先生成&lt;code&gt;.ts&lt;/code&gt;和&lt;code&gt;.qm&lt;/code&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;在源码里配置好想加入翻译文件的文本，包括&lt;code&gt;.ui&lt;/code&gt;文件内英文的控件文字、源码中所有可能显示在界面上的文字用&lt;code&gt;tr()&lt;/code&gt;包起来，qml文件中使用&lt;code&gt;qsTr()&lt;/code&gt;包裹。&lt;/li&gt;
+&lt;li&gt;在&lt;code&gt;.pro&lt;/code&gt;文件里加上qBittorrent里翻译文件相关的配置&lt;/li&gt;
+&lt;li&gt;打开Qt自带的命令行，在这个命令行里才能用&lt;code&gt;lrelease&lt;/code&gt;命令（仅限Windows，Linux大概直接&lt;code&gt;find&lt;/code&gt;一下就行）。&lt;/li&gt;
+&lt;li&gt;使用&lt;code&gt;lupdate app.pro -ts appname_zh_CN.ts&lt;/code&gt;即可生成&lt;code&gt;.ts&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;用文本编辑器打开&lt;code&gt;.ts&lt;/code&gt;，添加翻译，添加后去掉&lt;code&gt;type=&amp;quot;unfinished&amp;quot;&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;在打开刚出的命令行，用&lt;code&gt;lrelease appname_zh_CN.ts -qm appname_zh_CN.qm&lt;/code&gt;生成&lt;code&gt;.qm&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;新建一个qrc文件（如&lt;code&gt;translation.qrc&lt;/code&gt;），添加进刚才生成的&lt;code&gt;.qm&lt;/code&gt;，&lt;code&gt;.ts&lt;/code&gt;也可以加进去，不加也行但要记得加进git仓库。&lt;/li&gt;
+&lt;/ol&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;cmake-2&#34;
+    &gt;CMake&lt;a href=&#34;#cmake-2&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;在有&lt;code&gt;add_executable&lt;/code&gt;命令的CMakeLists内加入以下代码，必须在这个CMakeLists内添加的原因是翻译文件无法使用&lt;code&gt;target_sources&lt;/code&gt;添加进编译的目标程序内（格式不支持）：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-cmake&#34; data-lang=&#34;cmake&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;# Generate translations
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;set&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;APPNAME_TS_FILES&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;CMAKE_SOURCE_DIR&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;/src/resource/translation/appname_en.ts&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;CMAKE_SOURCE_DIR&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;/src/resource/translation/appname_zh_CN.ts&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;set_source_files_properties&lt;/span&gt;(&lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;APPNAME_TS_FILES&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;PROPERTIES&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;OUTPUT_LOCATION&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;${CMAKE_SOURCE_DIR}/src/resource/translation&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;qt5_add_translation&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;QM_FILES&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;APPNAME_TS_FILES&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;注意：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;以上语句需要在&lt;code&gt;add_subdirctory&lt;/code&gt;添加了qrc文件之前。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;set_source_files_properties&lt;/code&gt;设置的输出目录必须是qrc文件内记录的qm文件目录，否则生成时无法更新qrc文件内包含的翻译。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;之后在&lt;code&gt;add_executable&lt;/code&gt;时加上生成的翻译文件：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-cmake&#34; data-lang=&#34;cmake&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;add_executable&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;appname&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;QM_FILES&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;别忘了讲qrc文件加进来，并且打开AUTORCC开关：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-cmake&#34; data-lang=&#34;cmake&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;# 打开AUTORCC需要在顶层的CMakeLists中尽早开启
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;set&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;AUTORCC&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;ON&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;target_sources&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;appname&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;PRIVATE&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;translation.qrc&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;qmake-2&#34;
+    &gt;QMake&lt;a href=&#34;#qmake-2&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;.pro&lt;/code&gt;文件里加入以下配置：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-cmake&#34; data-lang=&#34;cmake&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;isEmpty&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;QMAKE_LRELEASE&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    win32: QMAKE_LRELEASE = $$[QT_INSTALL_BINS]/lrelease.exe
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    else: QMAKE_LRELEASE = $$[QT_INSTALL_BINS]/lrelease
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    unix {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;equals&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;QT_MAJOR_VERSION,&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;5&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            !&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;exists&lt;/span&gt;($$&lt;span style=&#34;color:#f1fa8c&#34;&gt;QMAKE_LRELEASE&lt;/span&gt;): QMAKE_LRELEASE = lrelease-qt5
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    else {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        !&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;exists&lt;/span&gt;($$&lt;span style=&#34;color:#f1fa8c&#34;&gt;QMAKE_LRELEASE&lt;/span&gt;): QMAKE_LRELEASE = lrelease
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;lrelease.input = TS_SOURCES
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;lrelease.output = ${QMAKE_FILE_PATH}/${QMAKE_FILE_BASE}.qm
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;lrelease.commands = @echo &amp;#34;lrelease ${QMAKE_FILE_NAME}&amp;#34; &amp;amp;&amp;amp; $$QMAKE_LRELEASE -silent ${QMAKE_FILE_NAME} -qm ${QMAKE_FILE_OUT}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;lrelease.CONFIG += no_link target_predeps
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;QMAKE_EXTRA_COMPILERS += lrelease
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;TRANSLATIONS += $$&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;files&lt;/span&gt;($$&lt;span style=&#34;color:#f1fa8c&#34;&gt;PWD/src/resource/translation/appname_*.ts&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;TS_SOURCES += $$TRANSLATIONS
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;完事了，非常简单。&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;加载翻译文件&#34;
+    &gt;加载翻译文件&lt;a href=&#34;#%e5%8a%a0%e8%bd%bd%e7%bf%bb%e8%af%91%e6%96%87%e4%bb%b6&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;在&lt;code&gt;setupUi&lt;/code&gt;之前，一般在main.cpp里：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;#include&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;lt;QtCore/QTranslator&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;&lt;/span&gt;QTranslator appTranslator;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;QApplication &lt;span style=&#34;color:#50fa7b&#34;&gt;a&lt;/span&gt;(argc, argv);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;QLocale locale &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; QLocale&lt;span style=&#34;color:#ff79c6&#34;&gt;::&lt;/span&gt;system();
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;QTranslator appTranslator;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;switch&lt;/span&gt; (locale.script()) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#ff79c6&#34;&gt;case&lt;/span&gt; QLocale&lt;span style=&#34;color:#ff79c6&#34;&gt;::&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;SimplifiedChineseScript&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        appTranslator.load(QLatin1String(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;:/translation/appname_zh_CN.qm&amp;#34;&lt;/span&gt;));
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#ff79c6&#34;&gt;break&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#ff79c6&#34;&gt;default&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        appTranslator.load(QLatin1String(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;:/translation/appname_en.qm&amp;#34;&lt;/span&gt;));
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;a.installTranslator(&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;appTranslator);
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;我只制作了中文和英文两种翻译所以switch只有两条分支。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;QTranslator&lt;/code&gt;需要在声明application之后。&lt;/li&gt;
+&lt;/ul&gt;
+</description></item><item>
+            <title>CMake实践记录</title>
+            <link>https://kzs.moe/en-us/2023/01/10/cmake%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95.html/</link>
+            <pubDate>Tue, 10 Jan 2023 22:09:12 +0800</pubDate>
+            <guid>https://kzs.moe/en-us/2023/01/10/cmake%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95.html/</guid><description>&lt;p&gt;作为一门比shell的语法还x疼的“语言”，不动动笔杆子真不行。&lt;/p&gt;
+&lt;p&gt;以下基本以&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/flameshot-org/flameshot&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;flameshot&lt;/a
+&gt;
+为例来学习。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;覆盖掉cmakecache中缓存的option&#34;
+    &gt;覆盖掉CMakeCache中缓存的option&lt;a href=&#34;#%e8%a6%86%e7%9b%96%e6%8e%89cmakecache%e4%b8%ad%e7%bc%93%e5%ad%98%e7%9a%84option&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;不推荐使用&lt;code&gt;option(OPTION_NAME &amp;quot;Option description&amp;quot; OPTION_STATE)&lt;/code&gt;，因为更改option状态时会被CMakeCache里的旧Option状态覆盖，且对subdirectory内的CMakeLists.txt作用效果不好。&lt;/p&gt;
+&lt;p&gt;推荐做法：&lt;code&gt;set(OPTION_NAME OPTION_STATE CACHE OPTION_TYPE &amp;quot;Option description&amp;quot; FORCE)&lt;/code&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;OPTION_NAME：option名称。&lt;/li&gt;
+&lt;li&gt;OPTION_STATE：option状态，一般为&lt;code&gt;ON&lt;/code&gt;或&lt;code&gt;OFF&lt;/code&gt;，推荐使用全大写。&lt;/li&gt;
+&lt;li&gt;CACHE：表示写入到CMakeCache里。&lt;/li&gt;
+&lt;li&gt;FORCE：表示强制覆盖CMakeCache里的值。&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;cmakeliststxt内添加编译时变量&#34;
+    &gt;CMakeLists.txt内添加编译时变量&lt;a href=&#34;#cmakeliststxt%e5%86%85%e6%b7%bb%e5%8a%a0%e7%bc%96%e8%af%91%e6%97%b6%e5%8f%98%e9%87%8f&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;语法：&lt;code&gt;add_compile_options(&amp;quot;...&amp;quot;)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;例如MSVC开启强制utf-8：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;add_compile_options(&amp;#34;$&amp;lt;$&amp;lt;C_COMPILER_ID:MSVC&amp;gt;:/utf-8&amp;gt;&amp;#34;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;add_compile_options(&amp;#34;$&amp;lt;$&amp;lt;CXX_COMPILER_ID:MSVC&amp;gt;:/utf-8&amp;gt;&amp;#34;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;题外话，对应的在QMake内开启的方法为在&lt;code&gt;.pro&lt;/code&gt;内添加：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;win32-msvc* {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  QMAKE_CXXFLAGS += /utf-8
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h2 class=&#34;group &#34; id=&#34;添加宏marco&#34;
+    &gt;添加宏（MARCO）&lt;a href=&#34;#%e6%b7%bb%e5%8a%a0%e5%ae%8fmarco&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;语法：&lt;code&gt;add_definitions(-DMARCO_NAME)&lt;/code&gt;
+相当于编译时有了宏MARCO_NAME。&lt;/p&gt;
+&lt;p&gt;那么如何把宏去掉呢？&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;remove_definitions(-DMARCO_NAME)&lt;/code&gt;&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;includeoutputlink的顺序&#34;
+    &gt;include、output、link的顺序&lt;a href=&#34;#includeoutputlink%e7%9a%84%e9%a1%ba%e5%ba%8f&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;先&lt;code&gt;include_directories&lt;/code&gt;，然后&lt;code&gt;add_excutable&lt;/code&gt;，再&lt;code&gt;add_subdirectories&lt;/code&gt;，最后&lt;code&gt;target_link_libraries&lt;/code&gt;。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;cmake使用qt5库&#34;
+    &gt;CMake使用Qt5库&lt;a href=&#34;#cmake%e4%bd%bf%e7%94%a8qt5%e5%ba%93&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;需要按以下几步走。&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;打开额外compiler开关&#34;
+    &gt;打开额外Compiler开关&lt;a href=&#34;#%e6%89%93%e5%bc%80%e9%a2%9d%e5%a4%96compiler%e5%bc%80%e5%85%b3&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-cmake&#34; data-lang=&#34;cmake&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;set&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;CMAKE_AUTOMOC&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;ON&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;set&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;CMAKE_AUTORCC&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;ON&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;set&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;CMAKE_AUTOUIC&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;ON&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;分别编译Qt的元对象系统（信号槽，或者说使用了&lt;code&gt;Q_OBJECT&lt;/code&gt;宏的地方）、Qt的资源文件&lt;code&gt;*.qrc&lt;/code&gt;和Qt的UI文件&lt;code&gt;*.ui&lt;/code&gt;。&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;设定cmake的modules&#34;
+    &gt;设定CMake的Modules&lt;a href=&#34;#%e8%ae%be%e5%ae%9acmake%e7%9a%84modules&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;在尽量开头的位置设置&lt;code&gt;CMAKE_PREFIX_PATH&lt;/code&gt;到Qt自带的cmake目录，如：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;set(CMAKE_PATH_PREFIX /opt/Qt5.15.2/5.15.2/gcc_64/lib/cmake)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;实际操作过程中推荐这样写：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;set(CMAKE_PATH_PREFIX ${QT_CMAKE_PATH})&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;并在执行&lt;code&gt;cmake&lt;/code&gt;前&lt;code&gt;export&lt;/code&gt;下：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;export QT_CMAKE_PATH=/opt/Qt5.15.2/5.15.2/gcc_64/lib/cmake&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;（Windows下，使用QtCreator不需要&lt;code&gt;export&lt;/code&gt;，如果用命令行的话使用git的bash，有&lt;code&gt;export&lt;/code&gt;）&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;检查qt库cmake-modules的安装情况&#34;
+    &gt;检查Qt库(CMake modules)的安装情况&lt;a href=&#34;#%e6%a3%80%e6%9f%a5qt%e5%ba%93cmake-modules%e7%9a%84%e5%ae%89%e8%a3%85%e6%83%85%e5%86%b5&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;以使用QtCore、QtGui、QtWidgets为例，设定了&lt;code&gt;CMAKE_PATH_PREFIX&lt;/code&gt;后：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;find_package(Qt5 CONFIG REQUIRED Core Gui Widgets)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;PS：似乎还有一种语法：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)&lt;/code&gt;&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;链接qt动态库&#34;
+    &gt;链接Qt动态库&lt;a href=&#34;#%e9%93%be%e6%8e%a5qt%e5%8a%a8%e6%80%81%e5%ba%93&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;基本在最后位置：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;target_link_libraries(${BIN_NAME} Qt5::Core Qt5::Gui Qt5::Widgets)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;上面的语句默认链接debug版本的动态库，若要链接release版本，增加&lt;code&gt;optimized&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;target_link_libraries(${BIN_NAME} optimized Qt5::Core Qt5::Gui Qt5::Widgets)&lt;/code&gt;&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;包含子目录&#34;
+    &gt;包含子目录&lt;a href=&#34;#%e5%8c%85%e5%90%ab%e5%ad%90%e7%9b%ae%e5%bd%95&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;在上层目录中，首先&lt;code&gt;add_executable(BIN_NAME)&lt;/code&gt;，之后&lt;code&gt;add_subdirectories(sub_dir)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;在子目录&lt;code&gt;sub_dir&lt;/code&gt;中，&lt;code&gt;target_sources(BIN_NAME srcfile1 srcfile2 ...)&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;target_sources的用法&#34;
+    &gt;target_sources的用法&lt;a href=&#34;#target_sources%e7%9a%84%e7%94%a8%e6%b3%95&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;target_sources&lt;/code&gt;不仅是添加源文件，同样可以添加&lt;code&gt;*.qrc&lt;/code&gt;、&lt;code&gt;*.ui&lt;/code&gt;（前提是相关Compiler已打开）。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;区分系统平台&#34;
+    &gt;区分系统平台&lt;a href=&#34;#%e5%8c%ba%e5%88%86%e7%b3%bb%e7%bb%9f%e5%b9%b3%e5%8f%b0&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;立即推：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;8
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-cmake&#34; data-lang=&#34;cmake&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;if&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;WIN32&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;# do something...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;elif&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;UNIX&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;# do something...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;elif&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;APPLE&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;# do someting...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;else&lt;/span&gt;()
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;# 醒醒吧
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;endif&lt;/span&gt;()
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h2 class=&#34;group &#34; id=&#34;qtcreator中could-not-load-cache的解决方法&#34;
+    &gt;QtCreator中could not load cache的解决方法&lt;a href=&#34;#qtcreator%e4%b8%adcould-not-load-cache%e7%9a%84%e8%a7%a3%e5%86%b3%e6%96%b9%e6%b3%95&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;可怜的qtc，bug满身，对Qml而言是，对CMake更是。&lt;/p&gt;
+&lt;p&gt;现在还坚持用qtc的原因只有方便看文档和上色丰富简单又好看了吧。&lt;/p&gt;
+&lt;p&gt;清除-重新构建后总是报错：could not load cache怎么办？&lt;/p&gt;
+&lt;p&gt;找到左边项目-CMake-&lt;code&gt;Re-configure with Initial Parameters&lt;/code&gt;，点一下即可重新编译。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;windows平台rc文件的使用&#34;
+    &gt;Windows平台rc文件的使用&lt;a href=&#34;#windows%e5%b9%b3%e5%8f%b0rc%e6%96%87%e4%bb%b6%e7%9a%84%e4%bd%bf%e7%94%a8&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;使用&lt;code&gt;target_sources&lt;/code&gt;添加即可。&lt;/p&gt;
+&lt;p&gt;注意：编码格式在设置了UTF-8以后无比不要用UTF-8-BOM，否则在编译时会报错。&lt;/p&gt;
+&lt;p&gt;关于&lt;code&gt;*.rc&lt;/code&gt;文件的格式，参考&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/flameshot-org/flameshot/blob/master/data/flameshot.rc&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;flameshot.rc&lt;/a
+&gt;
+&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;windows平台关闭控制台&#34;
+    &gt;Windows平台关闭控制台&lt;a href=&#34;#windows%e5%b9%b3%e5%8f%b0%e5%85%b3%e9%97%ad%e6%8e%a7%e5%88%b6%e5%8f%b0&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;使用&lt;code&gt;WIN32&lt;/code&gt;参数：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;add_executable(KeyContainer WIN32)&lt;/code&gt;&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;解决cannot-find-source-file-maincpp&#34;
+    &gt;解决Cannot find source file: main.cpp&lt;a href=&#34;#%e8%a7%a3%e5%86%b3cannot-find-source-file-maincpp&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;目录结构如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;├─CMakeLists.txt
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;└─src
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    │─CMakeLists.txt
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    └─core
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        │─CMakeLists.txt
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        │─main.cpp
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;CMakeLists一层一层add_subdirectory。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;add_executable&lt;/code&gt;时报错：Cannot find source file: main.cpp。&lt;/p&gt;
+&lt;p&gt;意外发现将CMake最低要求版本&lt;code&gt;cmake_minimum_required&lt;/code&gt;设置到&amp;gt;=3.13，qtc默认给的是3.5。&lt;/p&gt;
+&lt;p&gt;题外话：直接在文件夹里cmake .没有这个报错，所以……彩鸡qtc。&lt;/p&gt;
+</description></item><item>
+            <title>配置neovim</title>
+            <link>https://kzs.moe/en-us/2023/01/09/%E9%85%8D%E7%BD%AEneovim.html/</link>
+            <pubDate>Mon, 09 Jan 2023 23:30:12 +0800</pubDate>
+            <guid>https://kzs.moe/en-us/2023/01/09/%E9%85%8D%E7%BD%AEneovim.html/</guid><description>
+
+&lt;h1 class=&#34;group &#34; id=&#34;配置neovim&#34;
+    &gt;配置neovim&lt;a href=&#34;#%e9%85%8d%e7%bd%aeneovim&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h1&gt;
+
+&lt;p&gt;&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://neovim.io/&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;neovim&lt;/a
+&gt;
+是一款强大且轻量的基于vim的tui编辑器，相比vim有更现代的设置和插件系统。今天neovim的生态已然非常广泛。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;安装neovim&#34;
+    &gt;安装neovim&lt;a href=&#34;#%e5%ae%89%e8%a3%85neovim&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;linux&#34;
+    &gt;Linux&lt;a href=&#34;#linux&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/neovim/neovim/releases/tag/stable&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;neovim release page&lt;/a
+&gt;
+上提供了*.deb和*.tar.gz，安装非常方便。
+&lt;ul&gt;
+&lt;li&gt;不推荐通过&lt;code&gt;apt&lt;/code&gt;等包管理软件安装neovim，版本太老。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;windows&#34;
+    &gt;Windows&lt;a href=&#34;#windows&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;release page上提供了Windows可用的*.zip，使用Qt制作了GUI。&lt;/li&gt;
+&lt;li&gt;然而GUI太不vim了，想在Linux的shell里使用vim怎么办？可以采用wezterm + msys2 + 从源码编译neovim的组合技，可以复刻Linux shell中90%的操作。
+&lt;ul&gt;
+&lt;li&gt;编译方法见&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/neovim/neovim/wiki/Building-Neovim#windows--msys2--mingw&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;neovim wiki&lt;/a
+&gt;
+，大概命令如下：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;pacman -S mingw-w64-x86_64-&lt;span style=&#34;color:#ff79c6&#34;&gt;{&lt;/span&gt;gcc,libtool,cmake,make,perl,python2,pkg-config,ninja,diffutils&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;mkdir .deps
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;cd&lt;/span&gt; .deps
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;cmake -G Ninja ..&lt;span style=&#34;color:#f1fa8c&#34;&gt;\c&lt;/span&gt;make.deps&lt;span style=&#34;color:#f1fa8c&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&lt;/span&gt;ninja
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;cd&lt;/span&gt; ..
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;mkdir build
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;cd&lt;/span&gt; build
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;cmake -G Ninja -D &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;CMAKE_BUILD_TYPE&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;RelWithDebInfo ..
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ninja
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ninja install
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;亲测在Win10上一次编过，编完以后neovim的二进制会install到shell启动默认目录下的nvim-win64/bin内。找不到的话用Everything找一下就行了。加到PATH里即可顺利玩耍。&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;关于neovim插件&#34;
+    &gt;关于neovim插件&lt;a href=&#34;#%e5%85%b3%e4%ba%8eneovim%e6%8f%92%e4%bb%b6&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;STOP！我说停停，到这里解释一下neovim插件相关的概念，为啥呢？网上教装插件的教程不少，但可能是我太笨吧，看完了也看得云里雾里，包括原生vim的插件也是很迷。&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;neovim的插件&#34;
+    &gt;(neo)vim的插件&lt;a href=&#34;#neovim%e7%9a%84%e6%8f%92%e4%bb%b6&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;插件指的是给(neo)vim提供额外功能的“软件”，一般是vimscript（适用于vim）和lua（适用于neovim）编写的，这两种都是脚本语言，下载插件也就是下载源码，一般从github上克隆到指定目录即可。&lt;/li&gt;
+&lt;li&gt;neovim也可以使用vimscript制作的插件，但是vimscript的效率比较低，装多了卡，而且远不如lua好理解，哪怕一点也不懂lua（比如我），看一看也能照猫画虎写，不推荐在neovim里用太多vimscript编写的插件。&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;neovim的插件管理器&#34;
+    &gt;(neo)vim的插件管理器&lt;a href=&#34;#neovim%e7%9a%84%e6%8f%92%e4%bb%b6%e7%ae%a1%e7%90%86%e5%99%a8&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;插件管理器是指提供下载插件、管理插件加载的特殊插件，一般也是从github上安装，直接&lt;code&gt;curl&lt;/code&gt;下来就行。&lt;/li&gt;
+&lt;li&gt;&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/junegunn/vim-plug&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;vim-plug&lt;/a
+&gt;
+是一款插件管理器，可以用于vim和neovim。在vim上算最好用的插件，但是在neovim里并不推荐，因为它用的是vimscript，和满处lua的neovim有点格格不入。&lt;/li&gt;
+&lt;li&gt;&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/wbthomason/packer.nvim&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;packer.vim&lt;/a
+&gt;
+也是一款插件管理器，可以用于neovim，采用lua编写，配置的可读性强，好上手，neovim上首推。&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;安装neovim插件&#34;
+    &gt;安装neovim插件&lt;a href=&#34;#%e5%ae%89%e8%a3%85neovim%e6%8f%92%e4%bb%b6&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;安装packervim&#34;
+    &gt;安装packer.vim&lt;a href=&#34;#%e5%ae%89%e8%a3%85packervim&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;先安装插件管理器才方便装插件嘛，直接进行一个命令行的装：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;git clone --depth &lt;span style=&#34;color:#bd93f9&#34;&gt;1&lt;/span&gt; https://github.com/wbthomason/packer.nvim&lt;span style=&#34;color:#f1fa8c&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&lt;/span&gt; ~/.local/share/nvim/site/pack/packer/start/packer.nvim
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;至此，packer安装完成，那么如何通过它管理插件呢？
+Linux上neovim会从&lt;code&gt;~/.config/nvim/init.lua&lt;/code&gt;或者&lt;code&gt;~/.config/nvim/init.vim&lt;/code&gt;读取配置，用lua写配置就是前者的路径了。
+实际上配置路径好像很多，但是用这两个就行。
+&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;&lt;del&gt;Windows的配置文件路径以后会补充，现在可以去官网看&lt;/del&gt;
+&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;先进到&lt;code&gt;~/.config/nvim/&lt;/code&gt;文件夹里，不出意外里面有一个叫做&lt;code&gt;lua&lt;/code&gt;的文件夹，用来存放我们将要写的lua脚本。
+&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;把它想象成“项目根目录”，比如：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;我写了一个&lt;code&gt;lua/basic.lua&lt;/code&gt;，那么在加载&lt;code&gt;basic.lua&lt;/code&gt;时应该写类似&lt;code&gt;#include&amp;lt;basic.lua&amp;gt;&lt;/code&gt;而不是&lt;code&gt;#include&amp;lt;lua/basic.lua&amp;gt;&lt;/code&gt;。
+&lt;br&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;没有这个文件夹就自己建一个。
+&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;看过一些neovim配置示例，按惯例：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;init.lua&lt;/code&gt;（&lt;code&gt;~/.config/nvim/init.lua&lt;/code&gt;）里只写要加载哪些lua脚本，比如包含vim行号搜索缩进等基本配置的&lt;code&gt;basic.lua&lt;/code&gt;、包含想加载的插件的&lt;code&gt;plugins.lua&lt;/code&gt;，举个例子：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-lua&#34; data-lang=&#34;lua&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;require(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;basic.lua&amp;#39;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;require(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;plugins.lua&amp;#39;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;basic.lua&lt;/code&gt;（&lt;code&gt;~/.config/nvim/lua/basic.lua&lt;/code&gt;）加载vim基本配置，举个栗子：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-lua&#34; data-lang=&#34;lua&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;vim.opt.nu &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;vim.opt.rnu &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;vim.opt.hls &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;vim.opt.incsearch &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;相当于vim的&lt;code&gt;~/.vimrc&lt;/code&gt;里的：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;set nu
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;set rnu
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;set hls
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;set incsearch
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;不能说一模一样，只能说完全相同。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;plugins.lua&lt;/code&gt;（&lt;code&gt;~/.config/nvim/lua/plugins.lua&lt;/code&gt;）里面写想加载的插件及其配置，还是举例子：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;8
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-lua&#34; data-lang=&#34;lua&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; require(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;packer&amp;#39;&lt;/span&gt;).startup(&lt;span style=&#34;color:#ff79c6&#34;&gt;function&lt;/span&gt;()
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#6272a4&#34;&gt;-- 加载packer&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  use &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;wbthomason/packer.vim&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#6272a4&#34;&gt;-- 加载主题 可以用大括号包起来&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  use { &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;navarasu/onedark.vim&amp;#39;&lt;/span&gt; }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#6272a4&#34;&gt;-- 加载onedark主题的配置文件：~/.config/nvim/lua/plugins_config/one-dark.lua&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  require(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;plugins_config.one-dark&amp;#39;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#6272a4&#34;&gt;-- 以下省略&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;写好配置了，然后怎么安装呢？
+&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;运行&lt;code&gt;nvim&lt;/code&gt;，然后输入vim的命令：&lt;code&gt;:PackerSync&lt;/code&gt;即可自动从github上下载插件并把旧插件升到最新版本。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;安装lsp&#34;
+    &gt;安装LSP&lt;a href=&#34;#%e5%ae%89%e8%a3%85lsp&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;neovim安装LSP比较方便，LSP是指&amp;quot;Language Server Protocol&amp;quot;，虽然是协议，可以理解为一种在后台进行静态代码分析的server，提供显示代码错误、代码补全建议的功能，非常好用。
+&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;Idea、VS Code太重了，难道我写个demo还要打开这些笨蛋看着内存疯狂上涨吗？
+&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;如果把vim和LSP结合在一起，岂不是双倍快乐？大项目不谈，写个小demo又会带来更多快乐。&lt;/p&gt;
+&lt;p&gt;neovim可以安装LSP，vim也可以，可惜后者似乎安装有些麻烦，还是前者吧，这也是我想从vim转到neovim的原因之一。&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;lsp插件组成&#34;
+    &gt;LSP插件组成&lt;a href=&#34;#lsp%e6%8f%92%e4%bb%b6%e7%bb%84%e6%88%90&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;虽然叫LSP插件组成，这里实际是想讲整个LSP套件的组成，需要哪些插件。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;LSP Server：刚才说了，我们想要的显示代码错误、代码补全建议的功能就是它提供的。
+&lt;ul&gt;
+&lt;li&gt;需要指出的是，不同的语言需要启用不同的LSP，比如C/CPP可以用Clangd，Go可以用gopls，Rust可以用rust-analyzer，Python可以用pyright。&lt;/li&gt;
+&lt;li&gt;需要安装。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;LSP Client：大概是处理Server发来的信息呗，这部分不用管，neovim自带整个功能。
+&lt;ul&gt;
+&lt;li&gt;不需要安装。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;LSP Server管理器：一个neovim插件，可以方便的管理各种LSP Server。
+&lt;ul&gt;
+&lt;li&gt;需要安装。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;LSP Server下载器：neovim&amp;rsquo;插件，提供下载LSP Server功能。
+&lt;ul&gt;
+&lt;li&gt;需要安装。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;代码补全建议插件：neovim不带这部分，LSP Server也不包含这部分，所以需要额外下一个neovim插件：
+&lt;ul&gt;
+&lt;li&gt;需要安装。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;放到今天的示例里，对应关系为：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;LSP Server：按需下载，列表在&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;nvim-lspconfig的文档&lt;/a
+&gt;
+。&lt;/li&gt;
+&lt;li&gt;LSP Server管理器：&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/neovim/nvim-lspconfig&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;nvim-lspconfig&lt;/a
+&gt;
+。&lt;/li&gt;
+&lt;li&gt;LSP Server下载器：&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/williamboman/mason.nvim&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;mason.vim&lt;/a
+&gt;
+。&lt;/li&gt;
+&lt;li&gt;代码补全建议插件：&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/hrsh7th/nvim-cmp&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;nvim-cmp&lt;/a
+&gt;
+。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;最后提供一个示例：&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/realth000/config/tree/master/014-nvim&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;realth000/config&lt;/a
+&gt;
+&lt;/p&gt;
+</description></item><item>
+            <title>Hello_hugo</title>
+            <link>https://kzs.moe/en-us/2023/01/09/hello_hugo.html/</link>
+            <pubDate>Mon, 09 Jan 2023 05:47:15 +0800</pubDate>
+            <guid>https://kzs.moe/en-us/2023/01/09/hello_hugo.html/</guid><description>&lt;p&gt;Hello Hugo&lt;/p&gt;
+</description></item></channel>
+</rss>

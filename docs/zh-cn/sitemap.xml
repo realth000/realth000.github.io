@@ -2,29 +2,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://kzs.moe/zh-cn/2023/01/10/cmake%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95.html/</loc>
-    <lastmod>2023-01-10T22:10:54+08:00</lastmod>
+    <loc>https://kzs.moe/</loc>
+    <lastmod>2023-01-12T22:44:46+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
                 rel="alternate"
                 hreflang="en-us"
-                href="https://kzs.moe/2023/01/10/cmake%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95.html/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh-cn"
-                href="https://kzs.moe/zh-cn/2023/01/10/cmake%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95.html/"
-                />
-  </url><url>
-    <loc>https://kzs.moe/zh-cn/</loc>
-    <lastmod>2023-01-10T22:10:54+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en-us"
-                href="https://kzs.moe/"
+                href="https://kzs.moe/en-us/"
                 />
     <xhtml:link
                 rel="alternate"
@@ -34,61 +19,91 @@
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://kzs.moe/zh-cn/"
+                href="https://kzs.moe/"
                 />
   </url><url>
-    <loc>https://kzs.moe/zh-cn/posts/</loc>
+    <loc>https://kzs.moe/posts/</loc>
+    <lastmod>2023-01-12T22:44:46+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="https://kzs.moe/en-us/posts/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://kzs.moe/posts/"
+                />
+  </url><url>
+    <loc>https://kzs.moe/2023/01/12/qt%E5%A4%9A%E8%AF%AD%E8%A8%80%E7%BF%BB%E8%AF%91%E5%9B%BD%E9%99%85%E5%8C%96.html/</loc>
+    <lastmod>2023-01-12T22:44:46+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="https://kzs.moe/en-us/2023/01/12/qt%E5%A4%9A%E8%AF%AD%E8%A8%80%E7%BF%BB%E8%AF%91%E5%9B%BD%E9%99%85%E5%8C%96.html/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://kzs.moe/2023/01/12/qt%E5%A4%9A%E8%AF%AD%E8%A8%80%E7%BF%BB%E8%AF%91%E5%9B%BD%E9%99%85%E5%8C%96.html/"
+                />
+  </url><url>
+    <loc>https://kzs.moe/2023/01/10/cmake%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95.html/</loc>
     <lastmod>2023-01-10T22:10:54+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
                 rel="alternate"
                 hreflang="en-us"
-                href="https://kzs.moe/posts/"
+                href="https://kzs.moe/en-us/2023/01/10/cmake%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95.html/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://kzs.moe/zh-cn/posts/"
+                href="https://kzs.moe/2023/01/10/cmake%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95.html/"
                 />
   </url><url>
-    <loc>https://kzs.moe/zh-cn/2023/01/09/%E9%85%8D%E7%BD%AEneovim.html/</loc>
+    <loc>https://kzs.moe/2023/01/09/%E9%85%8D%E7%BD%AEneovim.html/</loc>
     <lastmod>2023-01-09T23:33:41+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
                 rel="alternate"
                 hreflang="en-us"
-                href="https://kzs.moe/2023/01/09/%E9%85%8D%E7%BD%AEneovim.html/"
+                href="https://kzs.moe/en-us/2023/01/09/%E9%85%8D%E7%BD%AEneovim.html/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://kzs.moe/zh-cn/2023/01/09/%E9%85%8D%E7%BD%AEneovim.html/"
+                href="https://kzs.moe/2023/01/09/%E9%85%8D%E7%BD%AEneovim.html/"
                 />
   </url><url>
-    <loc>https://kzs.moe/zh-cn/2023/01/09/hello_hugo.html/</loc>
+    <loc>https://kzs.moe/2023/01/09/hello_hugo.html/</loc>
     <lastmod>2023-01-09T05:54:33+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
                 rel="alternate"
                 hreflang="en-us"
-                href="https://kzs.moe/2023/01/09/hello_hugo.html/"
+                href="https://kzs.moe/en-us/2023/01/09/hello_hugo.html/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://kzs.moe/zh-cn/2023/01/09/hello_hugo.html/"
+                href="https://kzs.moe/2023/01/09/hello_hugo.html/"
                 />
   </url><url>
-    <loc>https://kzs.moe/zh-cn/categories/</loc>
+    <loc>https://kzs.moe/categories/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
                 rel="alternate"
                 hreflang="en-us"
-                href="https://kzs.moe/categories/"
+                href="https://kzs.moe/en-us/categories/"
                 />
     <xhtml:link
                 rel="alternate"
@@ -98,16 +113,16 @@
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://kzs.moe/zh-cn/categories/"
+                href="https://kzs.moe/categories/"
                 />
   </url><url>
-    <loc>https://kzs.moe/zh-cn/tags/</loc>
+    <loc>https://kzs.moe/tags/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
                 rel="alternate"
                 hreflang="en-us"
-                href="https://kzs.moe/tags/"
+                href="https://kzs.moe/en-us/tags/"
                 />
     <xhtml:link
                 rel="alternate"
@@ -117,7 +132,7 @@
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://kzs.moe/zh-cn/tags/"
+                href="https://kzs.moe/tags/"
                 />
   </url>
 </urlset>
