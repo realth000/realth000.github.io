@@ -6,7 +6,16 @@
     <description>Recent content in Posts on Distant Vicinity</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 12 Jan 2023 22:42:50 +0800</lastBuildDate><atom:link href="https://kzs.moe/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 20 Jan 2023 22:23:53 +0800</lastBuildDate><atom:link href="https://kzs.moe/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>智能的命令</title>
+      <link>https://kzs.moe/2023/01/20/%E6%99%BA%E8%83%BD%E7%9A%84%E5%91%BD%E4%BB%A4.html/</link>
+      <pubDate>Fri, 20 Jan 2023 22:23:53 +0800</pubDate>
+      
+      <guid>https://kzs.moe/2023/01/20/%E6%99%BA%E8%83%BD%E7%9A%84%E5%91%BD%E4%BB%A4.html/</guid>
+      <description>智能的命令也不会遇到兔女郎学姐。 智能 智能的命令会给使用者带来更好的体验，比如不小心输入错参数时可以提示相似的正确参数、提供更易用的参数等等。</description>
+    </item>
+    
     <item>
       <title>Qt多语言翻译（国际化）</title>
       <link>https://kzs.moe/2023/01/12/qt%E5%A4%9A%E8%AF%AD%E8%A8%80%E7%BF%BB%E8%AF%91%E5%9B%BD%E9%99%85%E5%8C%96.html/</link>
