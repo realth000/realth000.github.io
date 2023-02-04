@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en-us" class="lang-en-us">
+    <head><meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="keywords" content="Hugo,Hugo Theme,Luna," /><meta name="description" content="“在短暂的flutter学习中我意识到一件事，越是追求简单越是有报错。” “说人话。” “我不用getx 做状态管理了，jojo！” 为何不用get" />
+<meta itemprop="description" content="“在短暂的flutter学习中我意识到一件事，越是追求简单越是有报错。” “说人话。” “我不用getx 做状态管理了，jojo！” 为何不用get" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<meta itemprop="name" content="简单学习riverpod - Distant Vicinity" />
+<link href="https://kzs.moe/index.xml" title="简单学习riverpod - Distant Vicinity" type="application/rss+xml" rel="alternate" />
+<title>简单学习riverpod - Distant Vicinity</title><link rel="stylesheet" href="/main.d4880997a9b25c8d2c137ea6c579e9322beb72396de331e697e99776700be1e2.css" integrity="sha256-1IgJl6myXI0sE36mxXnpMivrcjlt4zHml+mXdnAL4eI=" /><meta property="og:site_name" content="简单学习riverpod - Distant Vicinity" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="简单学习riverpod" />
+<meta property="og:description" content="“在短暂的flutter学习中我意识到一件事，越是追求简单越是有报错。” “说人话。” “我不用getx 做状态管理了，jojo！” 为何不用get" />
+<meta property="og:url" content="https://kzs.moe/en-us/2023/02/05/%E7%AE%80%E5%8D%95%E5%AD%A6%E4%B9%A0riverpod.html/" /><meta property="article:publisher" content="https://kzs.moe/en-us/2023/02/05/%E7%AE%80%E5%8D%95%E5%AD%A6%E4%B9%A0riverpod.html/" /><meta property="article:published_time" content="2023-02-05T02:55:15&#43;08:00" /><meta property="article:modified_time" content="2023-02-05T03:40:38&#43;08:00" /><meta name="theme-color" content="#2babe2" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="简单学习riverpod - Distant Vicinity" />
+<meta name="apple-mobile-web-app-status-bar-style" content="white" />
+<meta name="twitter:card" content="summary_large_image" /><meta name="twitter:site" content="@Ice_Hazymoon" />
+    <meta name="twitter:creator" content="@Ice_Hazymoon" /><meta name="twitter:title" content="简单学习riverpod - Distant Vicinity" />
+<meta name="twitter:description" content="“在短暂的flutter学习中我意识到一件事，越是追求简单越是有报错。” “说人话。” “我不用getx 做状态管理了，jojo！” 为何不用get" />
+<meta name="twitter:url" content="https://kzs.moe/en-us/2023/02/05/%E7%AE%80%E5%8D%95%E5%AD%A6%E4%B9%A0riverpod.html/" /><meta name="twitter:image" content="" /><link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" /><link rel="manifest" href="/en-us/manifest.json" /><link href="/icon.png" rel="shortcut icon" />
+<link href="/icon.png" rel="Bookmark" />
+<link rel="apple-touch-icon" href="/icon.png" /><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "headline": "简单学习riverpod",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https:\/\/kzs.moe\/en-us\/2023\/02\/05\/%E7%AE%80%E5%8D%95%E5%AD%A6%E4%B9%A0riverpod.html\/"
+  },"genre": "posts","wordcount": 1956 ,
+  "url": "https:\/\/kzs.moe\/en-us\/2023\/02\/05\/%E7%AE%80%E5%8D%95%E5%AD%A6%E4%B9%A0riverpod.html\/","datePublished": "2023-02-05T02:55:15\u002b08:00","dateModified": "2023-02-05T03:40:38\u002b08:00","author": {
+    "@type": "Person",
+    "name": "realth000"
+  },"description": ""
+}
+</script>
+
+
+    </head>
+    
+    <body class="dark:bg-darkBg dark:text-darkText">
+        <div class="relative mx-auto shadow-lg md:max-w-4xl xl:max-w-4xl 2xl:max-w-4xl">
+            <div class="main flex flex-col justify-between bg-white dark:bg-darkFg"><header class="relative"><nav id="nav" class="navbar top-0 z-10 flex items-center border-b px-5 py-6 dark:border-darkBorder md:px-10">
+        <div class="route-items flex w-full items-center justify-around"><a
+                    title="Home"
+                    data-active-link="/en-us/"
+                    href="/en-us/"
+                    class=" relative flex cursor-pointer flex-col items-center text-gray-700 transition duration-150 ease-[ease]"
+                >
+                    <i
+                        class="eva eva-home flex h-8 w-8 items-center justify-center text-3xl leading-none text-gray-500 transition duration-150 ease-[ease] dark:text-darkTextPlaceholder"
+                    ></i>
+                    <span class="mt-1 block text-xs text-gray-400 dark:text-darkText sm:text-sm md:hidden">Home</span>
+                </a><a
+                    title="Archives"
+                    data-active-link="/en-us/archives/"
+                    href="/en-us/archives/"
+                    class=" relative flex cursor-pointer flex-col items-center text-gray-700 transition duration-150 ease-[ease]"
+                >
+                    <i
+                        class="eva eva-bar-chart flex h-8 w-8 items-center justify-center text-3xl leading-none text-gray-500 transition duration-150 ease-[ease] dark:text-darkTextPlaceholder"
+                    ></i>
+                    <span class="mt-1 block text-xs text-gray-400 dark:text-darkText sm:text-sm md:hidden">Archives</span>
+                </a><a
+                    title="GitHub"
+                    data-active-link="/en-us/github/"
+                    href="/en-us/github/"
+                    class=" relative flex cursor-pointer flex-col items-center text-gray-700 transition duration-150 ease-[ease]"
+                >
+                    <i
+                        class="eva eva-github flex h-8 w-8 items-center justify-center text-3xl leading-none text-gray-500 transition duration-150 ease-[ease] dark:text-darkTextPlaceholder"
+                    ></i>
+                    <span class="mt-1 block text-xs text-gray-400 dark:text-darkText sm:text-sm md:hidden">GitHub</span>
+                </a><a
+                    title="Search"
+                    data-active-link="/en-us/search/"
+                    href="/en-us/search/"
+                    class=" relative flex cursor-pointer flex-col items-center text-gray-700 transition duration-150 ease-[ease]"
+                >
+                    <i
+                        class="eva eva-search flex h-8 w-8 items-center justify-center text-3xl leading-none text-gray-500 transition duration-150 ease-[ease] dark:text-darkTextPlaceholder"
+                    ></i>
+                    <span class="mt-1 block text-xs text-gray-400 dark:text-darkText sm:text-sm md:hidden">Search</span>
+                </a>
+        </div>
+    </nav><div class="dark-mode-switch absolute right-0 top-0 z-10 cursor-pointer pr-2 pt-2 text-xl leading-none">
+    <i class="eva eva-moon opacity-20 dark:opacity-70"></i>
+</div>
+</header>
+<main class="relative flex flex-grow " id="swup"><style>:root {
+        --font:Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }</style><div class="type-posts layout- w-full"><div class="relative h-full">
+    <div class="relative h-full">
+        <div class="page-view-article flex h-full flex-col bg-white dark:bg-darkFg"><div class="relative"><div>
+    <div class="-mb-2 w-full p-6 pb-0 text-3xl md:px-10">
+        简单学习riverpod
+    </div>
+</div></div><div class="article-info border-b p-6 pb-3 text-sm dark:border-darkBorder md:px-10">
+    <div>
+        <div class="mb-3 mr-4 inline-flex items-center sm:rounded-full">
+            <i class="eva eva-clock-outline mr-1"></i>
+            <span>
+                <time
+                    title="Published in 05 Feb 2023 02:55:15"datetime="2023-02-05T02:55:15+08:00">05 Feb 2023</time
+                >
+            </span>
+        </div><div class="mb-3 mr-4 inline-flex items-center sm:rounded-full">
+                <i class="eva eva-flag-outline mr-1"></i>
+                <span>4 mins read</span>
+            </div></div></div><aside
+            class="toc border-b border-gray-300 px-5 py-5 dark:border-darkBorder md:px-10 2xl:fixed 2xl:top-10 2xl:m-0 2xl:-ml-72 2xl:w-72 2xl:border-none 2xl:p-0 2xl:py-4 2xl:pr-4 "
+        >
+            <header>
+                <h1 class="mb-3 text-2xl font-bold 2xl:mb-4">Table of Contents</h1>
+            </header>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#为何不用getx">为何不用<code>getx</code></a></li>
+    <li><a href="#介绍">介绍</a></li>
+    <li><a href="#极速开始">极速开始</a></li>
+  </ul>
+</nav>
+        </aside><section class="article-content typo relative flex-grow px-6 py-5 md:px-10"><i title="Faster Reads" id="bionicReading" class="absolute right-0 top-0 cursor-pointer p-3"
+            ><svg class="w-4 h-4 fill-current text-gray-400" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="10811" ><path d="M480 192c-19.2 0-32-12.8-32-32v-128c0-19.2 12.8-32 32-32s32 12.8 32 32v128c0 19.2-12.8 32-32 32zM160 1024c-6.4 0-19.2 0-25.6-6.4l-128-128c0-6.4-6.4-19.2-6.4-25.6s6.4-19.2 6.4-25.6l512-512c12.8-6.4 38.4-6.4 51.2 0l128 128c0 6.4 6.4 19.2 6.4 25.6s-6.4 19.2-6.4 25.6l-512 512c-6.4 6.4-19.2 6.4-25.6 6.4z m-83.2-160l83.2 83.2 467.2-467.2-83.2-83.2-467.2 467.2zM992 576h-128c-19.2 0-32-12.8-32-32s12.8-32 32-32h128c19.2 0 32 12.8 32 32s-12.8 32-32 32zM768 288c-6.4 0-19.2 0-25.6-6.4-12.8-12.8-12.8-32 0-44.8l96-96c12.8-12.8 32-12.8 44.8 0s12.8 32 0 44.8l-96 96c0 6.4-12.8 6.4-19.2 6.4zM256 288c-6.4 0-19.2 0-25.6-6.4L134.4 185.6c-6.4-12.8-6.4-38.4 0-51.2s32-12.8 44.8 0l96 96c12.8 12.8 12.8 32 0 44.8 0 12.8-12.8 12.8-19.2 12.8zM864 896c-6.4 0-19.2 0-25.6-6.4l-96-96c-12.8-12.8-12.8-32 0-44.8s32-12.8 44.8 0l96 96c12.8 12.8 12.8 32 0 44.8 0 6.4-12.8 6.4-19.2 6.4z" p-id="10812"></path><path d="M544 640c-6.4 0-19.2 0-25.6-6.4l-128-128c-6.4-12.8-6.4-38.4 0-51.2s32-12.8 44.8 0l128 128c12.8 12.8 12.8 38.4 6.4 51.2-6.4 6.4-19.2 6.4-25.6 6.4z" p-id="10813"></path></svg></i
+        ><blockquote>
+<p>“在短暂的<code>flutter</code>学习中我意识到一件事，越是追求简单越是有报错。”<br>
+“说人话。”<br>
+“我不用<a
+    class="link"
+    href="https://pub.dev/packages/get"target="_blank" rel="noopener">getx</a
+>
+做状态管理了，jojo！”</p>
+</blockquote>
+
+
+<h2 class="group " id="为何不用getx"
+    >为何不用<code>getx</code><a href="#%e4%b8%ba%e4%bd%95%e4%b8%8d%e7%94%a8getx"
+        ><i class="eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100"></i></a
+></h2>
+
+<p><code>getx</code>在pub上有一万多个like，足以见得其强大，状态管理是<code>getx</code>的主要功能之一。使用<code>getx</code>以后可以几乎不写<code>StatefulWidget</code>，简单的<code>.obs</code>和<code>Obx()</code>、<code>GetController</code>和<code>GetBuilder</code>就能控制好状态管理，对于不想写state的新手来说真是新手福音。同时还有很强的性能：只在数值更新且变化时更新少量组件。</p>
+<p>那么为什么不用<code>getx</code>呢？</p>
+<ul>
+<li>State算<code>flutter</code>很主要的一块内容，脱离State玩自然简单，但是还是和官方的主要方向不和，未来有风险，何况现在<code>getx</code>更新很少了（有可能是没bug，但是也没feature啊）。</li>
+<li>使用<code>getx</code>时绑定的数值必须挨个传递，否则就会……<code>error [Get] the improper use of a GetX has been detected</code>。实际使用中，这个错误并不少，容易触发。<del>我好菜啊</del>。</li>
+<li><code>Get.find()</code>强大，也吓人，任何位置只要调用<code>Get.find()</code>就能获取甚至操作绑定的数据，容易出错，而且写多了很乱。我个人觉得这个地方需要加以限制，不能太随意，<del>本来菜鸡写得就随意，这下更乱了</del>。</li>
+</ul>
+
+
+<h2 class="group " id="介绍"
+    >介绍<a href="#%e4%bb%8b%e7%bb%8d"
+        ><i class="eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100"></i></a
+></h2>
+
+<p><a
+    class="link"
+    href="https://pub.dev/packages/riverpod"target="_blank" rel="noopener">Riverpod</a
+>
+是一款提供数据缓存和数据绑定功能的库，由<a
+    class="link"
+    href="https://pub.dev/packages/provider"target="_blank" rel="noopener">Provider</a
+>
+的作者开发，作为<code>Provider</code>的升级版，能解决一些<code>Provider</code>难以解决的问题，毕竟<code>Provider</code>已经用得太广泛了。</p>
+<blockquote>
+<p>官方小彩蛋：<code>riverpod</code>这个词是由<code>provider</code>单词重新排列顺序后形成的。</p>
+</blockquote>
+<p><code>Riverpod</code>具有以下特点：</p>
+<ul>
+<li>报错出现在编译期而不是运行期。</li>
+<li>不需要嵌套监听和绑定的对象。</li>
+<li>保证代码可测试。</li>
+</ul>
+<p>根据<a
+    class="link"
+    href="https://riverpod.dev/docs/getting_started"target="_blank" rel="noopener">官网</a
+>
+的介绍，<code>riverpod</code>一共由三个版本：</p>
+<ul>
+<li><code>riverpod</code>，适合仅包含<code>dart</code>，不使用<code>flutter</code>的场景。</li>
+<li><code>flutter_riverpod</code>，适合使用<code>flutter</code>的场景。</li>
+<li><code>hook_riverpod</code>，同时使用<code>flutter_hooks</code>和<code>riverpod</code>。</li>
+</ul>
+<p>嗯……反正用第二个就对了。</p>
+
+
+<h2 class="group " id="极速开始"
+    >极速开始<a href="#%e6%9e%81%e9%80%9f%e5%bc%80%e5%a7%8b"
+        ><i class="eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100"></i></a
+></h2>
+
+<p>完整代码：</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">50
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">51
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">52
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">53
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">54
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">55
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">56
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">57
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">58
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">59
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">60
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">61
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">62
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">63
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">64
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">65
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">66
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">67
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">68
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">69
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">70
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">71
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-dart" data-lang="dart"><span style="display:flex;"><span><span style="color:#ff79c6">import</span> <span style="color:#f1fa8c">&#39;package:flutter/material.dart&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">import</span> <span style="color:#f1fa8c">&#39;package:flutter_riverpod/flutter_riverpod.dart&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8be9fd">void</span> main() {
+</span></span><span style="display:flex;"><span>  runApp(<span style="color:#8be9fd;font-style:italic">const</span> MyApp());
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">MyApp</span> <span style="color:#8be9fd;font-style:italic">extends</span> StatelessWidget {
+</span></span><span style="display:flex;"><span>  <span style="color:#8be9fd;font-style:italic">const</span> MyApp({<span style="color:#ff79c6">super</span>.key});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#6272a4">// This widget is the root of your application.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>  @override
+</span></span><span style="display:flex;"><span>  Widget build(BuildContext context) <span style="color:#ff79c6">=&gt;</span> ProviderScope(
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">child:</span> MaterialApp(
+</span></span><span style="display:flex;"><span>          <span style="color:#8be9fd;font-style:italic">title:</span> <span style="color:#f1fa8c">&#39;Flutter Demo&#39;</span>,
+</span></span><span style="display:flex;"><span>          <span style="color:#8be9fd;font-style:italic">home:</span> MyHomePage(<span style="color:#8be9fd;font-style:italic">title:</span> <span style="color:#f1fa8c">&#39;Flutter Demo Home Page&#39;</span>),
+</span></span><span style="display:flex;"><span>        ),
+</span></span><span style="display:flex;"><span>      );
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">Wapper</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#8be9fd;font-style:italic">final</span> countProvider <span style="color:#ff79c6">=</span> StateProvider((ref) <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">0</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">final</span> globalProvider <span style="color:#ff79c6">=</span> StateProvider((ref) <span style="color:#ff79c6">=&gt;</span> <span style="color:#f1fa8c">&#34;asd&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">MyHomePage</span> <span style="color:#8be9fd;font-style:italic">extends</span> ConsumerWidget {
+</span></span><span style="display:flex;"><span>  MyHomePage({<span style="color:#ff79c6">super</span>.key, <span style="color:#8be9fd;font-style:italic">required</span> <span style="color:#ff79c6">this</span>.title});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#8be9fd;font-style:italic">final</span> <span style="color:#8be9fd">String</span> title;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#8be9fd;font-style:italic">final</span> countProvider <span style="color:#ff79c6">=</span> StateProvider((ref) <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">0</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#8be9fd;font-style:italic">final</span> w <span style="color:#ff79c6">=</span> Wapper();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  @override
+</span></span><span style="display:flex;"><span>  Widget build(BuildContext context, WidgetRef ref) {
+</span></span><span style="display:flex;"><span>    print(<span style="color:#f1fa8c">&#39;AAAA rebuild!&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">return</span> Scaffold(
+</span></span><span style="display:flex;"><span>      <span style="color:#8be9fd;font-style:italic">appBar:</span> AppBar(
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// the App.build method, and use it to set our appbar title.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        <span style="color:#8be9fd;font-style:italic">title:</span> Text(title),
+</span></span><span style="display:flex;"><span>      ),
+</span></span><span style="display:flex;"><span>      <span style="color:#8be9fd;font-style:italic">body:</span> Center(
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">child:</span> Column(
+</span></span><span style="display:flex;"><span>          <span style="color:#8be9fd;font-style:italic">mainAxisAlignment:</span> MainAxisAlignment.center,
+</span></span><span style="display:flex;"><span>          <span style="color:#8be9fd;font-style:italic">children:</span> <span style="color:#ff79c6">&lt;</span>Widget<span style="color:#ff79c6">&gt;</span>[
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">const</span> Text(
+</span></span><span style="display:flex;"><span>              <span style="color:#f1fa8c">&#39;You have pushed the button this many times:&#39;</span>,
+</span></span><span style="display:flex;"><span>            ),
+</span></span><span style="display:flex;"><span>            Consumer(
+</span></span><span style="display:flex;"><span>              <span style="color:#8be9fd;font-style:italic">builder:</span> (context, ref, _) <span style="color:#ff79c6">=&gt;</span> Text(
+</span></span><span style="display:flex;"><span>                <span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">${</span>ref.watch(countProvider)<span style="color:#f1fa8c">}</span><span style="color:#f1fa8c">, </span><span style="color:#f1fa8c">${</span>ref.watch(w.countProvider)<span style="color:#f1fa8c">}</span><span style="color:#f1fa8c">, </span><span style="color:#f1fa8c">${</span>ref.watch(globalProvider)<span style="color:#f1fa8c">}</span><span style="color:#f1fa8c">&#39;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#8be9fd;font-style:italic">style:</span> Theme.of(context).textTheme.headlineMedium,
+</span></span><span style="display:flex;"><span>              ),
+</span></span><span style="display:flex;"><span>            ),
+</span></span><span style="display:flex;"><span>          ],
+</span></span><span style="display:flex;"><span>        ),
+</span></span><span style="display:flex;"><span>      ),
+</span></span><span style="display:flex;"><span>      <span style="color:#8be9fd;font-style:italic">floatingActionButton:</span> FloatingActionButton(
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">onPressed:</span> () {
+</span></span><span style="display:flex;"><span>          ref.read(countProvider.notifier).state<span style="color:#ff79c6">++</span>;
+</span></span><span style="display:flex;"><span>          ref.read(w.countProvider.notifier).state<span style="color:#ff79c6">--</span>;
+</span></span><span style="display:flex;"><span>          ref.read(globalProvider.notifier).state <span style="color:#ff79c6">+=</span> <span style="color:#f1fa8c">&#34;a&#34;</span>;
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">tooltip:</span> <span style="color:#f1fa8c">&#39;Increment&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">child:</span> <span style="color:#8be9fd;font-style:italic">const</span> Icon(Icons.add),
+</span></span><span style="display:flex;"><span>      ), <span style="color:#6272a4">// This trailing comma makes auto-formatting nicer for build methods.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    );
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>老朋友，<code>flutter</code>默认的计数器demo，相比于使用原生的<code>setState()</code>，<code>riverpod</code>的主要改动点如下：</p>
+<ul>
+<li><code>MyApp</code>的<code>build()</code>中，<code>MaterialApp</code>外面包了一层<code>ProviderScope</code>。</li>
+<li><code>MyHomePage</code>继承<code>ConsumerWidget</code>而不是<code>StatefulWidget</code>，同时去掉了State，<code>build</code>方法加了一个<code>WidgetRef</code>参数。</li>
+<li><code>MyHomePage</code>中的<code>count</code>改成了<code>final countProvider = StateProvider((ref) =&gt; 0);</code>，把初始值0包在<code>StateProvider</code>里面。</li>
+<li>原本显示<code>count</code>的<code>Text</code>现在显示<code>ref.watch(countProvider)</code>，而且外面包了一层<code>Consumer</code>。</li>
+<li>按下按钮后原本的<code>setState</code>和<code>count +=1</code>改成了<code>ref.read(countProvider.notifier).state++</code>。</li>
+</ul>
+<p>看来<code>riverpod</code>主要中<code>ConsumerWidget</code>是关键，它让一个<code>Widget</code>变成可以使用<code>riverpod</code>相关功能的<code>StatefulWidget</code>。</p>
+<p>需要绑定的数值包在<code>StateProvider</code>里，需要读数值时<code>ref.watch(providerObject)</code>，需要写入数值时对<code>ref.read(provider.notifier).state</code>做操作。</p>
+<p>那么<code>ref</code>可以理解为一个在观察的搬运工，你我通过<code>ref.read</code>告诉<code>ref</code>“该更新数值了”，通过<code>ref.watch()</code>告诉<code>ref</code>“这个位置看好了，数值变了的话记得更新”。</p>
+<p>同时也能看出来，<code>StateProvider</code>可以隔着Wrapper，也可以是全局的Object，使用起来没有<code>getx</code>必须相邻传递的限制，同时也可以方便地遵守各种层级暴露关系，思路不容易乱。</p>
+<p>性能也不错，上文代码中更改的部分只有<code>Consumer</code>包裹的那一部分，已经和<code>getx</code>的性能外表上看上去一样了，同样是手动<code>setState</code>最极限小的更新范围。</p>
+<p>所以嘛，用上去不比<code>getx</code>麻烦多少。</p>
+<p>当然，路由管理什么的还是可以用<code>getx</code><del>，如果没有其他好用的路由管理包的话</del>。</p>
+</section><div class="px-6 pb-5 pt-4 text-center text-xl text-gray-500 md:px-10 md:pb-10 md:pt-14 flex items-center justify-center"><a
+                class="mr-4 inline-flex h-5 w-5 items-center"
+                title="Share to twitter"
+                href="https://twitter.com/share?&text=%e2%80%9c%e5%9c%a8%e7%9f%ad%e6%9a%82%e7%9a%84flutter%e5%ad%a6%e4%b9%a0%e4%b8%ad%e6%88%91%e6%84%8f%e8%af%86%e5%88%b0%e4%b8%80%e4%bb%b6%e4%ba%8b%ef%bc%8c%e8%b6%8a%e6%98%af%e8%bf%bd%e6%b1%82%e7%ae%80%e5%8d%95%e8%b6%8a%e6%98%af%e6%9c%89%e6%8a%a5%e9%94%99%e3%80%82%e2%80%9d%20%e2%80%9c%e8%af%b4%e4%ba%ba%e8%af%9d%e3%80%82%e2%80%9d%20%e2%80%9c%e6%88%91%e4%b8%8d%e7%94%a8getx%20%e5%81%9a%e7%8a%b6%e6%80%81%e7%ae%a1%e7%90%86%e4%ba%86%ef%bc%8cjojo%ef%bc%81%e2%80%9d%20%e4%b8%ba%e4%bd%95%e4%b8%8d%e7%94%a8get&url=https://kzs.moe/en-us/2023/02/05/%E7%AE%80%E5%8D%95%E5%AD%A6%E4%B9%A0riverpod.html/"
+                target="_blank"
+                rel="noopener noreferrer"
+                ><i class="eva eva-twitter hover:text-theme"></i
+            ></a><a
+                class="mr-4 inline-flex h-5 w-5 items-center"
+                title="Share to facebook"
+                href="https://www.facebook.com/sharer.php?u=https://kzs.moe/en-us/2023/02/05/%E7%AE%80%E5%8D%95%E5%AD%A6%E4%B9%A0riverpod.html/"
+                target="_blank"
+                rel="noopener noreferrer"
+                ><i class="eva eva-facebook hover:text-theme"></i
+            ></a><a
+                class="mr-4 inline-flex h-5 w-5 items-center"
+                title="Share to weibo"
+                href="https://service.weibo.com/share/share.php?url=https://kzs.moe/en-us/2023/02/05/%E7%AE%80%E5%8D%95%E5%AD%A6%E4%B9%A0riverpod.html/&title=%e7%ae%80%e5%8d%95%e5%ad%a6%e4%b9%a0riverpod&sudaref=kzs.moe"
+                target="_blank"
+                rel="noopener noreferrer"
+            ><svg class="inline-block h-5 w-5 fill-current hover:text-theme" viewBox="0 0 1193 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2681" width="200" height="200"> <path d="M456.991736 557.336482c-107.598583 0-194.644628 74.956316-194.644629 166.838252s87.046045 166.838253 194.644629 166.838253c107.598583 0 194.644628-74.956316 194.644628-166.838253s-87.046045-166.838253-194.644628-166.838252zM391.707202 822.101535c-36.269185 0-66.493506-27.806375-66.493507-62.866588s29.015348-62.866588 66.493507-62.866588c36.269185 0 66.493506 27.806375 66.493506 62.866588S427.976387 822.101535 391.707202 822.101535z m93.090909-91.881936c-14.507674 0-26.597403-12.089728-26.597403-26.597403s12.089728-26.597403 26.597403-26.597403 26.597403 12.089728 26.597403 26.597403-12.089728 26.597403-26.597403 26.597403zM239.376623 281.690673C97.9268 394.125148-18.134593 600.859504 30.224321 661.308146c32.642267 41.105077 59.239669-19.343566 124.524203-89.46399 30.224321-32.642267 77.374262-54.403778 122.106258-90.672964 20.552538-16.92562 197.062574-35.060213 230.913813-35.060212 97.9268-99.135773 114.85242-207.943329 74.956316-258.720189-48.358914-59.239669-201.898465-16.92562-343.348288 94.299882z" p-id="2682" ></path> <path d="M808.802834 560.9634C906.729634 461.827627 911.565525 377.199528 870.460449 326.422668c-47.149941-60.448642-211.570248-32.642267-351.811098 78.583235" p-id="2683" ></path> <path d="M605.695396 353.020071c-14.507674 8.46281-25.38843 12.089728-29.015349 7.253837-1.208973-2.417946-1.208973-6.044864 1.208973-9.671783-16.92562-1.208973-33.85124-1.208973-50.776859-1.208973C235.749705 349.393152 0 500.514758 0 686.696576s235.749705 337.303424 527.112161 337.303424 527.112161-151.121606 527.11216-337.303424c0-170.465171-194.644628-309.497048-448.528925-333.676505zM481.171192 959.924439C275.645809 959.924439 108.807556 847.489965 108.807556 708.458087s166.838253-251.466352 372.363636-251.466351 372.363636 112.434475 372.363637 251.466351-166.838253 251.466352-372.363637 251.466352z" p-id="2684" ></path> <path d="M1021.582054 423.140496c-3.626919 0-6.044864 0-9.671782-1.208973-18.134593-4.835891-29.015348-24.179457-22.970485-42.31405 2.417946-7.253837 3.626919-16.92562 3.626919-29.015348 0-65.284534-53.194805-119.688312-119.688312-119.688312-19.343566 0-33.85124-15.716647-33.851239-33.851239s15.716647-33.85124 33.851239-33.85124c103.971665 0 187.390791 84.628099 187.390791 187.390791 0 18.134593-2.417946 33.85124-6.044864 48.358914-4.835891 14.507674-18.134593 24.179457-32.642267 24.179457z" p-id="2685" ></path> <path d="M1146.106257 473.917355c-2.417946 0-6.044864 0-8.46281-1.208972-20.552538-4.835891-32.642267-25.38843-27.806375-45.940969 6.044864-24.179457 8.46281-47.149941 8.46281-71.329397C1118.299882 201.898465 991.357733 74.956316 836.609209 74.956316c-20.552538 0-37.478158-16.92562-37.478158-37.478158S816.056671 0 836.609209 0c197.062574 0 356.646989 159.584416 356.646989 356.646989 0 29.015348-3.626919 59.239669-10.880755 88.255018-3.626919 18.134593-19.343566 29.015348-36.269186 29.015348z" p-id="2686" ></path> </svg></a><i class="eva eva-copy mr-4 cursor-pointer hover:text-theme" title="Copy Link" data-clipboard-text="https://kzs.moe/en-us/2023/02/05/%E7%AE%80%E5%8D%95%E5%AD%A6%E4%B9%A0riverpod.html/"></i><div class="group h-5 w-5 relative hidden cursor-pointer sm:inline-block">
+                <i title="QR Code" class="eva show-qrcode eva-smartphone hover:text-theme"></i>
+                <div
+                    class="qrcode-wrapper p-2 pointer-events-none absolute left-2/4 bottom-10 h-32 w-32 -translate-x-1/2 overflow-hidden rounded border border-gray-300 bg-white opacity-0 transition duration-300 ease-[ease] group-hover:opacity-100"
+                >
+                    <img class="h-full w-full" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=https://kzs.moe/en-us/2023/02/05/%E7%AE%80%E5%8D%95%E5%AD%A6%E4%B9%A0riverpod.html/" alt="QR Code" />
+                </div>
+            </div></div>
+<div class="border-b dark:border-darkBorder"></div><div class="flex justify-between px-2 py-4 text-xl md:px-6 md:text-2xl">
+    <div>
+        <a
+            href="/en-us/2023/01/20/%E6%99%BA%E8%83%BD%E7%9A%84%E5%91%BD%E4%BB%A4.html/"
+            title="智能的命令"
+            class="invisible flex cursor-pointer items-center text-gray-500 transition duration-300 ease-[ease] hover:text-theme dark:text-darkTextPlaceholder dark:hover:text-darkText"style="visibility: visible;">
+            <span class="flex items-center text-5xl opacity-70 dark:bg-opacity-100">
+                <i class="eva eva-chevron-left-outline"></i>
+            </span>
+            <span>Prev</span>
+        </a>
+    </div><div class="hidden items-center text-xs xl:flex">
+        Unless otherwise stated, this blog is licensed under 「
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0" target="_blank" rel="noopener noreferrer" class="text-theme">CC BY-NC-ND 4.0</a>
+        」
+    </div>
+    <div class="flex items-center text-sm xl:hidden">
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0" target="_blank" rel="noopener noreferrer" class="text-theme">
+            <img src="/Cc-by-nc-nd.svg" alt="CC BY-NC-ND 4.0" title="CC BY-NC-ND 4.0" class="w-24" />
+        </a>
+    </div>
+
+    <a
+        href=""
+        title=""
+        class="invisible flex cursor-pointer items-center text-gray-500 transition duration-300 ease-[ease] hover:text-theme dark:text-darkTextPlaceholder dark:hover:text-darkText">
+        <span>Next</span>
+        <span class="flex items-center text-5xl opacity-70 dark:bg-opacity-100">
+            <i class="eva eva-chevron-right-outline"></i>
+        </span>
+    </a>
+</div>
+
+        </div>
+    </div>
+</div>
+</div>
+                </main><footer>
+    <div
+        class="com-footer flex flex-col items-center border-t py-4 px-4 text-sm leading-none text-gray-600 dark:border-darkBorder dark:text-darkTextPlaceholder md:flex-row md:justify-between"
+    >
+        <div class="mb-2 flex items-center justify-between text-center md:mb-0">
+            <span class="">© 2023 - 2023</span>
+            <span class="mx-1.5 opacity-50"> | </span>Powered by <a data-no-swup class="mx-1 font-bold hover:text-theme" href="https://gohugo.io/" target="_blank" rel="noopener noreferrer">Hugo</a> <span class="text-xs opacity-70">❤</span> <a data-no-swup class="mx-1 font-bold hover:text-theme" href="https://github.com/Ice-Hazymoon/hugo-theme-luna" target="_blank" rel="noopener noreferrer">Luna</a></div>
+
+        <div class="flex items-center"><span class="noscript-hidden mx-1.5 hidden opacity-50 md:block"> | </span><a data-no-swup href="https://kzs.moe/en-us/index.xml" target="_blank" class="mr-1.5 hover:text-theme">
+                    <span class=" md:hidden lg:inline"><svg t="1650887361919" class="mr-0.5 w-96 w-3 fill-current text-inherit inline-block align-top" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3091"><path d="M320.16155 831.918c0 70.738-57.344 128.082-128.082 128.082S63.99955 902.656 63.99955 831.918s57.344-128.082 128.082-128.082 128.08 57.346 128.08 128.082z m351.32 94.5c-16.708-309.2-264.37-557.174-573.9-573.9C79.31155 351.53 63.99955 366.21 63.99955 384.506v96.138c0 16.83 12.98 30.944 29.774 32.036 223.664 14.568 402.946 193.404 417.544 417.544 1.094 16.794 15.208 29.774 32.036 29.774h96.138c18.298 0.002 32.978-15.31 31.99-33.58z m288.498 0.576C943.19155 459.354 566.92955 80.89 97.00555 64.02 78.94555 63.372 63.99955 77.962 63.99955 96.032v96.136c0 17.25 13.67 31.29 30.906 31.998 382.358 15.678 689.254 322.632 704.93 704.93 0.706 17.236 14.746 30.906 31.998 30.906h96.136c18.068-0.002 32.658-14.948 32.01-33.008z" p-id="3092"></path></svg></span>
+                    <span>RSS</span>
+                </a><a data-no-swup href="https://kzs.moe/en-us/sitemap.xml" target="_blank" class="mr-1.5 hover:text-theme">
+                    <span class=" md:hidden lg:inline"><svg t="1650887940556" class="mr-0.5 w-3 fill-current text-inherit inline-block align-top" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6291"><path d="M950.044 625.778h-68.266v-56.89c0-45.51-39.822-85.332-85.334-85.332h-256v-85.334h68.267c39.822 0 73.956-34.133 73.956-73.955V130.844c0-39.822-34.134-73.955-73.956-73.955H415.29c-39.822 0-73.956 34.133-73.956 73.955v193.423c0 39.822 34.134 73.955 73.956 73.955h68.267v85.334h-256c-45.512 0-85.334 39.822-85.334 85.333v56.889H73.956C34.133 625.778 0 659.91 0 699.733v193.423c0 39.822 34.133 73.955 73.956 73.955h193.422c39.822 0 73.955-34.133 73.955-73.955V699.733c0-39.822-34.133-73.955-73.955-73.955H199.11v-56.89c0-17.066 11.378-28.444 28.445-28.444h568.888c17.067 0 28.445 11.378 28.445 28.445v56.889h-68.267c-39.822 0-73.955 34.133-73.955 73.955v193.423c0 39.822 34.133 73.955 73.955 73.955h193.422c39.823 0 73.956-34.133 73.956-73.955V699.733c0-39.822-34.133-73.955-73.956-73.955z" p-id="6292"></path></svg></span>
+                    <span>Sitemap</span>
+                </a><div id="google_translate_element" class="overflow-hidden rounded border dark:border-darkBorder"></div></div></div>
+
+    <script type="text/javascript">
+window.__theme = {
+    cdn: '',
+    pjax: true ,
+    isServer: false ,
+    $version:"",
+    lang: 'en-us',
+    imageZoom: true ,
+    lazyload: true ,
+    bionicReading: {
+        enabled: true ,
+        skipLinks: false ,
+        autoBionic: false ,
+        excludeWords:[],
+        excludeClasses:["github"],
+        excludeNodeNames:[],
+    },
+    katex: true ,
+    search: true ,
+    backtop: true ,
+    pangu: true ,
+    autoDarkMode: true ,
+    googleAnalytics:false,
+    hugoEncrypt: {
+        wrongPasswordText: 'Password is incorrect',
+        userStorage:window['sessionStorage'],
+    },
+    console: {
+        enabled: true ,
+        leftColor: '#dd6065',
+        rightColor: '#feb462',
+        leftText: 'Hugo Theme Luna',
+        rightText: 'Powered by Hugo ❤ Luna',
+    },
+    assets: {
+        error_svg: "\/images\/error.svg",
+        search_svg: "\/images\/search.svg",
+    },
+    i18n: {
+        copy: {
+            success: "Copy success",
+            failed: "Copy failed",
+            copyCode: "Copy code",
+        },
+        search: {
+            untitled: "Untitled",
+            loadFailure: "Initialization of the search engine failed",
+            input: "Type something...",
+        },
+        darkMode: {
+            dark: "Switch to dark mode",
+            light: "Switch to light mode"
+        }
+    },}
+</script>
+<script type="text/javascript" src="/ts/main.5562dd676e11d79991ff088b5335690420b8a54043d1dd6ced64a624ca63167d.js" defer integrity="sha256-VWLdZ24R15mR/wiLUzVpBCC4pUBD0d1s7WSmJMpjFn0="></script><script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('\/sw.js');
+        });
+    }
+</script>
+<script type="text/javascript" src="/translate-google.ecd37c3cc8f7e1b08910201dd0d9fc3e5f4b1395fb8ebead3141b931f036f777.js" defer integrity="sha256-7NN8PMj34bCJECAd0Nn8Pl9LE5X7jr6tMUG5MfA293c="></script><script type="text/javascript">
+    window.translateelement_styles = "\/sass\/translateelement.min.c65796c6c3e4d48c75f72776948be83c5c448d1c5cc466b996b00657c558d28a.css";
+    function googleTranslateElementInit(){
+        new google.translate.TranslateElement({
+            pageLanguage: 'en-us',
+            includedLanguages: 'af,ga,sq,it,ar,ja,az,kn,eu,ko,bn,la,be,lv,bg,lt,ca,mk,zh-CN,ms,zh-TW,mt,hr,no,cs,fa,da,pl,nl,pt,en,ro,eo,ru,et,sr,tl,sk,fi,sl,fr,es,gl,sw,ka,sv,de,ta,el,te,gu,th,ht,tr,iw,uk,hi,ur,hu,vi,is,cy,id,yi',
+            autoDisplay:false
+        },'google_translate_element');
+    }
+</script>
+
+
+
+
+
+<script>
+    
+    
+</script>
+
+<script data-swup-reload-script>
+    
+    
+</script>
+</footer>
+</div>
+        </div><a
+        href="#nav"
+        title="Back to top"
+        id="back-top"
+        class="fixed right-6 bottom-9 z-10 translate-y-3 scale-90 cursor-pointer rounded-full bg-white opacity-0 transition duration-300 ease-[ease] dark:bg-darkBgAccent sm:scale-100"
+    >
+        <div class="relative">
+            <div class="absolute left-0 top-0 flex h-full w-full items-center justify-center text-xl">
+                <i class="eva eva-arrow-upward-outline"></i>
+            </div>
+            <svg id="svg" width="54" height="54" viewBox="0 0 54 54" preserveAspectRatio="xMinYMin meet">
+                <circle
+                    transform="rotate(-90, 27 , 27)"
+                    style="stroke-dasharray: 157, 157; stroke-dashoffset: 157;"
+                    cx="27"
+                    cy="27"
+                    r="25"
+                    fill="none"
+                    stroke-width="4"
+                    stroke-linecap="round"
+                    stroke="var(--theme)"
+                />
+            </svg>
+        </div>
+    </a><div id="i18nlist"><div
+                style="font-size: 0;"
+                class=" absolute  left-0 top-0 z-50 rounded rounded-tl-none rounded-bl-none md:bg-white p-1.5 md:shadow-custom dark:bg-darkBgAccent"
+            >
+                <input type="checkbox" name="i18nlist-input" id="i18nlist-checkbox" />
+                <label for="i18nlist-checkbox">
+                    <span class="cursor-pointer leading-none group-hover:hidden"><svg class="w-5 h-5 fill-current text-inherit dark:text-darkTextPlaceholder" t="1655231528998" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2176" ><path d="M213.333333 640v85.333333a85.333333 85.333333 0 0 0 78.933334 85.12L298.666667 810.666667h128v85.333333H298.666667a170.666667 170.666667 0 0 1-170.666667-170.666667v-85.333333h85.333333z m554.666667-213.333333l187.733333 469.333333h-91.946666l-51.242667-128h-174.506667l-51.157333 128h-91.904L682.666667 426.666667h85.333333z m-42.666667 123.093333L672.128 682.666667h106.325333L725.333333 549.76zM341.333333 85.333333v85.333334h170.666667v298.666666H341.333333v128H256v-128H85.333333V170.666667h170.666667V85.333333h85.333333z m384 42.666667a170.666667 170.666667 0 0 1 170.666667 170.666667v85.333333h-85.333333V298.666667a85.333333 85.333333 0 0 0-85.333334-85.333334h-128V128h128zM256 256H170.666667v128h85.333333V256z m170.666667 0H341.333333v128h85.333334V256z" p-id="2177"></path></svg></span>
+                </label>
+                <ul class="hidden border border-transparent pb-0 group-hover:block"><li class="mb-1.5 cursor-pointer last:mb-0">
+                            <a data-no-swup href="https://kzs.moe/2023/02/05/%E7%AE%80%E5%8D%95%E5%AD%A6%E4%B9%A0riverpod.html/" title="Switch language to 中文"><img class="w-6 cursor-pointer rounded-sm border border-gray-50" src="/images/i18n/zh-cn.svg" alt="zh-cn" />
+                            </a>
+                        </li></ul>
+            </div></div><noscript>
+    <style>
+        .dark-mode-switch,
+        #run-time,
+        #bionicReading,
+        .noscript-hidden,
+        [data-clipboard-text],
+        [data-lazyload] {
+            display: none;
+        }
+        #back-top {
+            opacity: 1;
+        }
+        .noscript-show {
+            display: initial;
+        }
+    </style>
+</noscript>
+</body>
+</html>
