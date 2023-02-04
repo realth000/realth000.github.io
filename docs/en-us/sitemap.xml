@@ -3,7 +3,7 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://kzs.moe/en-us/</loc>
-    <lastmod>2023-01-21T00:34:49+08:00</lastmod>
+    <lastmod>2023-02-05T03:40:38+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -23,7 +23,7 @@
                 />
   </url><url>
     <loc>https://kzs.moe/en-us/posts/</loc>
-    <lastmod>2023-01-21T00:34:49+08:00</lastmod>
+    <lastmod>2023-02-05T03:40:38+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -37,8 +37,23 @@
                 href="https://kzs.moe/en-us/posts/"
                 />
   </url><url>
+    <loc>https://kzs.moe/en-us/2023/02/05/%E7%AE%80%E5%8D%95%E5%AD%A6%E4%B9%A0riverpod.html/</loc>
+    <lastmod>2023-02-05T03:40:38+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://kzs.moe/2023/02/05/%E7%AE%80%E5%8D%95%E5%AD%A6%E4%B9%A0riverpod.html/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="https://kzs.moe/en-us/2023/02/05/%E7%AE%80%E5%8D%95%E5%AD%A6%E4%B9%A0riverpod.html/"
+                />
+  </url><url>
     <loc>https://kzs.moe/en-us/2023/01/20/%E6%99%BA%E8%83%BD%E7%9A%84%E5%91%BD%E4%BB%A4.html/</loc>
-    <lastmod>2023-01-21T00:34:49+08:00</lastmod>
+    <lastmod>2023-02-05T02:54:41+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -53,7 +68,7 @@
                 />
   </url><url>
     <loc>https://kzs.moe/en-us/2023/01/12/qt%E5%A4%9A%E8%AF%AD%E8%A8%80%E7%BF%BB%E8%AF%91%E5%9B%BD%E9%99%85%E5%8C%96.html/</loc>
-    <lastmod>2023-01-19T09:43:44+08:00</lastmod>
+    <lastmod>2023-01-12T22:44:46+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -68,7 +83,7 @@
                 />
   </url><url>
     <loc>https://kzs.moe/en-us/2023/01/10/cmake%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95.html/</loc>
-    <lastmod>2023-01-19T09:43:44+08:00</lastmod>
+    <lastmod>2023-01-10T22:10:48+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -83,7 +98,7 @@
                 />
   </url><url>
     <loc>https://kzs.moe/en-us/2023/01/09/%E9%85%8D%E7%BD%AEneovim.html/</loc>
-    <lastmod>2023-01-19T09:43:44+08:00</lastmod>
+    <lastmod>2023-01-09T23:33:54+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -98,37 +113,37 @@
                 />
   </url><url>
     <loc>https://kzs.moe/en-us/search/</loc>
-    <lastmod>2023-01-19T09:43:44+08:00</lastmod>
+    <lastmod>2023-01-09T08:10:08+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://kzs.moe/en-us/search.zh/</loc>
-    <lastmod>2023-01-19T09:43:44+08:00</lastmod>
+    <lastmod>2023-01-09T08:10:10+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://kzs.moe/en-us/archives/</loc>
-    <lastmod>2023-01-19T09:43:44+08:00</lastmod>
+    <lastmod>2023-01-09T08:08:37+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://kzs.moe/en-us/archives.zh/</loc>
-    <lastmod>2023-01-19T09:43:44+08:00</lastmod>
+    <lastmod>2023-01-09T08:08:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://kzs.moe/en-us/github/</loc>
-    <lastmod>2023-01-19T09:43:44+08:00</lastmod>
+    <lastmod>2023-01-09T08:06:01+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://kzs.moe/en-us/github.zh/</loc>
-    <lastmod>2023-01-19T09:43:44+08:00</lastmod>
+    <lastmod>2023-01-09T08:06:32+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://kzs.moe/en-us/2023/01/09/hello_hugo.html/</loc>
-    <lastmod>2023-01-19T09:43:44+08:00</lastmod>
+    <lastmod>2023-01-09T05:47:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link

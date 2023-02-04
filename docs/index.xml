@@ -13,9 +13,243 @@
         <link>https://kzs.moe/</link>
         <managingEditor>realth000</managingEditor>
         <description>A simple, performance-first, SEO-friendly Hugo theme</description>
-        <lastBuildDate>Fri, 20 Jan 2023 22:23:53 +0800</lastBuildDate>
+        <lastBuildDate>Sun, 05 Feb 2023 02:55:15 +0800</lastBuildDate>
         <language>zh-cn</language>
         <generator>Hugo -- gohugo.io</generator><item>
+            <title>简单学习riverpod</title>
+            <link>https://kzs.moe/2023/02/05/%E7%AE%80%E5%8D%95%E5%AD%A6%E4%B9%A0riverpod.html/</link>
+            <pubDate>Sun, 05 Feb 2023 02:55:15 +0800</pubDate>
+            <guid>https://kzs.moe/2023/02/05/%E7%AE%80%E5%8D%95%E5%AD%A6%E4%B9%A0riverpod.html/</guid><description>&lt;blockquote&gt;
+&lt;p&gt;“在短暂的&lt;code&gt;flutter&lt;/code&gt;学习中我意识到一件事，越是追求简单越是有报错。”&lt;br&gt;
+“说人话。”&lt;br&gt;
+“我不用&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://pub.dev/packages/get&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;getx&lt;/a
+&gt;
+做状态管理了，jojo！”&lt;/p&gt;
+&lt;/blockquote&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;为何不用getx&#34;
+    &gt;为何不用&lt;code&gt;getx&lt;/code&gt;&lt;a href=&#34;#%e4%b8%ba%e4%bd%95%e4%b8%8d%e7%94%a8getx&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;getx&lt;/code&gt;在pub上有一万多个like，足以见得其强大，状态管理是&lt;code&gt;getx&lt;/code&gt;的主要功能之一。使用&lt;code&gt;getx&lt;/code&gt;以后可以几乎不写&lt;code&gt;StatefulWidget&lt;/code&gt;，简单的&lt;code&gt;.obs&lt;/code&gt;和&lt;code&gt;Obx()&lt;/code&gt;、&lt;code&gt;GetController&lt;/code&gt;和&lt;code&gt;GetBuilder&lt;/code&gt;就能控制好状态管理，对于不想写state的新手来说真是新手福音。同时还有很强的性能：只在数值更新且变化时更新少量组件。&lt;/p&gt;
+&lt;p&gt;那么为什么不用&lt;code&gt;getx&lt;/code&gt;呢？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;State算&lt;code&gt;flutter&lt;/code&gt;很主要的一块内容，脱离State玩自然简单，但是还是和官方的主要方向不和，未来有风险，何况现在&lt;code&gt;getx&lt;/code&gt;更新很少了（有可能是没bug，但是也没feature啊）。&lt;/li&gt;
+&lt;li&gt;使用&lt;code&gt;getx&lt;/code&gt;时绑定的数值必须挨个传递，否则就会……&lt;code&gt;error [Get] the improper use of a GetX has been detected&lt;/code&gt;。实际使用中，这个错误并不少，容易触发。&lt;del&gt;我好菜啊&lt;/del&gt;。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Get.find()&lt;/code&gt;强大，也吓人，任何位置只要调用&lt;code&gt;Get.find()&lt;/code&gt;就能获取甚至操作绑定的数据，容易出错，而且写多了很乱。我个人觉得这个地方需要加以限制，不能太随意，&lt;del&gt;本来菜鸡写得就随意，这下更乱了&lt;/del&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;介绍&#34;
+    &gt;介绍&lt;a href=&#34;#%e4%bb%8b%e7%bb%8d&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://pub.dev/packages/riverpod&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Riverpod&lt;/a
+&gt;
+是一款提供数据缓存和数据绑定功能的库，由&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://pub.dev/packages/provider&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Provider&lt;/a
+&gt;
+的作者开发，作为&lt;code&gt;Provider&lt;/code&gt;的升级版，能解决一些&lt;code&gt;Provider&lt;/code&gt;难以解决的问题，毕竟&lt;code&gt;Provider&lt;/code&gt;已经用得太广泛了。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;官方小彩蛋：&lt;code&gt;riverpod&lt;/code&gt;这个词是由&lt;code&gt;provider&lt;/code&gt;单词重新排列顺序后形成的。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;code&gt;Riverpod&lt;/code&gt;具有以下特点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;报错出现在编译期而不是运行期。&lt;/li&gt;
+&lt;li&gt;不需要嵌套监听和绑定的对象。&lt;/li&gt;
+&lt;li&gt;保证代码可测试。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;根据&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://riverpod.dev/docs/getting_started&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;官网&lt;/a
+&gt;
+的介绍，&lt;code&gt;riverpod&lt;/code&gt;一共由三个版本：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;riverpod&lt;/code&gt;，适合仅包含&lt;code&gt;dart&lt;/code&gt;，不使用&lt;code&gt;flutter&lt;/code&gt;的场景。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;flutter_riverpod&lt;/code&gt;，适合使用&lt;code&gt;flutter&lt;/code&gt;的场景。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;hook_riverpod&lt;/code&gt;，同时使用&lt;code&gt;flutter_hooks&lt;/code&gt;和&lt;code&gt;riverpod&lt;/code&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;嗯……反正用第二个就对了。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;极速开始&#34;
+    &gt;极速开始&lt;a href=&#34;#%e6%9e%81%e9%80%9f%e5%bc%80%e5%a7%8b&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;完整代码：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;23
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;24
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;25
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;26
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;27
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;28
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;29
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;30
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;31
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;32
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;33
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;34
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;35
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;36
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;37
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;38
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;39
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;40
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;41
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;42
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;43
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;44
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;45
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;46
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;47
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;48
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;49
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;50
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;51
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;52
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;53
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;54
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;55
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;56
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;57
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;58
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;59
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;60
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;61
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;62
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;63
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;64
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;65
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;66
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;67
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;68
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;69
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;70
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;71
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-dart&#34; data-lang=&#34;dart&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;package:flutter/material.dart&amp;#39;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;package:flutter_riverpod/flutter_riverpod.dart&amp;#39;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd&#34;&gt;void&lt;/span&gt; main() {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  runApp(&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;const&lt;/span&gt; MyApp());
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;MyApp&lt;/span&gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;extends&lt;/span&gt; StatelessWidget {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;const&lt;/span&gt; MyApp({&lt;span style=&#34;color:#ff79c6&#34;&gt;super&lt;/span&gt;.key});
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#6272a4&#34;&gt;// This widget is the root of your application.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;  @override
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  Widget build(BuildContext context) &lt;span style=&#34;color:#ff79c6&#34;&gt;=&amp;gt;&lt;/span&gt; ProviderScope(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;child:&lt;/span&gt; MaterialApp(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;title:&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;Flutter Demo&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;home:&lt;/span&gt; MyHomePage(&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;title:&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;Flutter Demo Home Page&amp;#39;&lt;/span&gt;),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        ),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      );
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;Wapper&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;final&lt;/span&gt; countProvider &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; StateProvider((ref) &lt;span style=&#34;color:#ff79c6&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#bd93f9&#34;&gt;0&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;final&lt;/span&gt; globalProvider &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; StateProvider((ref) &lt;span style=&#34;color:#ff79c6&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;asd&amp;#34;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;MyHomePage&lt;/span&gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;extends&lt;/span&gt; ConsumerWidget {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  MyHomePage({&lt;span style=&#34;color:#ff79c6&#34;&gt;super&lt;/span&gt;.key, &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;required&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;this&lt;/span&gt;.title});
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;final&lt;/span&gt; &lt;span style=&#34;color:#8be9fd&#34;&gt;String&lt;/span&gt; title;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;final&lt;/span&gt; countProvider &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; StateProvider((ref) &lt;span style=&#34;color:#ff79c6&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#bd93f9&#34;&gt;0&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;final&lt;/span&gt; w &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; Wapper();
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  @override
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  Widget build(BuildContext context, WidgetRef ref) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    print(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;AAAA rebuild!&amp;#39;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#ff79c6&#34;&gt;return&lt;/span&gt; Scaffold(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;appBar:&lt;/span&gt; AppBar(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#6272a4&#34;&gt;// the App.build method, and use it to set our appbar title.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;        &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;title:&lt;/span&gt; Text(title),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      ),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;body:&lt;/span&gt; Center(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;child:&lt;/span&gt; Column(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;mainAxisAlignment:&lt;/span&gt; MainAxisAlignment.center,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;children:&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;lt;&lt;/span&gt;Widget&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;gt;&lt;/span&gt;[
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;const&lt;/span&gt; Text(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;You have pushed the button this many times:&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            ),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            Consumer(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;builder:&lt;/span&gt; (context, ref, _) &lt;span style=&#34;color:#ff79c6&#34;&gt;=&amp;gt;&lt;/span&gt; Text(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;${&lt;/span&gt;ref.watch(countProvider)&lt;span style=&#34;color:#f1fa8c&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;, &lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;${&lt;/span&gt;ref.watch(w.countProvider)&lt;span style=&#34;color:#f1fa8c&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;, &lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;${&lt;/span&gt;ref.watch(globalProvider)&lt;span style=&#34;color:#f1fa8c&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;style:&lt;/span&gt; Theme.of(context).textTheme.headlineMedium,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              ),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            ),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          ],
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        ),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      ),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;floatingActionButton:&lt;/span&gt; FloatingActionButton(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;onPressed:&lt;/span&gt; () {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          ref.read(countProvider.notifier).state&lt;span style=&#34;color:#ff79c6&#34;&gt;++&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          ref.read(w.countProvider.notifier).state&lt;span style=&#34;color:#ff79c6&#34;&gt;--&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          ref.read(globalProvider.notifier).state &lt;span style=&#34;color:#ff79c6&#34;&gt;+=&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;a&amp;#34;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        },
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;tooltip:&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;Increment&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;child:&lt;/span&gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;const&lt;/span&gt; Icon(Icons.add),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      ), &lt;span style=&#34;color:#6272a4&#34;&gt;// This trailing comma makes auto-formatting nicer for build methods.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    );
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;老朋友，&lt;code&gt;flutter&lt;/code&gt;默认的计数器demo，相比于使用原生的&lt;code&gt;setState()&lt;/code&gt;，&lt;code&gt;riverpod&lt;/code&gt;的主要改动点如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;MyApp&lt;/code&gt;的&lt;code&gt;build()&lt;/code&gt;中，&lt;code&gt;MaterialApp&lt;/code&gt;外面包了一层&lt;code&gt;ProviderScope&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;MyHomePage&lt;/code&gt;继承&lt;code&gt;ConsumerWidget&lt;/code&gt;而不是&lt;code&gt;StatefulWidget&lt;/code&gt;，同时去掉了State，&lt;code&gt;build&lt;/code&gt;方法加了一个&lt;code&gt;WidgetRef&lt;/code&gt;参数。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;MyHomePage&lt;/code&gt;中的&lt;code&gt;count&lt;/code&gt;改成了&lt;code&gt;final countProvider = StateProvider((ref) =&amp;gt; 0);&lt;/code&gt;，把初始值0包在&lt;code&gt;StateProvider&lt;/code&gt;里面。&lt;/li&gt;
+&lt;li&gt;原本显示&lt;code&gt;count&lt;/code&gt;的&lt;code&gt;Text&lt;/code&gt;现在显示&lt;code&gt;ref.watch(countProvider)&lt;/code&gt;，而且外面包了一层&lt;code&gt;Consumer&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;按下按钮后原本的&lt;code&gt;setState&lt;/code&gt;和&lt;code&gt;count +=1&lt;/code&gt;改成了&lt;code&gt;ref.read(countProvider.notifier).state++&lt;/code&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;看来&lt;code&gt;riverpod&lt;/code&gt;主要中&lt;code&gt;ConsumerWidget&lt;/code&gt;是关键，它让一个&lt;code&gt;Widget&lt;/code&gt;变成可以使用&lt;code&gt;riverpod&lt;/code&gt;相关功能的&lt;code&gt;StatefulWidget&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;需要绑定的数值包在&lt;code&gt;StateProvider&lt;/code&gt;里，需要读数值时&lt;code&gt;ref.watch(providerObject)&lt;/code&gt;，需要写入数值时对&lt;code&gt;ref.read(provider.notifier).state&lt;/code&gt;做操作。&lt;/p&gt;
+&lt;p&gt;那么&lt;code&gt;ref&lt;/code&gt;可以理解为一个在观察的搬运工，你我通过&lt;code&gt;ref.read&lt;/code&gt;告诉&lt;code&gt;ref&lt;/code&gt;“该更新数值了”，通过&lt;code&gt;ref.watch()&lt;/code&gt;告诉&lt;code&gt;ref&lt;/code&gt;“这个位置看好了，数值变了的话记得更新”。&lt;/p&gt;
+&lt;p&gt;同时也能看出来，&lt;code&gt;StateProvider&lt;/code&gt;可以隔着Wrapper，也可以是全局的Object，使用起来没有&lt;code&gt;getx&lt;/code&gt;必须相邻传递的限制，同时也可以方便地遵守各种层级暴露关系，思路不容易乱。&lt;/p&gt;
+&lt;p&gt;性能也不错，上文代码中更改的部分只有&lt;code&gt;Consumer&lt;/code&gt;包裹的那一部分，已经和&lt;code&gt;getx&lt;/code&gt;的性能外表上看上去一样了，同样是手动&lt;code&gt;setState&lt;/code&gt;最极限小的更新范围。&lt;/p&gt;
+&lt;p&gt;所以嘛，用上去不比&lt;code&gt;getx&lt;/code&gt;麻烦多少。&lt;/p&gt;
+&lt;p&gt;当然，路由管理什么的还是可以用&lt;code&gt;getx&lt;/code&gt;&lt;del&gt;，如果没有其他好用的路由管理包的话&lt;/del&gt;。&lt;/p&gt;
+</description></item><item>
             <title>智能的命令</title>
             <link>https://kzs.moe/2023/01/20/%E6%99%BA%E8%83%BD%E7%9A%84%E5%91%BD%E4%BB%A4.html/</link>
             <pubDate>Fri, 20 Jan 2023 22:23:53 +0800</pubDate>

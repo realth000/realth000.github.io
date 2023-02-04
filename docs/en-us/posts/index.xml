@@ -6,7 +6,16 @@
     <description>Recent content in Posts on Distant Vicinity</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Fri, 20 Jan 2023 22:23:53 +0800</lastBuildDate><atom:link href="https://kzs.moe/en-us/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 05 Feb 2023 02:55:15 +0800</lastBuildDate><atom:link href="https://kzs.moe/en-us/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>简单学习riverpod</title>
+      <link>https://kzs.moe/en-us/2023/02/05/%E7%AE%80%E5%8D%95%E5%AD%A6%E4%B9%A0riverpod.html/</link>
+      <pubDate>Sun, 05 Feb 2023 02:55:15 +0800</pubDate>
+      
+      <guid>https://kzs.moe/en-us/2023/02/05/%E7%AE%80%E5%8D%95%E5%AD%A6%E4%B9%A0riverpod.html/</guid>
+      <description>“在短暂的flutter学习中我意识到一件事，越是追求简单越是有报错。” “说人话。” “我不用getx 做状态管理了，jojo！” 为何不用get</description>
+    </item>
+    
     <item>
       <title>智能的命令</title>
       <link>https://kzs.moe/en-us/2023/01/20/%E6%99%BA%E8%83%BD%E7%9A%84%E5%91%BD%E4%BB%A4.html/</link>
