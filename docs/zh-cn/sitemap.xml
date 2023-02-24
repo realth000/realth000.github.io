@@ -3,7 +3,7 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://kzs.moe/</loc>
-    <lastmod>2023-02-05T03:40:43+08:00</lastmod>
+    <lastmod>2023-02-24T21:12:03+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -22,8 +22,23 @@
                 href="https://kzs.moe/"
                 />
   </url><url>
+    <loc>https://kzs.moe/2023/02/18/localsend%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B8%80-%E4%BB%8B%E7%BB%8D.html/</loc>
+    <lastmod>2023-02-24T21:12:03+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="https://kzs.moe/en-us/2023/02/18/localsend%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B8%80-%E4%BB%8B%E7%BB%8D.html/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://kzs.moe/2023/02/18/localsend%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B8%80-%E4%BB%8B%E7%BB%8D.html/"
+                />
+  </url><url>
     <loc>https://kzs.moe/posts/</loc>
-    <lastmod>2023-02-05T03:40:43+08:00</lastmod>
+    <lastmod>2023-02-24T21:12:03+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link

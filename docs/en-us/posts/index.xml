@@ -6,7 +6,16 @@
     <description>Recent content in Posts on Distant Vicinity</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 05 Feb 2023 02:55:15 +0800</lastBuildDate><atom:link href="https://kzs.moe/en-us/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 18 Feb 2023 02:44:46 +0800</lastBuildDate><atom:link href="https://kzs.moe/en-us/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>localsend源码学习（一） - 介绍</title>
+      <link>https://kzs.moe/en-us/2023/02/18/localsend%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B8%80-%E4%BB%8B%E7%BB%8D.html/</link>
+      <pubDate>Sat, 18 Feb 2023 02:44:46 +0800</pubDate>
+      
+      <guid>https://kzs.moe/en-us/2023/02/18/localsend%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B8%80-%E4%BB%8B%E7%BB%8D.html/</guid>
+      <description>介绍 localsend 是一款开源的跨平台局域网文件/消息投送软件，只要在连上相同WIFI的设备上开启localsend客户端，即可方便地在设备间传送文件，具</description>
+    </item>
+    
     <item>
       <title>简单学习riverpod</title>
       <link>https://kzs.moe/en-us/2023/02/05/%E7%AE%80%E5%8D%95%E5%AD%A6%E4%B9%A0riverpod.html/</link>
