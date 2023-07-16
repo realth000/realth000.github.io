@@ -1,6 +1,7 @@
 ---
 title: "配置neovim"
 date: 2023-01-09T23:30:12+08:00
+tags: ["neovim"]
 ---
 
 # 配置neovim
