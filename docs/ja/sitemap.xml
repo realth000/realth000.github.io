@@ -26,13 +26,13 @@
     <priority>0.5</priority>
     <xhtml:link
                 rel="alternate"
-                hreflang="en-us"
-                href="https://kzs.moe/en-us/"
+                hreflang="zh-cn"
+                href="https://kzs.moe/"
                 />
     <xhtml:link
                 rel="alternate"
-                hreflang="zh-cn"
-                href="https://kzs.moe/"
+                hreflang="en-us"
+                href="https://kzs.moe/en-us/"
                 />
     <xhtml:link
                 rel="alternate"
@@ -45,13 +45,13 @@
     <priority>0.5</priority>
     <xhtml:link
                 rel="alternate"
-                hreflang="en-us"
-                href="https://kzs.moe/en-us/tags/"
+                hreflang="zh-cn"
+                href="https://kzs.moe/tags/"
                 />
     <xhtml:link
                 rel="alternate"
-                hreflang="zh-cn"
-                href="https://kzs.moe/tags/"
+                hreflang="en-us"
+                href="https://kzs.moe/en-us/tags/"
                 />
     <xhtml:link
                 rel="alternate"
