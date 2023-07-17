@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>neovim on Distant Vicinity</title>
+    <link>https://kzs.moe/tags/neovim/</link>
+    <description>Recent content in neovim on Distant Vicinity</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 09 Jan 2023 23:30:12 +0800</lastBuildDate><atom:link href="https://kzs.moe/tags/neovim/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>配置neovim</title>
+      <link>https://kzs.moe/2023/01/09/%E9%85%8D%E7%BD%AEneovim.html/</link>
+      <pubDate>Mon, 09 Jan 2023 23:30:12 +0800</pubDate>
+      
+      <guid>https://kzs.moe/2023/01/09/%E9%85%8D%E7%BD%AEneovim.html/</guid>
+      <description>配置neovim neovim 是一款强大且轻量的基于vim的tui编辑器，相比vim有更现代的设置和插件系统。今天neovim的生态已然非常广泛。 安装n</description>
+    </item>
+    
+  </channel>
+</rss>

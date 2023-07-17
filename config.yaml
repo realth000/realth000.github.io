@@ -159,20 +159,20 @@ menu:
       #- *mainMenuTwitter
     - *mainMenuGitHub
     - *mainMenuSearch
-   副导航 / sub-navigation
-   sub:
-     - name: Categories
-       weight: 20
-       identifier: categories
-       params:
-         icon: eva eva-folder
-       url: /categories/
-     - name: Tags
-       weight: 30
-       identifier: tags
-       params:
-         icon: eva eva-pricetags
-       url: /tags/
+  # 副导航 / sub-navigation
+  sub:
+    - name: Categories
+      weight: 20
+      identifier: categories
+      params:
+        icon: eva eva-folder
+      url: /categories/
+    - name: Tags
+      weight: 30
+      identifier: tags
+      params:
+        icon: eva eva-pricetags
+      url: /tags/
 
 markup:
   highlight:

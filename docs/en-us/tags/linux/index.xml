@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>linux on Distant Vicinity</title>
+    <link>https://kzs.moe/en-us/tags/linux/</link>
+    <description>Recent content in linux on Distant Vicinity</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Fri, 20 Jan 2023 22:23:53 +0800</lastBuildDate><atom:link href="https://kzs.moe/en-us/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>智能的命令</title>
+      <link>https://kzs.moe/en-us/2023/01/20/%E6%99%BA%E8%83%BD%E7%9A%84%E5%91%BD%E4%BB%A4.html/</link>
+      <pubDate>Fri, 20 Jan 2023 22:23:53 +0800</pubDate>
+      
+      <guid>https://kzs.moe/en-us/2023/01/20/%E6%99%BA%E8%83%BD%E7%9A%84%E5%91%BD%E4%BB%A4.html/</guid>
+      <description>智能的命令也不会遇到兔女郎学姐。 智能 智能的命令会给使用者带来更好的体验，比如不小心输入错参数时可以提示相似的正确参数、提供更易用的参数等等。</description>
+    </item>
+    
+  </channel>
+</rss>

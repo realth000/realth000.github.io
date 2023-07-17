@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-cn" class="lang-zh-cn">
     <head><meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="keywords" content="Hugo,Hugo Theme,Luna," /><meta name="description" content="介绍 localsend 是一款开源的跨平台局域网文件/消息投送软件，只要在连上相同WIFI的设备上开启localsend客户端，即可方便地在设备间传送文件，具" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="keywords" content="flutter,localsend,Hugo,Hugo Theme,Luna," /><meta name="description" content="介绍 localsend 是一款开源的跨平台局域网文件/消息投送软件，只要在连上相同WIFI的设备上开启localsend客户端，即可方便地在设备间传送文件，具" />
 <meta itemprop="description" content="介绍 localsend 是一款开源的跨平台局域网文件/消息投送软件，只要在连上相同WIFI的设备上开启localsend客户端，即可方便地在设备间传送文件，具" />
 <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 <meta itemprop="name" content="localsend源码学习（一） - 介绍 - Distant Vicinity" />
@@ -10,7 +10,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:title" content="localsend源码学习（一） - 介绍" />
 <meta property="og:description" content="介绍 localsend 是一款开源的跨平台局域网文件/消息投送软件，只要在连上相同WIFI的设备上开启localsend客户端，即可方便地在设备间传送文件，具" />
-<meta property="og:url" content="https://kzs.moe/2023/02/18/localsend%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B8%80-%E4%BB%8B%E7%BB%8D.html/" /><meta property="article:publisher" content="https://kzs.moe/2023/02/18/localsend%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B8%80-%E4%BB%8B%E7%BB%8D.html/" /><meta property="article:published_time" content="2023-02-18T02:44:46&#43;08:00" /><meta property="article:modified_time" content="2023-02-24T21:12:03&#43;08:00" /><meta name="theme-color" content="#2babe2" />
+<meta property="og:url" content="https://kzs.moe/2023/02/18/localsend%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B8%80-%E4%BB%8B%E7%BB%8D.html/" /><meta property="article:publisher" content="https://kzs.moe/2023/02/18/localsend%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B8%80-%E4%BB%8B%E7%BB%8D.html/" /><meta property="article:published_time" content="2023-02-18T02:44:46&#43;08:00" /><meta property="article:modified_time" content="2023-07-17T08:18:20&#43;08:00" /><meta name="theme-color" content="#2babe2" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-title" content="localsend源码学习（一） - 介绍 - Distant Vicinity" />
 <meta name="apple-mobile-web-app-status-bar-style" content="white" />
@@ -27,8 +27,8 @@
   "mainEntityOfPage": {
     "@type": "WebPage",
     "@id": "https:\/\/kzs.moe\/2023\/02\/18\/localsend%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B8%80-%E4%BB%8B%E7%BB%8D.html\/"
-  },"genre": "posts","wordcount": 1992 ,
-  "url": "https:\/\/kzs.moe\/2023\/02\/18\/localsend%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B8%80-%E4%BB%8B%E7%BB%8D.html\/","datePublished": "2023-02-18T02:44:46\u002b08:00","dateModified": "2023-02-24T21:12:03\u002b08:00","author": {
+  },"genre": "posts","keywords": "flutter, localsend","wordcount": 1992 ,
+  "url": "https:\/\/kzs.moe\/2023\/02\/18\/localsend%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B8%80-%E4%BB%8B%E7%BB%8D.html\/","datePublished": "2023-02-18T02:44:46\u002b08:00","dateModified": "2023-07-17T08:18:20\u002b08:00","author": {
     "@type": "Person",
     "name": "realth000"
   },"description": ""
@@ -83,7 +83,27 @@
                     <span class="mt-1 block text-xs text-gray-400 dark:text-darkText sm:text-sm md:hidden">搜索</span>
                 </a>
         </div>
-    </nav><div class="dark-mode-switch absolute right-0 top-0 z-10 cursor-pointer pr-2 pt-2 text-xl leading-none">
+    </nav><nav class="sub-navbar z-10 flex items-center border-b px-5 py-2 dark:border-darkBorder md:px-10"><a
+                title="分类"
+                data-active-link="/categories/"
+                href="/categories/"
+                class=" relative flex cursor-pointer items-center mr-4 text-gray-400 dark:text-darkText transition duration-150 ease-[ease] hover:text-theme"
+            >
+                <i
+                    class="eva eva-folder leading-none mr-1"
+                ></i>
+                <span>分类</span>
+            </a><a
+                title="标签"
+                data-active-link="/tags/"
+                href="/tags/"
+                class=" relative flex cursor-pointer items-center mr-4 text-gray-400 dark:text-darkText transition duration-150 ease-[ease] hover:text-theme"
+            >
+                <i
+                    class="eva eva-pricetags leading-none mr-1"
+                ></i>
+                <span>标签</span>
+            </a></nav><div class="dark-mode-switch absolute right-0 top-0 z-10 cursor-pointer pr-2 pt-2 text-xl leading-none">
     <i class="eva eva-moon opacity-20 dark:opacity-70"></i>
 </div>
 </header>
@@ -108,13 +128,21 @@
                     <i class="eva eva-edit-2-outline mr-1"></i>
                     <span>
                         <time
-                            title="最后修改于：2023年2月24日 21:12:03"datetime="2023-02-24T21:12:03+08:00">2023年2月24日</time
+                            title="最后修改于：2023年7月17日 08:18:20"datetime="2023-07-17T08:18:20+08:00">2023年7月17日</time
                         >
                     </span>
                 </span><div class="mb-3 mr-4 inline-flex items-center sm:rounded-full">
                 <i class="eva eva-flag-outline mr-1"></i>
                 <span>4 分钟</span>
-            </div></div></div><aside
+            </div></div><div class="mb-3 flex items-center">
+            <i class="eva eva-pricetags-outline mr-1"></i>
+            <span class="mr-3">标签</span><a href="/tags/flutter" title="flutter" class="group mr-2 flex items-center text-sm">
+                    <i class="mr-1 text-gray-400 group-hover:text-theme">#</i>
+                    <span class="text-gray-400 group-hover:text-theme">flutter</span>
+                </a><a href="/tags/localsend" title="localsend" class="group mr-2 flex items-center text-sm">
+                    <i class="mr-1 text-gray-400 group-hover:text-theme">#</i>
+                    <span class="text-gray-400 group-hover:text-theme">localsend</span>
+                </a></div></div><aside
             class="toc border-b border-gray-300 px-5 py-5 dark:border-darkBorder md:px-10 2xl:fixed 2xl:top-10 2xl:m-0 2xl:-ml-72 2xl:w-72 2xl:border-none 2xl:p-0 2xl:py-4 2xl:pr-4 "
         >
             <header>

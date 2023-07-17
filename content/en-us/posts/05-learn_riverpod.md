@@ -1,6 +1,7 @@
 ---
 title: "简单学习riverpod"
 date: 2023-02-05T02:55:15+08:00
+tags: ["flutter", "riverpod"]
 ---
 
 > “在短暂的``flutter``学习中我意识到一件事，越是追求简单越是有报错。”<br>
