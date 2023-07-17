@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 <meta itemprop="name" content="localsend源码学习（一） - 介绍 - Distant Vicinity" />
 <link href="https://kzs.moe/index.xml" title="localsend源码学习（一） - 介绍 - Distant Vicinity" type="application/rss+xml" rel="alternate" />
-<title>localsend源码学习（一） - 介绍 - Distant Vicinity</title><link rel="stylesheet" href="/main.d4880997a9b25c8d2c137ea6c579e9322beb72396de331e697e99776700be1e2.css" integrity="sha256-1IgJl6myXI0sE36mxXnpMivrcjlt4zHml+mXdnAL4eI=" /><meta property="og:site_name" content="localsend源码学习（一） - 介绍 - Distant Vicinity" />
+<title>localsend源码学习（一） - 介绍 - Distant Vicinity</title><link rel="stylesheet" href="/main.ab69c4124d5532c8b93211590ced0d8453789c0e6eec149fe192081b2759aa4f.css" integrity="sha256-q2nEEk1VMsi5MhFZDO0NhFN4nA5u7BSf4ZIIGydZqk8=" /><meta property="og:site_name" content="localsend源码学习（一） - 介绍 - Distant Vicinity" />
 <meta property="og:type" content="article" />
 <meta property="og:title" content="localsend源码学习（一） - 介绍" />
 <meta property="og:description" content="介绍 localsend 是一款开源的跨平台局域网文件/消息投送软件，只要在连上相同WIFI的设备上开启localsend客户端，即可方便地在设备间传送文件，具" />
@@ -14,10 +14,12 @@
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-title" content="localsend源码学习（一） - 介绍 - Distant Vicinity" />
 <meta name="apple-mobile-web-app-status-bar-style" content="white" />
+
 <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:site" content="@Ice_Hazymoon" />
     <meta name="twitter:creator" content="@Ice_Hazymoon" /><meta name="twitter:title" content="localsend源码学习（一） - 介绍 - Distant Vicinity" />
 <meta name="twitter:description" content="介绍 localsend 是一款开源的跨平台局域网文件/消息投送软件，只要在连上相同WIFI的设备上开启localsend客户端，即可方便地在设备间传送文件，具" />
-<meta name="twitter:url" content="https://kzs.moe/en-us/2023/02/18/localsend%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B8%80-%E4%BB%8B%E7%BB%8D.html/" /><meta name="twitter:image" content="" /><link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" /><link rel="manifest" href="/en-us/manifest.json" /><link href="/icon.png" rel="shortcut icon" />
+<meta name="twitter:url" content="https://kzs.moe/en-us/2023/02/18/localsend%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B8%80-%E4%BB%8B%E7%BB%8D.html/" /><meta name="twitter:image" content="" />
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" /><link rel="manifest" href="/en-us/manifest.json" /><link href="/icon.png" rel="shortcut icon" />
 <link href="/icon.png" rel="Bookmark" />
 <link rel="apple-touch-icon" href="/icon.png" /><script type="application/ld+json">
 {
@@ -37,85 +39,86 @@
 
 
     </head>
-    
+
     <body class="dark:bg-darkBg dark:text-darkText">
         <div class="relative mx-auto shadow-lg md:max-w-4xl xl:max-w-4xl 2xl:max-w-4xl">
-            <div class="main flex flex-col justify-between bg-white dark:bg-darkFg"><header class="relative"><nav id="nav" class="navbar top-0 z-10 flex items-center border-b px-5 py-6 dark:border-darkBorder md:px-10">
-        <div class="route-items flex w-full items-center justify-around"><a
-                    title="Home"
-                    data-active-link="/en-us/"
-                    href="/en-us/"
-                    class=" relative flex cursor-pointer flex-col items-center text-gray-700 transition duration-150 ease-[ease]"
+            <div class="main flex flex-col justify-between bg-white dark:bg-darkFg"><header
+    class="relative"
+><nav id="nav" class="navbar top-0 z-10 flex items-center border-b px-5 py-6 dark:border-darkBorder md:px-10">
+            <div class="route-items flex w-full items-center justify-around"><a
+                        title="Home"
+                        data-active-link="/en-us/"
+                        href="/en-us/"
+                        class=" relative flex cursor-pointer flex-col items-center text-gray-700 transition duration-150 ease-[ease]"
+                    >
+                        <i
+                            class="eva eva-home flex h-8 w-8 items-center justify-center text-3xl leading-none text-gray-500 transition duration-150 ease-[ease] dark:text-darkTextPlaceholder"
+                        ></i>
+                        <span class="mt-1 block text-xs text-gray-400 dark:text-darkText sm:text-sm md:hidden">Home</span>
+                    </a><a
+                        title="Archives"
+                        data-active-link="/en-us/archives/"
+                        href="/en-us/archives/"
+                        class=" relative flex cursor-pointer flex-col items-center text-gray-700 transition duration-150 ease-[ease]"
+                    >
+                        <i
+                            class="eva eva-bar-chart flex h-8 w-8 items-center justify-center text-3xl leading-none text-gray-500 transition duration-150 ease-[ease] dark:text-darkTextPlaceholder"
+                        ></i>
+                        <span class="mt-1 block text-xs text-gray-400 dark:text-darkText sm:text-sm md:hidden">Archives</span>
+                    </a><a
+                        title="GitHub"
+                        data-active-link="/en-us/github/"
+                        href="/en-us/github/"
+                        class=" relative flex cursor-pointer flex-col items-center text-gray-700 transition duration-150 ease-[ease]"
+                    >
+                        <i
+                            class="eva eva-github flex h-8 w-8 items-center justify-center text-3xl leading-none text-gray-500 transition duration-150 ease-[ease] dark:text-darkTextPlaceholder"
+                        ></i>
+                        <span class="mt-1 block text-xs text-gray-400 dark:text-darkText sm:text-sm md:hidden">GitHub</span>
+                    </a><a
+                        title="Search"
+                        data-active-link="/en-us/search/"
+                        href="/en-us/search/"
+                        class=" relative flex cursor-pointer flex-col items-center text-gray-700 transition duration-150 ease-[ease]"
+                    >
+                        <i
+                            class="eva eva-search flex h-8 w-8 items-center justify-center text-3xl leading-none text-gray-500 transition duration-150 ease-[ease] dark:text-darkTextPlaceholder"
+                        ></i>
+                        <span class="mt-1 block text-xs text-gray-400 dark:text-darkText sm:text-sm md:hidden">Search</span>
+                    </a>
+            </div>
+        </nav><nav class="sub-navbar z-10 flex items-center border-b px-5 py-2 dark:border-darkBorder md:px-10"><a
+                    title="Categories"
+                    data-active-link="/en-us/categories/"
+                    href="/en-us/categories/"
+                    class=" relative mr-4 flex cursor-pointer items-center text-gray-400 transition duration-150 ease-[ease] hover:text-theme dark:text-darkText"
                 >
-                    <i
-                        class="eva eva-home flex h-8 w-8 items-center justify-center text-3xl leading-none text-gray-500 transition duration-150 ease-[ease] dark:text-darkTextPlaceholder"
-                    ></i>
-                    <span class="mt-1 block text-xs text-gray-400 dark:text-darkText sm:text-sm md:hidden">Home</span>
+                    <i class="eva eva-folder mr-1 leading-none"></i>
+                    <span>Categories</span>
                 </a><a
-                    title="Archives"
-                    data-active-link="/en-us/archives/"
-                    href="/en-us/archives/"
-                    class=" relative flex cursor-pointer flex-col items-center text-gray-700 transition duration-150 ease-[ease]"
+                    title="Tags"
+                    data-active-link="/en-us/tags/"
+                    href="/en-us/tags/"
+                    class=" relative mr-4 flex cursor-pointer items-center text-gray-400 transition duration-150 ease-[ease] hover:text-theme dark:text-darkText"
                 >
-                    <i
-                        class="eva eva-bar-chart flex h-8 w-8 items-center justify-center text-3xl leading-none text-gray-500 transition duration-150 ease-[ease] dark:text-darkTextPlaceholder"
-                    ></i>
-                    <span class="mt-1 block text-xs text-gray-400 dark:text-darkText sm:text-sm md:hidden">Archives</span>
-                </a><a
-                    title="GitHub"
-                    data-active-link="/en-us/github/"
-                    href="/en-us/github/"
-                    class=" relative flex cursor-pointer flex-col items-center text-gray-700 transition duration-150 ease-[ease]"
-                >
-                    <i
-                        class="eva eva-github flex h-8 w-8 items-center justify-center text-3xl leading-none text-gray-500 transition duration-150 ease-[ease] dark:text-darkTextPlaceholder"
-                    ></i>
-                    <span class="mt-1 block text-xs text-gray-400 dark:text-darkText sm:text-sm md:hidden">GitHub</span>
-                </a><a
-                    title="Search"
-                    data-active-link="/en-us/search/"
-                    href="/en-us/search/"
-                    class=" relative flex cursor-pointer flex-col items-center text-gray-700 transition duration-150 ease-[ease]"
-                >
-                    <i
-                        class="eva eva-search flex h-8 w-8 items-center justify-center text-3xl leading-none text-gray-500 transition duration-150 ease-[ease] dark:text-darkTextPlaceholder"
-                    ></i>
-                    <span class="mt-1 block text-xs text-gray-400 dark:text-darkText sm:text-sm md:hidden">Search</span>
-                </a>
-        </div>
-    </nav><nav class="sub-navbar z-10 flex items-center border-b px-5 py-2 dark:border-darkBorder md:px-10"><a
-                title="Categories"
-                data-active-link="/en-us/categories/"
-                href="/en-us/categories/"
-                class=" relative flex cursor-pointer items-center mr-4 text-gray-400 dark:text-darkText transition duration-150 ease-[ease] hover:text-theme"
-            >
-                <i
-                    class="eva eva-folder leading-none mr-1"
-                ></i>
-                <span>Categories</span>
-            </a><a
-                title="Tags"
-                data-active-link="/en-us/tags/"
-                href="/en-us/tags/"
-                class=" relative flex cursor-pointer items-center mr-4 text-gray-400 dark:text-darkText transition duration-150 ease-[ease] hover:text-theme"
-            >
-                <i
-                    class="eva eva-pricetags leading-none mr-1"
-                ></i>
-                <span>Tags</span>
-            </a></nav><div class="dark-mode-switch absolute right-0 top-0 z-10 cursor-pointer pr-2 pt-2 text-xl leading-none">
+                    <i class="eva eva-pricetags mr-1 leading-none"></i>
+                    <span>Tags</span>
+                </a></nav><div class="dark-mode-switch absolute right-0 top-0 z-10 cursor-pointer pr-2 pt-2 text-xl leading-none">
     <i class="eva eva-moon opacity-20 dark:opacity-70"></i>
 </div>
 </header>
-<main class="relative flex flex-grow " id="swup"><style>:root {
+<main class=" relative flex flex-grow" id="swup"><style>:root {
         --font:Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    }</style><div class="type-posts layout- w-full"><div class="relative h-full">
+    }</style>
+<div class="type-posts layout- w-full"><div class="relative h-full">
     <div class="relative h-full">
         <div class="page-view-article flex h-full flex-col bg-white dark:bg-darkFg"><div class="relative"><div>
     <div class="-mb-2 w-full p-6 pb-0 text-3xl md:px-10">
         localsend源码学习（一） - 介绍
     </div>
-</div></div><div class="article-info border-b p-6 pb-3 text-sm dark:border-darkBorder md:px-10">
+</div>
+</div>
+<div class="article-info border-b p-6 pb-3 text-sm dark:border-darkBorder md:px-10">
     <div>
         <div class="mb-3 mr-4 inline-flex items-center sm:rounded-full">
             <i class="eva eva-clock-outline mr-1"></i>
@@ -142,7 +145,8 @@
                 </a><a href="/en-us/tags/localsend" title="localsend" class="group mr-2 flex items-center text-sm">
                     <i class="mr-1 text-gray-400 group-hover:text-theme">#</i>
                     <span class="text-gray-400 group-hover:text-theme">localsend</span>
-                </a></div></div><aside
+                </a></div></div>
+<aside
             class="toc border-b border-gray-300 px-5 py-5 dark:border-darkBorder md:px-10 2xl:fixed 2xl:top-10 2xl:m-0 2xl:-ml-72 2xl:w-72 2xl:border-none 2xl:p-0 2xl:py-4 2xl:pr-4 "
         >
             <header>
@@ -438,7 +442,8 @@
 <p>基本上和我想做的局域网流转软件一模一样，我放弃我自己做那个了，正好通过localsend学习flutter，只会getx那一套并不行，很多包使用的时候需要statefulwidget，这种场景和getx并不契合。</p>
 <p>这篇文章稍微水了点，主要介绍一下localsend，下一期从具体角度分析下localsend的源码。</p>
 <p>本来早就想写，这一周因为某些奇怪的无可奈何的原因没弄成，还过得很不舒坦，今天算好了一些，希望今后不再出这种问题吧。</p>
-</section><div class="px-6 pb-5 pt-4 text-center text-xl text-gray-500 md:px-10 md:pb-10 md:pt-14 flex items-center justify-center"><a
+</section>
+<div class="flex items-center justify-center px-6 pb-5 pt-4 text-center text-xl text-gray-500 md:px-10 md:pb-10 md:pt-14"><a
                 class="mr-4 inline-flex h-5 w-5 items-center"
                 title="Share to twitter"
                 href="https://twitter.com/share?&text=%e4%bb%8b%e7%bb%8d%20localsend%20%e6%98%af%e4%b8%80%e6%ac%be%e5%bc%80%e6%ba%90%e7%9a%84%e8%b7%a8%e5%b9%b3%e5%8f%b0%e5%b1%80%e5%9f%9f%e7%bd%91%e6%96%87%e4%bb%b6/%e6%b6%88%e6%81%af%e6%8a%95%e9%80%81%e8%bd%af%e4%bb%b6%ef%bc%8c%e5%8f%aa%e8%a6%81%e5%9c%a8%e8%bf%9e%e4%b8%8a%e7%9b%b8%e5%90%8cWIFI%e7%9a%84%e8%ae%be%e5%a4%87%e4%b8%8a%e5%bc%80%e5%90%aflocalsend%e5%ae%a2%e6%88%b7%e7%ab%af%ef%bc%8c%e5%8d%b3%e5%8f%af%e6%96%b9%e4%be%bf%e5%9c%b0%e5%9c%a8%e8%ae%be%e5%a4%87%e9%97%b4%e4%bc%a0%e9%80%81%e6%96%87%e4%bb%b6%ef%bc%8c%e5%85%b7&url=https://kzs.moe/en-us/2023/02/18/localsend%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B8%80-%E4%BB%8B%E7%BB%8D.html/"
@@ -458,10 +463,10 @@
                 href="https://service.weibo.com/share/share.php?url=https://kzs.moe/en-us/2023/02/18/localsend%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B8%80-%E4%BB%8B%E7%BB%8D.html/&title=localsend%e6%ba%90%e7%a0%81%e5%ad%a6%e4%b9%a0%ef%bc%88%e4%b8%80%ef%bc%89%20-%20%e4%bb%8b%e7%bb%8d&sudaref=kzs.moe"
                 target="_blank"
                 rel="noopener noreferrer"
-            ><svg class="inline-block h-5 w-5 fill-current hover:text-theme" viewBox="0 0 1193 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2681" width="200" height="200"> <path d="M456.991736 557.336482c-107.598583 0-194.644628 74.956316-194.644629 166.838252s87.046045 166.838253 194.644629 166.838253c107.598583 0 194.644628-74.956316 194.644628-166.838253s-87.046045-166.838253-194.644628-166.838252zM391.707202 822.101535c-36.269185 0-66.493506-27.806375-66.493507-62.866588s29.015348-62.866588 66.493507-62.866588c36.269185 0 66.493506 27.806375 66.493506 62.866588S427.976387 822.101535 391.707202 822.101535z m93.090909-91.881936c-14.507674 0-26.597403-12.089728-26.597403-26.597403s12.089728-26.597403 26.597403-26.597403 26.597403 12.089728 26.597403 26.597403-12.089728 26.597403-26.597403 26.597403zM239.376623 281.690673C97.9268 394.125148-18.134593 600.859504 30.224321 661.308146c32.642267 41.105077 59.239669-19.343566 124.524203-89.46399 30.224321-32.642267 77.374262-54.403778 122.106258-90.672964 20.552538-16.92562 197.062574-35.060213 230.913813-35.060212 97.9268-99.135773 114.85242-207.943329 74.956316-258.720189-48.358914-59.239669-201.898465-16.92562-343.348288 94.299882z" p-id="2682" ></path> <path d="M808.802834 560.9634C906.729634 461.827627 911.565525 377.199528 870.460449 326.422668c-47.149941-60.448642-211.570248-32.642267-351.811098 78.583235" p-id="2683" ></path> <path d="M605.695396 353.020071c-14.507674 8.46281-25.38843 12.089728-29.015349 7.253837-1.208973-2.417946-1.208973-6.044864 1.208973-9.671783-16.92562-1.208973-33.85124-1.208973-50.776859-1.208973C235.749705 349.393152 0 500.514758 0 686.696576s235.749705 337.303424 527.112161 337.303424 527.112161-151.121606 527.11216-337.303424c0-170.465171-194.644628-309.497048-448.528925-333.676505zM481.171192 959.924439C275.645809 959.924439 108.807556 847.489965 108.807556 708.458087s166.838253-251.466352 372.363636-251.466351 372.363636 112.434475 372.363637 251.466351-166.838253 251.466352-372.363637 251.466352z" p-id="2684" ></path> <path d="M1021.582054 423.140496c-3.626919 0-6.044864 0-9.671782-1.208973-18.134593-4.835891-29.015348-24.179457-22.970485-42.31405 2.417946-7.253837 3.626919-16.92562 3.626919-29.015348 0-65.284534-53.194805-119.688312-119.688312-119.688312-19.343566 0-33.85124-15.716647-33.851239-33.851239s15.716647-33.85124 33.851239-33.85124c103.971665 0 187.390791 84.628099 187.390791 187.390791 0 18.134593-2.417946 33.85124-6.044864 48.358914-4.835891 14.507674-18.134593 24.179457-32.642267 24.179457z" p-id="2685" ></path> <path d="M1146.106257 473.917355c-2.417946 0-6.044864 0-8.46281-1.208972-20.552538-4.835891-32.642267-25.38843-27.806375-45.940969 6.044864-24.179457 8.46281-47.149941 8.46281-71.329397C1118.299882 201.898465 991.357733 74.956316 836.609209 74.956316c-20.552538 0-37.478158-16.92562-37.478158-37.478158S816.056671 0 836.609209 0c197.062574 0 356.646989 159.584416 356.646989 356.646989 0 29.015348-3.626919 59.239669-10.880755 88.255018-3.626919 18.134593-19.343566 29.015348-36.269186 29.015348z" p-id="2686" ></path> </svg></a><i class="eva eva-copy mr-4 cursor-pointer hover:text-theme" title="Copy Link" data-clipboard-text="https://kzs.moe/en-us/2023/02/18/localsend%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B8%80-%E4%BB%8B%E7%BB%8D.html/"></i><div class="group h-5 w-5 relative hidden cursor-pointer sm:inline-block">
+            ><svg class="inline-block h-5 w-5 fill-current hover:text-theme" viewBox="0 0 1193 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2681" width="200" height="200"> <path d="M456.991736 557.336482c-107.598583 0-194.644628 74.956316-194.644629 166.838252s87.046045 166.838253 194.644629 166.838253c107.598583 0 194.644628-74.956316 194.644628-166.838253s-87.046045-166.838253-194.644628-166.838252zM391.707202 822.101535c-36.269185 0-66.493506-27.806375-66.493507-62.866588s29.015348-62.866588 66.493507-62.866588c36.269185 0 66.493506 27.806375 66.493506 62.866588S427.976387 822.101535 391.707202 822.101535z m93.090909-91.881936c-14.507674 0-26.597403-12.089728-26.597403-26.597403s12.089728-26.597403 26.597403-26.597403 26.597403 12.089728 26.597403 26.597403-12.089728 26.597403-26.597403 26.597403zM239.376623 281.690673C97.9268 394.125148-18.134593 600.859504 30.224321 661.308146c32.642267 41.105077 59.239669-19.343566 124.524203-89.46399 30.224321-32.642267 77.374262-54.403778 122.106258-90.672964 20.552538-16.92562 197.062574-35.060213 230.913813-35.060212 97.9268-99.135773 114.85242-207.943329 74.956316-258.720189-48.358914-59.239669-201.898465-16.92562-343.348288 94.299882z" p-id="2682" ></path> <path d="M808.802834 560.9634C906.729634 461.827627 911.565525 377.199528 870.460449 326.422668c-47.149941-60.448642-211.570248-32.642267-351.811098 78.583235" p-id="2683" ></path> <path d="M605.695396 353.020071c-14.507674 8.46281-25.38843 12.089728-29.015349 7.253837-1.208973-2.417946-1.208973-6.044864 1.208973-9.671783-16.92562-1.208973-33.85124-1.208973-50.776859-1.208973C235.749705 349.393152 0 500.514758 0 686.696576s235.749705 337.303424 527.112161 337.303424 527.112161-151.121606 527.11216-337.303424c0-170.465171-194.644628-309.497048-448.528925-333.676505zM481.171192 959.924439C275.645809 959.924439 108.807556 847.489965 108.807556 708.458087s166.838253-251.466352 372.363636-251.466351 372.363636 112.434475 372.363637 251.466351-166.838253 251.466352-372.363637 251.466352z" p-id="2684" ></path> <path d="M1021.582054 423.140496c-3.626919 0-6.044864 0-9.671782-1.208973-18.134593-4.835891-29.015348-24.179457-22.970485-42.31405 2.417946-7.253837 3.626919-16.92562 3.626919-29.015348 0-65.284534-53.194805-119.688312-119.688312-119.688312-19.343566 0-33.85124-15.716647-33.851239-33.851239s15.716647-33.85124 33.851239-33.85124c103.971665 0 187.390791 84.628099 187.390791 187.390791 0 18.134593-2.417946 33.85124-6.044864 48.358914-4.835891 14.507674-18.134593 24.179457-32.642267 24.179457z" p-id="2685" ></path> <path d="M1146.106257 473.917355c-2.417946 0-6.044864 0-8.46281-1.208972-20.552538-4.835891-32.642267-25.38843-27.806375-45.940969 6.044864-24.179457 8.46281-47.149941 8.46281-71.329397C1118.299882 201.898465 991.357733 74.956316 836.609209 74.956316c-20.552538 0-37.478158-16.92562-37.478158-37.478158S816.056671 0 836.609209 0c197.062574 0 356.646989 159.584416 356.646989 356.646989 0 29.015348-3.626919 59.239669-10.880755 88.255018-3.626919 18.134593-19.343566 29.015348-36.269186 29.015348z" p-id="2686" ></path> </svg></a><i class="eva eva-copy mr-4 cursor-pointer hover:text-theme" title="Copy Link" data-clipboard-text="https://kzs.moe/en-us/2023/02/18/localsend%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B8%80-%E4%BB%8B%E7%BB%8D.html/"></i><div class="group relative hidden h-5 w-5 cursor-pointer sm:inline-block">
                 <i title="QR Code" class="eva show-qrcode eva-smartphone hover:text-theme"></i>
                 <div
-                    class="qrcode-wrapper p-2 pointer-events-none absolute left-2/4 bottom-10 h-32 w-32 -translate-x-1/2 overflow-hidden rounded border border-gray-300 bg-white opacity-0 transition duration-300 ease-[ease] group-hover:opacity-100"
+                    class="qrcode-wrapper pointer-events-none absolute left-2/4 bottom-10 h-32 w-32 -translate-x-1/2 overflow-hidden rounded border border-gray-300 bg-white p-2 opacity-0 transition duration-300 ease-[ease] group-hover:opacity-100"
                 >
                     <img class="h-full w-full" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=https://kzs.moe/en-us/2023/02/18/localsend%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B8%80-%E4%BB%8B%E7%BB%8D.html/" alt="QR Code" />
                 </div>
@@ -489,9 +494,9 @@
     </div>
 
     <a
-        href=""
-        title=""
-        class="invisible flex cursor-pointer items-center text-gray-500 transition duration-300 ease-[ease] hover:text-theme dark:text-darkTextPlaceholder dark:hover:text-darkText">
+        href="/en-us/2023/07/17/3days%E7%9A%84%E5%BE%AA%E7%8E%AF%E4%B8%8E%E6%B0%B8%E6%81%92%E7%9A%84%E7%AD%89%E5%BE%85.html/"
+        title="3days的循环与永恒的等待"
+        class="invisible flex cursor-pointer items-center text-gray-500 transition duration-300 ease-[ease] hover:text-theme dark:text-darkTextPlaceholder dark:hover:text-darkText"style="visibility: visible;">
         <span>Next</span>
         <span class="flex items-center text-5xl opacity-70 dark:bg-opacity-100">
             <i class="eva eva-chevron-right-outline"></i>
@@ -499,9 +504,11 @@
     </a>
 </div>
 
+
         </div>
     </div>
 </div>
+
 </div>
                 </main><footer>
     <div
@@ -512,7 +519,7 @@
             <span class="mx-1.5 opacity-50"> | </span>Powered by <a data-no-swup class="mx-1 font-bold hover:text-theme" href="https://gohugo.io/" target="_blank" rel="noopener noreferrer">Hugo</a> <span class="text-xs opacity-70">❤</span> <a data-no-swup class="mx-1 font-bold hover:text-theme" href="https://github.com/Ice-Hazymoon/hugo-theme-luna" target="_blank" rel="noopener noreferrer">Luna</a></div>
 
         <div class="flex items-center"><span class="noscript-hidden mx-1.5 hidden opacity-50 md:block"> | </span><a data-no-swup href="https://kzs.moe/en-us/index.xml" target="_blank" class="mr-1.5 hover:text-theme">
-                    <span class=" md:hidden lg:inline"><svg t="1650887361919" class="mr-0.5 w-96 w-3 fill-current text-inherit inline-block align-top" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3091"><path d="M320.16155 831.918c0 70.738-57.344 128.082-128.082 128.082S63.99955 902.656 63.99955 831.918s57.344-128.082 128.082-128.082 128.08 57.346 128.08 128.082z m351.32 94.5c-16.708-309.2-264.37-557.174-573.9-573.9C79.31155 351.53 63.99955 366.21 63.99955 384.506v96.138c0 16.83 12.98 30.944 29.774 32.036 223.664 14.568 402.946 193.404 417.544 417.544 1.094 16.794 15.208 29.774 32.036 29.774h96.138c18.298 0.002 32.978-15.31 31.99-33.58z m288.498 0.576C943.19155 459.354 566.92955 80.89 97.00555 64.02 78.94555 63.372 63.99955 77.962 63.99955 96.032v96.136c0 17.25 13.67 31.29 30.906 31.998 382.358 15.678 689.254 322.632 704.93 704.93 0.706 17.236 14.746 30.906 31.998 30.906h96.136c18.068-0.002 32.658-14.948 32.01-33.008z" p-id="3092"></path></svg></span>
+                    <span class=" md:hidden lg:inline"><svg t="1650887361919" class="mr-0.5 w-3 fill-current text-inherit inline-block align-top" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3091"><path d="M320.16155 831.918c0 70.738-57.344 128.082-128.082 128.082S63.99955 902.656 63.99955 831.918s57.344-128.082 128.082-128.082 128.08 57.346 128.08 128.082z m351.32 94.5c-16.708-309.2-264.37-557.174-573.9-573.9C79.31155 351.53 63.99955 366.21 63.99955 384.506v96.138c0 16.83 12.98 30.944 29.774 32.036 223.664 14.568 402.946 193.404 417.544 417.544 1.094 16.794 15.208 29.774 32.036 29.774h96.138c18.298 0.002 32.978-15.31 31.99-33.58z m288.498 0.576C943.19155 459.354 566.92955 80.89 97.00555 64.02 78.94555 63.372 63.99955 77.962 63.99955 96.032v96.136c0 17.25 13.67 31.29 30.906 31.998 382.358 15.678 689.254 322.632 704.93 704.93 0.706 17.236 14.746 30.906 31.998 30.906h96.136c18.068-0.002 32.658-14.948 32.01-33.008z" p-id="3092"></path></svg></span>
                     <span>RSS</span>
                 </a><a data-no-swup href="https://kzs.moe/en-us/sitemap.xml" target="_blank" class="mr-1.5 hover:text-theme">
                     <span class=" md:hidden lg:inline"><svg t="1650887940556" class="mr-0.5 w-3 fill-current text-inherit inline-block align-top" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6291"><path d="M950.044 625.778h-68.266v-56.89c0-45.51-39.822-85.332-85.334-85.332h-256v-85.334h68.267c39.822 0 73.956-34.133 73.956-73.955V130.844c0-39.822-34.134-73.955-73.956-73.955H415.29c-39.822 0-73.956 34.133-73.956 73.955v193.423c0 39.822 34.134 73.955 73.956 73.955h68.267v85.334h-256c-45.512 0-85.334 39.822-85.334 85.333v56.889H73.956C34.133 625.778 0 659.91 0 699.733v193.423c0 39.822 34.133 73.955 73.956 73.955h193.422c39.822 0 73.955-34.133 73.955-73.955V699.733c0-39.822-34.133-73.955-73.955-73.955H199.11v-56.89c0-17.066 11.378-28.444 28.445-28.444h568.888c17.067 0 28.445 11.378 28.445 28.445v56.889h-68.267c-39.822 0-73.955 34.133-73.955 73.955v193.423c0 39.822 34.133 73.955 73.955 73.955h193.422c39.823 0 73.956-34.133 73.956-73.955V699.733c0-39.822-34.133-73.955-73.956-73.955z" p-id="6292"></path></svg></span>
@@ -574,7 +581,7 @@ window.__theme = {
         }
     },}
 </script>
-<script type="text/javascript" src="/ts/main.5562dd676e11d79991ff088b5335690420b8a54043d1dd6ced64a624ca63167d.js" defer integrity="sha256-VWLdZ24R15mR/wiLUzVpBCC4pUBD0d1s7WSmJMpjFn0="></script><script>
+<script type="text/javascript" src="/ts/main.485f36a6a4c9392c64835c81e30569a75c2d202ca9ebbe09a5e600726fc5e962.js" defer integrity="sha256-SF82pqTJOSxkg1yB4wVpp1wtICyp674JpeYAcm/F6WI="></script><script>
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
             navigator.serviceWorker.register('\/sw.js');
@@ -591,6 +598,7 @@ window.__theme = {
         },'google_translate_element');
     }
 </script>
+
 
 
 
@@ -633,14 +641,20 @@ window.__theme = {
         </div>
     </a><div id="i18nlist"><div
                 style="font-size: 0;"
-                class=" absolute  left-0 top-0 z-50 rounded rounded-tl-none rounded-bl-none md:bg-white p-1.5 md:shadow-custom dark:bg-darkBgAccent"
+                class="
+                    absolute
+                 left-0 top-0 z-50 rounded rounded-tl-none rounded-bl-none p-1.5 dark:bg-darkBgAccent md:bg-white md:shadow-custom"
             >
                 <input type="checkbox" name="i18nlist-input" id="i18nlist-checkbox" />
                 <label for="i18nlist-checkbox">
                     <span class="cursor-pointer leading-none group-hover:hidden"><svg class="w-5 h-5 fill-current text-inherit dark:text-darkTextPlaceholder" t="1655231528998" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2176" ><path d="M213.333333 640v85.333333a85.333333 85.333333 0 0 0 78.933334 85.12L298.666667 810.666667h128v85.333333H298.666667a170.666667 170.666667 0 0 1-170.666667-170.666667v-85.333333h85.333333z m554.666667-213.333333l187.733333 469.333333h-91.946666l-51.242667-128h-174.506667l-51.157333 128h-91.904L682.666667 426.666667h85.333333z m-42.666667 123.093333L672.128 682.666667h106.325333L725.333333 549.76zM341.333333 85.333333v85.333334h170.666667v298.666666H341.333333v128H256v-128H85.333333V170.666667h170.666667V85.333333h85.333333z m384 42.666667a170.666667 170.666667 0 0 1 170.666667 170.666667v85.333333h-85.333333V298.666667a85.333333 85.333333 0 0 0-85.333334-85.333334h-128V128h128zM256 256H170.666667v128h85.333333V256z m170.666667 0H341.333333v128h85.333334V256z" p-id="2177"></path></svg></span>
                 </label>
                 <ul class="hidden border border-transparent pb-0 group-hover:block"><li class="mb-1.5 cursor-pointer last:mb-0">
-                            <a data-no-swup href="https://kzs.moe/2023/02/18/localsend%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B8%80-%E4%BB%8B%E7%BB%8D.html/" title="Switch language to 中文"><img class="w-6 cursor-pointer rounded-sm border border-gray-50" src="/images/i18n/zh-cn.svg" alt="zh-cn" />
+                            <a data-no-swup href="https://kzs.moe/2023/02/18/localsend%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B8%80-%E4%BB%8B%E7%BB%8D.html/" title="Switch language to 中文"><img
+                                    class="w-6 cursor-pointer rounded-sm border border-gray-50"
+                                    src="/images/i18n/zh-cn.svg"
+                                    alt="zh-cn"
+                                />
                             </a>
                         </li></ul>
             </div></div><noscript>

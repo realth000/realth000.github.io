@@ -28,7 +28,7 @@ paginate: 10
 
 # 版权信息，默认为 author.name ↓
 # default: author.name ↓
-# copyright: "" 
+# copyright: ""
 
 permalinks:
   # 文章链接的格式
@@ -275,7 +275,7 @@ params:
     # 网站创建时间
     # Site creation time
     creatTime: 2023/01/09
-  
+
   #  网站创建年份
   # Site creation year
   since: "2023"
@@ -299,7 +299,7 @@ params:
     weibo: true
     copyLinkText: true
     qrcode: true
-  
+
   qrcodeAPI: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data="
 
   # 文章许可设置
@@ -347,7 +347,7 @@ params:
     skipLinks: false # 跳过链接 / skip links
     excludeWords: [] # 忽略的单词 / ignored words
     excludeNodeNames: [] # 忽略的节点名称 / ignored node names
-    excludeClasses: ['github'] # 忽略的类名 / ignored classes
+    excludeClasses: ["github"] # 忽略的类名 / ignored classes
 
   # 启用谷歌翻译插件
   # enable google translate in footer
@@ -379,7 +379,7 @@ params:
     enabled: true
     # 超过这个字数后将显示目录
     # When the article word count is greater than this value, the TOC will be displayed
-    wordCount: 400 
+    wordCount: 400
 
   # 加密功能
   # encryption articles
@@ -449,7 +449,7 @@ languages:
     params:
       languageIcon: "images/i18n/zh-cn.svg" # in assets folder
       font: "Times New Roman,Times,Heti Song,serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol"
-      twitter: 
+      twitter:
         enabled: true
         rsshub: "https://rsshub.rssforever.com"
         id: "Ice_Hazymoon"
@@ -493,9 +493,9 @@ languages:
           lang: "ja"
     menu:
       main:
-      - *mainMenuHome
-      - *mainMenuArchives
-      - *mainMenuSearch
+        - *mainMenuHome
+        - *mainMenuArchives
+        - *mainMenuSearch
 
 staticDir:
   - static
