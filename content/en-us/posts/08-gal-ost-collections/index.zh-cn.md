@@ -20,6 +20,33 @@ tags: ["gal", "ost"]
 
 * 出品：AZARASHI Soft
 * 来源：游戏解包 (Garbro)
+  * 由于解包出的每一首OST均被分割成两个ogg文件，因此需要用以下脚本合并
+
+~~~ shell
+#!/bin/bash
+
+for f in $(ls *.ogg)
+do
+  match=$(echo $f | sed -n "s/bgm\(.*\)_a\.ogg/\1/p")
+  if [ "x$match" != "x" ];then
+    echo "make: \"$match\""
+  fi
+  name1="bgm${match}_a.ogg"
+  name2="bgm${match}_b.ogg"
+
+  if [ ! -f $name1 ] || [ ! -f $name2 ];then
+    echo "skip $match"
+    continue
+  fi
+
+  name3="bgm${match}.ogg"
+  echo "file '${name1}'" > input.txt
+  echo "file '${name2}'" >> input.txt
+  echo y | ffmpeg -f concat -i input.txt -c copy $name3
+
+done
+~~~
+
 * 相关链接：
   * [VGMdb-125369](https://vgmdb.net/album/125369)
 
