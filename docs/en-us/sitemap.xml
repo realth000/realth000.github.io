@@ -3,7 +3,7 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://kzs.moe/en-us/</loc>
-    <lastmod>2023-07-17T20:48:38+08:00</lastmod>
+    <lastmod>2023-07-22T10:24:37+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -22,23 +22,38 @@
                 href="https://kzs.moe/en-us/"
                 />
   </url><url>
-    <loc>https://kzs.moe/en-us/tags/gal/</loc>
-    <lastmod>2023-07-17T20:48:38+08:00</lastmod>
+    <loc>https://kzs.moe/en-us/tags/linux/</loc>
+    <lastmod>2023-07-22T10:24:37+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://kzs.moe/tags/gal/"
+                href="https://kzs.moe/tags/linux/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en-us"
-                href="https://kzs.moe/en-us/tags/gal/"
+                href="https://kzs.moe/en-us/tags/linux/"
+                />
+  </url><url>
+    <loc>https://kzs.moe/en-us/2023/07/22/linux%E6%8A%80%E5%B7%A7%E7%AC%94%E8%AE%B0.html/</loc>
+    <lastmod>2023-07-22T10:24:37+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://kzs.moe/2023/07/22/linux%E6%8A%80%E5%B7%A7%E7%AC%94%E8%AE%B0.html/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="https://kzs.moe/en-us/2023/07/22/linux%E6%8A%80%E5%B7%A7%E7%AC%94%E8%AE%B0.html/"
                 />
   </url><url>
     <loc>https://kzs.moe/en-us/posts/</loc>
-    <lastmod>2023-07-17T20:48:38+08:00</lastmod>
+    <lastmod>2023-07-22T10:24:37+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -53,7 +68,7 @@
                 />
   </url><url>
     <loc>https://kzs.moe/en-us/tags/</loc>
-    <lastmod>2023-07-17T20:48:38+08:00</lastmod>
+    <lastmod>2023-07-22T10:24:37+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -72,8 +87,23 @@
                 href="https://kzs.moe/en-us/tags/"
                 />
   </url><url>
+    <loc>https://kzs.moe/en-us/tags/gal/</loc>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://kzs.moe/tags/gal/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="https://kzs.moe/en-us/tags/gal/"
+                />
+  </url><url>
     <loc>https://kzs.moe/en-us/2023/07/17/%E7%BE%8E%E5%A5%BD%E4%B8%94%E4%B8%8D%E8%BF%9E%E7%BB%AD%E7%9A%84%E6%AF%8F%E4%B8%80%E5%A4%A9.html/</loc>
-    <lastmod>2023-07-17T20:46:51+08:00</lastmod>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -88,7 +118,7 @@
                 />
   </url><url>
     <loc>https://kzs.moe/en-us/2023/07/17/3days%E7%9A%84%E5%BE%AA%E7%8E%AF%E4%B8%8E%E6%B0%B8%E6%81%92%E7%9A%84%E7%AD%89%E5%BE%85.html/</loc>
-    <lastmod>2023-07-17T20:48:38+08:00</lastmod>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -103,7 +133,7 @@
                 />
   </url><url>
     <loc>https://kzs.moe/en-us/tags/flutter/</loc>
-    <lastmod>2023-07-17T08:18:14+08:00</lastmod>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -118,7 +148,7 @@
                 />
   </url><url>
     <loc>https://kzs.moe/en-us/tags/localsend/</loc>
-    <lastmod>2023-07-17T08:18:14+08:00</lastmod>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -133,7 +163,7 @@
                 />
   </url><url>
     <loc>https://kzs.moe/en-us/2023/02/18/localsend%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B8%80-%E4%BB%8B%E7%BB%8D.html/</loc>
-    <lastmod>2023-07-17T08:18:14+08:00</lastmod>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -148,7 +178,7 @@
                 />
   </url><url>
     <loc>https://kzs.moe/en-us/tags/riverpod/</loc>
-    <lastmod>2023-07-17T08:17:52+08:00</lastmod>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -163,7 +193,7 @@
                 />
   </url><url>
     <loc>https://kzs.moe/en-us/2023/02/05/%E7%AE%80%E5%8D%95%E5%AD%A6%E4%B9%A0riverpod.html/</loc>
-    <lastmod>2023-07-17T08:17:52+08:00</lastmod>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -178,7 +208,7 @@
                 />
   </url><url>
     <loc>https://kzs.moe/en-us/tags/git/</loc>
-    <lastmod>2023-07-17T08:17:08+08:00</lastmod>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -192,23 +222,8 @@
                 href="https://kzs.moe/en-us/tags/git/"
                 />
   </url><url>
-    <loc>https://kzs.moe/en-us/tags/linux/</loc>
-    <lastmod>2023-07-17T08:17:08+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh-cn"
-                href="https://kzs.moe/tags/linux/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en-us"
-                href="https://kzs.moe/en-us/tags/linux/"
-                />
-  </url><url>
     <loc>https://kzs.moe/en-us/2023/01/20/%E6%99%BA%E8%83%BD%E7%9A%84%E5%91%BD%E4%BB%A4.html/</loc>
-    <lastmod>2023-07-17T08:17:08+08:00</lastmod>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -223,7 +238,7 @@
                 />
   </url><url>
     <loc>https://kzs.moe/en-us/tags/i18n/</loc>
-    <lastmod>2023-07-17T09:04:56+08:00</lastmod>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -238,7 +253,7 @@
                 />
   </url><url>
     <loc>https://kzs.moe/en-us/tags/qt/</loc>
-    <lastmod>2023-07-17T09:04:56+08:00</lastmod>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -253,7 +268,7 @@
                 />
   </url><url>
     <loc>https://kzs.moe/en-us/2023/01/12/qt%E5%A4%9A%E8%AF%AD%E8%A8%80%E7%BF%BB%E8%AF%91%E5%9B%BD%E9%99%85%E5%8C%96.html/</loc>
-    <lastmod>2023-07-17T09:04:56+08:00</lastmod>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -268,7 +283,7 @@
                 />
   </url><url>
     <loc>https://kzs.moe/en-us/tags/cmake/</loc>
-    <lastmod>2023-07-17T08:11:12+08:00</lastmod>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -283,7 +298,7 @@
                 />
   </url><url>
     <loc>https://kzs.moe/en-us/2023/01/10/cmake%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95.html/</loc>
-    <lastmod>2023-07-17T08:11:12+08:00</lastmod>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -298,7 +313,7 @@
                 />
   </url><url>
     <loc>https://kzs.moe/en-us/tags/neovim/</loc>
-    <lastmod>2023-07-17T08:10:36+08:00</lastmod>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -313,7 +328,7 @@
                 />
   </url><url>
     <loc>https://kzs.moe/en-us/2023/01/09/%E9%85%8D%E7%BD%AEneovim.html/</loc>
-    <lastmod>2023-07-17T08:10:36+08:00</lastmod>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
@@ -328,37 +343,37 @@
                 />
   </url><url>
     <loc>https://kzs.moe/en-us/search/</loc>
-    <lastmod>2023-01-09T08:10:08+08:00</lastmod>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://kzs.moe/en-us/search.zh/</loc>
-    <lastmod>2023-01-09T08:10:10+08:00</lastmod>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://kzs.moe/en-us/archives/</loc>
-    <lastmod>2023-01-09T08:08:37+08:00</lastmod>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://kzs.moe/en-us/archives.zh/</loc>
-    <lastmod>2023-01-09T08:08:43+08:00</lastmod>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://kzs.moe/en-us/github/</loc>
-    <lastmod>2023-01-09T08:06:01+08:00</lastmod>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://kzs.moe/en-us/github.zh/</loc>
-    <lastmod>2023-01-09T08:06:32+08:00</lastmod>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://kzs.moe/en-us/2023/01/09/hello_hugo.html/</loc>
-    <lastmod>2023-01-09T05:47:23+08:00</lastmod>
+    <lastmod>2023-07-22T09:28:18+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
     <xhtml:link
