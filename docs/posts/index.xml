@@ -53,12 +53,12 @@
     </item>
     
     <item>
-      <title>简单学习riverpod</title>
-      <link>https://kzs.moe/2023/02/05/%E7%AE%80%E5%8D%95%E5%AD%A6%E4%B9%A0riverpod.html/</link>
+      <title>学习riverpod （一）</title>
+      <link>https://kzs.moe/2023/02/05/%E5%AD%A6%E4%B9%A0riverpod-%E4%B8%80.html/</link>
       <pubDate>Sun, 05 Feb 2023 02:55:15 +0800</pubDate>
       
-      <guid>https://kzs.moe/2023/02/05/%E7%AE%80%E5%8D%95%E5%AD%A6%E4%B9%A0riverpod.html/</guid>
-      <description>“在短暂的flutter学习中我意识到一件事，越是追求简单越是有报错。” “说人话。” “我不用getx 做状态管理了，jojo！” 为何不用get</description>
+      <guid>https://kzs.moe/2023/02/05/%E5%AD%A6%E4%B9%A0riverpod-%E4%B8%80.html/</guid>
+      <description>provider的介绍和使用</description>
     </item>
     
     <item>
