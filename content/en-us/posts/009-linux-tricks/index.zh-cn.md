@@ -206,3 +206,10 @@ auto enp0s8
 iface enp0s8 inet dhcp
 ```
 
+## boot
+
+### grub设置默认timeout
+
+前几天发生了个小插曲，想在办公本上把DE换成wayland，结果DM不支持导致进不去，并且grub也没开（timeout=0），这就奇怪了，我记得我之前已经设置过timeout了啊，原来是每次升级内核在重新生成grub.cfg时timeout被重置了。
+
+默认timeout在`/etc/default/grub`，把`GRUB_TIMEOUT=0`值改掉即可。
