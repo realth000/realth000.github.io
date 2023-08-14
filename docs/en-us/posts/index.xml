@@ -88,14 +88,5 @@
       <description>配置neovim neovim 是一款强大且轻量的基于vim的tui编辑器，相比vim有更现代的设置和插件系统。今天neovim的生态已然非常广泛。 安装n</description>
     </item>
     
-    <item>
-      <title>Hello_hugo</title>
-      <link>https://kzs.moe/en-us/2023/01/09/hello_hugo.html/</link>
-      <pubDate>Mon, 09 Jan 2023 05:47:15 +0800</pubDate>
-      
-      <guid>https://kzs.moe/en-us/2023/01/09/hello_hugo.html/</guid>
-      <description>Hello Hugo</description>
-    </item>
-    
   </channel>
 </rss>
