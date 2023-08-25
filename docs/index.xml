@@ -30,26 +30,19 @@
 &lt;p&gt;这里可能很多条目都写明了具体发行版，实际上很通用，不必拘泥于版本。&lt;/p&gt;
 
 
-&lt;h2 class=&#34;group &#34; id=&#34;中文相关&#34;
-    &gt;中文相关&lt;a href=&#34;#%e4%b8%ad%e6%96%87%e7%9b%b8%e5%85%b3&#34;
-        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h2&gt;
-
-
-
-&lt;h3 class=&#34;group &#34; id=&#34;arch-wayland配置fcitx5中文输入法&#34;
+&lt;h2 class=&#34;group &#34; id=&#34;arch-wayland配置fcitx5中文输入法&#34;
     &gt;Arch Wayland配置Fcitx5中文输入法&lt;a href=&#34;#arch-wayland%e9%85%8d%e7%bd%aefcitx5%e4%b8%ad%e6%96%87%e8%be%93%e5%85%a5%e6%b3%95&#34;
         &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h3&gt;
+&gt;&lt;/h2&gt;
 
 &lt;p&gt;折腾了很久，各自帖子都看了，好久才完全折腾好。&lt;/p&gt;
 &lt;p&gt;Fcitx5本身没什么问题，问题在于Wayland不完善，以及各自软件使用的技术差异很大，需要各自配置。&lt;/p&gt;
 
 
-&lt;h4 class=&#34;group &#34; id=&#34;基础配置&#34;
+&lt;h3 class=&#34;group &#34; id=&#34;基础配置&#34;
     &gt;基础配置&lt;a href=&#34;#%e5%9f%ba%e7%a1%80%e9%85%8d%e7%bd%ae&#34;
         &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h4&gt;
+&gt;&lt;/h3&gt;
 
 &lt;p&gt;安装fcitx (AUR)：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
@@ -297,19 +290,19 @@
 &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;h4 class=&#34;group &#34; id=&#34;浏览器&#34;
+&lt;h3 class=&#34;group &#34; id=&#34;浏览器&#34;
     &gt;浏览器&lt;a href=&#34;#%e6%b5%8f%e8%a7%88%e5%99%a8&#34;
         &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h4&gt;
+&gt;&lt;/h3&gt;
 
 &lt;p&gt;浏览器推荐使用Firefox，不需要做额外更改就可以使用Fcitx5输入中文。&lt;/p&gt;
 &lt;p&gt;chrome需要在启动中加参数&lt;code&gt;--gtk-version=4&lt;/code&gt;，并且存在输入法候选框不跟着光标的问题，此外114版本的chrome加上如上flag后会在启动时崩溃。&lt;/p&gt;
 
 
-&lt;h4 class=&#34;group &#34; id=&#34;intellij全家桶&#34;
+&lt;h3 class=&#34;group &#34; id=&#34;intellij全家桶&#34;
     &gt;Intellij全家桶&lt;a href=&#34;#intellij%e5%85%a8%e5%ae%b6%e6%a1%b6&#34;
         &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h4&gt;
+&gt;&lt;/h3&gt;
 
 &lt;p&gt;配置过基础环境变量后基本可以使用，但是会有候选框不跟随光标的问题，需要更换ide的java runtime&lt;/p&gt;
 &lt;ol&gt;
@@ -324,36 +317,36 @@
 &lt;/p&gt;
 
 
-&lt;h3 class=&#34;group &#34; id=&#34;fcitx5配置&#34;
+&lt;h2 class=&#34;group &#34; id=&#34;fcitx5配置&#34;
     &gt;Fcitx5配置&lt;a href=&#34;#fcitx5%e9%85%8d%e7%bd%ae&#34;
         &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h3&gt;
+&gt;&lt;/h2&gt;
 
 &lt;p&gt;默认配置有些地方不好用，需要改&lt;/p&gt;
 
 
-&lt;h4 class=&#34;group &#34; id=&#34;输入中文标点&#34;
+&lt;h3 class=&#34;group &#34; id=&#34;输入中文标点&#34;
     &gt;输入中文标点&lt;a href=&#34;#%e8%be%93%e5%85%a5%e4%b8%ad%e6%96%87%e6%a0%87%e7%82%b9&#34;
         &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h4&gt;
+&gt;&lt;/h3&gt;
 
 &lt;p&gt;默认情况下，即使在输入中文时，打出来的标点符号也是英文的。&lt;/p&gt;
 &lt;p&gt;按下&lt;code&gt;Ctrl + .&lt;/code&gt;切换到全角标点（中文标点）。&lt;/p&gt;
 
 
-&lt;h4 class=&#34;group &#34; id=&#34;切换中英文&#34;
+&lt;h3 class=&#34;group &#34; id=&#34;切换中英文&#34;
     &gt;切换中英文&lt;a href=&#34;#%e5%88%87%e6%8d%a2%e4%b8%ad%e8%8b%b1%e6%96%87&#34;
         &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h4&gt;
+&gt;&lt;/h3&gt;
 
 &lt;p&gt;默认是&lt;code&gt;Ctrl + Space&lt;/code&gt;，建议再加一个shift切换中英文。不然中文模式下想输入一点英文还要按两个键。&lt;/p&gt;
 &lt;p&gt;配置 -&amp;gt; 全局选项 -&amp;gt; 快捷键 -&amp;gt; 切换/禁用输入法 项。&lt;/p&gt;
 
 
-&lt;h4 class=&#34;group &#34; id=&#34;输入中文时上屏一些英文单词&#34;
+&lt;h3 class=&#34;group &#34; id=&#34;输入中文时上屏一些英文单词&#34;
     &gt;输入中文时上屏一些英文单词&lt;a href=&#34;#%e8%be%93%e5%85%a5%e4%b8%ad%e6%96%87%e6%97%b6%e4%b8%8a%e5%b1%8f%e4%b8%80%e4%ba%9b%e8%8b%b1%e6%96%87%e5%8d%95%e8%af%8d&#34;
         &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h4&gt;
+&gt;&lt;/h3&gt;
 
 &lt;p&gt;&lt;a
     class=&#34;link&#34;
@@ -363,17 +356,10 @@
 &lt;p&gt;输入中文时，按下&lt;code&gt;Shift + Enter&lt;/code&gt;可以把当前这点英文上屏。&lt;/p&gt;
 
 
-&lt;h2 class=&#34;group &#34; id=&#34;网络&#34;
-    &gt;网络&lt;a href=&#34;#%e7%bd%91%e7%bb%9c&#34;
-        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h2&gt;
-
-
-
-&lt;h3 class=&#34;group &#34; id=&#34;debian12同时开启多张网卡&#34;
+&lt;h2 class=&#34;group &#34; id=&#34;debian12同时开启多张网卡&#34;
     &gt;Debian12同时开启多张网卡&lt;a href=&#34;#debian12%e5%90%8c%e6%97%b6%e5%bc%80%e5%90%af%e5%a4%9a%e5%bc%a0%e7%bd%91%e5%8d%a1&#34;
         &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h3&gt;
+&gt;&lt;/h2&gt;
 
 &lt;p&gt;在&lt;code&gt;/etc/network/interfaces&lt;/code&gt;中添加配置，自动连接并设置为DHCP。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
@@ -406,7 +392,65 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;iface enp0s8 inet dhcp
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item>
+&lt;/div&gt;
+
+&lt;h2 class=&#34;group &#34; id=&#34;grub设置默认timeout&#34;
+    &gt;grub设置默认timeout&lt;a href=&#34;#grub%e8%ae%be%e7%bd%ae%e9%bb%98%e8%ae%a4timeout&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;前几天发生了个小插曲，想在办公本上把DE换成wayland，结果DM不支持导致进不去，并且grub也没开（timeout=0），这就奇怪了，我记得我之前已经设置过timeout了啊，原来是每次升级内核在重新生成grub.cfg时timeout被重置了。&lt;/p&gt;
+&lt;p&gt;默认timeout在&lt;code&gt;/etc/default/grub&lt;/code&gt;，把&lt;code&gt;GRUB_TIMEOUT=0&lt;/code&gt;值改掉即可。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;设置主题和图标主题&#34;
+    &gt;设置主题和图标主题&lt;a href=&#34;#%e8%ae%be%e7%bd%ae%e4%b8%bb%e9%a2%98%e5%92%8c%e5%9b%be%e6%a0%87%e4%b8%bb%e9%a2%98&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;之前多是用图形界面的配置来设置主题，现在用arch + hyprland需要从终端设置。&lt;/p&gt;
+&lt;p&gt;其实也简单：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;gsettings &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;set&lt;/span&gt; org.gnome.desktop.interface gtk-theme &amp;lt;theme name&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;gsettings &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;set&lt;/span&gt; org.gnome.desktop.interface icon-theme &amp;lt;icon theme name&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;其中主题放在&lt;code&gt;/usr/share/themes&lt;/code&gt;，图标放在&lt;code&gt;/usr/share/icons&lt;/code&gt;，名字就是文件夹的名字。&lt;/p&gt;
+&lt;p&gt;另外推荐主题&lt;code&gt;Qogir-dark&lt;/code&gt;和图标主题&lt;code&gt;ePapirus-Dark&lt;/code&gt;，后者包含一个工具用来改变主题：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;# -C后是文件夹图标颜色，-u代表刷新缓存，-t后跟papirus主题名&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;papirus-folders -C darkcyan -u -t ePapirus-Dark
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;项目地址：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/vinceliuice/Qogir-theme&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Qogir Theme&lt;/a
+&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/PapirusDevelopmentTeam/papirus-icon-theme&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Papirus Icon Theme&lt;/a
+&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://github.com/PapirusDevelopmentTeam/papirus-folders&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Papirus Folder Icon&lt;/a
+&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+</description></item><item>
             <title>gal OST 收集记录</title>
             <link>https://kzs.moe/2023/07/17/gal-ost-%E6%94%B6%E9%9B%86%E8%AE%B0%E5%BD%95.html/</link>
             <pubDate>Mon, 17 Jul 2023 22:47:22 +0800</pubDate>
