@@ -450,6 +450,67 @@
 &gt;
 &lt;/li&gt;
 &lt;/ul&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;flatpak编译时配置cargo的rsproxy&#34;
+    &gt;Flatpak编译时配置cargo的rsproxy&lt;a href=&#34;#flatpak%e7%bc%96%e8%af%91%e6%97%b6%e9%85%8d%e7%bd%aecargo%e7%9a%84rsproxy&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;最近开始玩gtk-rs，这一套和flatpak亲（绑）和（定），有一套仓库模板&lt;a
+    class=&#34;link&#34;
+    href=&#34;https://gitlab.gnome.org/World/Rust/gtk-rust-template&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;gtk-rs-template&lt;/a
+&gt;
+&lt;/p&gt;
+&lt;p&gt;基本是 rust + mason.&lt;/p&gt;
+&lt;p&gt;开发环境的话可以选择gnome的builder，也可以选择vs code + flatpak extension&lt;/p&gt;
+&lt;p&gt;clion暂时没有flatpak支持，暂时没琢磨怎么用，intellij-rust比rust-analyzer强很多，vsc扩展的github上已经有人提了移植到intellij的issue，暂时没动静，如果能在clion里用上就好了。&lt;/p&gt;
+&lt;p&gt;跑题了，构建的时候会在download crates的地方卡住，肯定要配置代理了。这里有两种思路：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;直接配置flatpak的http代理，这个网上的方法好像没效果，或者说对于构建这一步来说没效果。&lt;/li&gt;
+&lt;li&gt;配置cargo的rsproxy代理，但是网上没有找到任何有关flatpak build rust app cargo proxy的信息，这块玩的国人不多吧。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;绕了一个大圈，最后发现解决方法很简单：&lt;/p&gt;
+&lt;p&gt;rsproxy只能写在toml配置文件里，这个配置文件一般在cargo home的&lt;code&gt;config&lt;/code&gt;里，这个其实是个全局的配置文件，对所有项目都适用。&lt;/p&gt;
+&lt;p&gt;而如果想为某个项目单独配置rsproxy，把相应的配置写到工程目录里的&lt;code&gt;.cargo/config&lt;/code&gt;里即可，例如：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;[source.crates-io]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;# To use sparse index, change &amp;#39;rsproxy&amp;#39; to &amp;#39;rsproxy-sparse&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;replace-with = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;rsproxy&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;[source.rsproxy]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;registry = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;https://rsproxy.cn/crates.io-index&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;[source.rsproxy-sparse]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;registry = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;sparse+https://rsproxy.cn/index/&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;[registries.rsproxy]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;index = &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;https://rsproxy.cn/crates.io-index&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;[net]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;git-fetch-with-cli = &lt;span style=&#34;color:#ff79c6&#34;&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;emm，心疼硬盘，rust本来就是硬盘消耗大户，这flatpak还搞隔离环境，玩得开心就好。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;另外：都2023年了怎么还在用*.in这种反人类的东西啊，rust-analyzer和intellij-rust都不认识写进去的配置定义，红一片，做成环境变量别的配置不好吗&lt;/p&gt;
+&lt;/blockquote&gt;
 </description></item><item>
             <title>gal OST 收集记录</title>
             <link>https://kzs.moe/2023/07/17/gal-ost-%E6%94%B6%E9%9B%86%E8%AE%B0%E5%BD%95.html/</link>

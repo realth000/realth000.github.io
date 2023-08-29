@@ -12,15 +12,13 @@ tags: ["linux"]
 
 这里可能很多条目都写明了具体发行版，实际上很通用，不必拘泥于版本。
 
-## 中文相关
-
-### Arch Wayland配置Fcitx5中文输入法
+## Arch Wayland配置Fcitx5中文输入法
 
 折腾了很久，各自帖子都看了，好久才完全折腾好。
 
 Fcitx5本身没什么问题，问题在于Wayland不完善，以及各自软件使用的技术差异很大，需要各自配置。
 
-#### 基础配置
+### 基础配置
 
 安装fcitx (AUR)：
 
@@ -34,7 +32,6 @@ fcitx5-pinyin-sougou 20210320-1
 fcitx5-pinyin-zhwiki 1:0.2.4.20230329-1
 fcitx5-qt 5.0.17-1
 ```
-
 
 系统环境变量，写入到`/etc/security/pam_env.conf`。
 
@@ -148,13 +145,13 @@ SDL_IM_MODULE           DEFAULT=fcitx
 #
 ```
 
-#### 浏览器
+### 浏览器
 
 浏览器推荐使用Firefox，不需要做额外更改就可以使用Fcitx5输入中文。
 
 chrome需要在启动中加参数```--gtk-version=4```，并且存在输入法候选框不跟着光标的问题，此外114版本的chrome加上如上flag后会在启动时崩溃。
 
-#### Intellij全家桶
+### Intellij全家桶
 
 配置过基础环境变量后基本可以使用，但是会有候选框不跟随光标的问题，需要更换ide的java runtime
 
@@ -163,31 +160,29 @@ chrome需要在启动中加参数```--gtk-version=4```，并且存在输入法�
 
 ![设置java runtime](pics/select-idea-runtime.png)
 
-### Fcitx5配置
+## Fcitx5配置
 
 默认配置有些地方不好用，需要改
 
-#### 输入中文标点
+### 输入中文标点
 
 默认情况下，即使在输入中文时，打出来的标点符号也是英文的。
 
 按下`Ctrl + .`切换到全角标点（中文标点）。
 
-#### 切换中英文
+### 切换中英文
 
 默认是`Ctrl + Space`，建议再加一个shift切换中英文。不然中文模式下想输入一点英文还要按两个键。
 
 配置 -> 全局选项 -> 快捷键 -> 切换/禁用输入法 项。
 
-#### 输入中文时上屏一些英文单词
+### 输入中文时上屏一些英文单词
 
 [参考地址](https://groups.google.com/g/fcitx/c/yPZv2I3Zq58?pli=1)
 
 输入中文时，按下`Shift + Enter`可以把当前这点英文上屏。
 
-## 网络
-
-### Debian12同时开启多张网卡
+## Debian12同时开启多张网卡
 
 在`/etc/network/interfaces`中添加配置，自动连接并设置为DHCP。
 
@@ -206,3 +201,76 @@ auto enp0s8
 iface enp0s8 inet dhcp
 ```
 
+## grub设置默认timeout
+
+前几天发生了个小插曲，想在办公本上把DE换成wayland，结果DM不支持导致进不去，并且grub也没开（timeout=0），这就奇怪了，我记得我之前已经设置过timeout了啊，原来是每次升级内核在重新生成grub.cfg时timeout被重置了。
+
+默认timeout在`/etc/default/grub`，把`GRUB_TIMEOUT=0`值改掉即可。
+
+## 设置主题和图标主题
+
+之前多是用图形界面的配置来设置主题，现在用arch + hyprland需要从终端设置。
+
+其实也简单：
+
+``` bash
+gsettings set org.gnome.desktop.interface gtk-theme <theme name>
+gsettings set org.gnome.desktop.interface icon-theme <icon theme name>
+```
+
+其中主题放在`/usr/share/themes`，图标放在`/usr/share/icons`，名字就是文件夹的名字。
+
+另外推荐主题`Qogir-dark`和图标主题`ePapirus-Dark`，后者包含一个工具用来改变主题：
+
+``` bash
+# -C后是文件夹图标颜色，-u代表刷新缓存，-t后跟papirus主题名
+papirus-folders -C darkcyan -u -t ePapirus-Dark
+```
+
+项目地址：
+
+* [Qogir Theme](https://github.com/vinceliuice/Qogir-theme)
+* [Papirus Icon Theme](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme)
+* [Papirus Folder Icon](https://github.com/PapirusDevelopmentTeam/papirus-folders)
+
+## Flatpak编译时配置cargo的rsproxy
+
+最近开始玩gtk-rs，这一套和flatpak亲（绑）和（定），有一套仓库模板[gtk-rs-template](https://gitlab.gnome.org/World/Rust/gtk-rust-template)
+
+基本是 rust + mason.
+
+开发环境的话可以选择gnome的builder，也可以选择vs code + flatpak extension
+
+clion暂时没有flatpak支持，暂时没琢磨怎么用，intellij-rust比rust-analyzer强很多，vsc扩展的github上已经有人提了移植到intellij的issue，暂时没动静，如果能在clion里用上就好了。
+
+跑题了，构建的时候会在download crates的地方卡住，肯定要配置代理了。这里有两种思路：
+
+1. 直接配置flatpak的http代理，这个网上的方法好像没效果，或者说对于构建这一步来说没效果。
+2. 配置cargo的rsproxy代理，但是网上没有找到任何有关flatpak build rust app cargo proxy的信息，这块玩的国人不多吧。
+
+绕了一个大圈，最后发现解决方法很简单：
+
+rsproxy只能写在toml配置文件里，这个配置文件一般在cargo home的`config`里，这个其实是个全局的配置文件，对所有项目都适用。
+
+而如果想为某个项目单独配置rsproxy，把相应的配置写到工程目录里的`.cargo/config`里即可，例如：
+
+``` toml
+[source.crates-io]
+# To use sparse index, change 'rsproxy' to 'rsproxy-sparse'
+replace-with = 'rsproxy'
+
+[source.rsproxy]
+registry = "https://rsproxy.cn/crates.io-index"
+[source.rsproxy-sparse]
+registry = "sparse+https://rsproxy.cn/index/"
+
+[registries.rsproxy]
+index = "https://rsproxy.cn/crates.io-index"
+
+[net]
+git-fetch-with-cli = true
+```
+
+emm，心疼硬盘，rust本来就是硬盘消耗大户，这flatpak还搞隔离环境，玩得开心就好。
+
+> 另外：都2023年了怎么还在用*.in这种反人类的东西啊，rust-analyzer和intellij-rust都不认识写进去的配置定义，红一片，做成环境变量别的配置不好吗

@@ -232,3 +232,45 @@ papirus-folders -C darkcyan -u -t ePapirus-Dark
 * [Qogir Theme](https://github.com/vinceliuice/Qogir-theme)
 * [Papirus Icon Theme](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme)
 * [Papirus Folder Icon](https://github.com/PapirusDevelopmentTeam/papirus-folders)
+
+## Flatpak编译时配置cargo的rsproxy
+
+最近开始玩gtk-rs，这一套和flatpak亲（绑）和（定），有一套仓库模板[gtk-rs-template](https://gitlab.gnome.org/World/Rust/gtk-rust-template)
+
+基本是 rust + mason.
+
+开发环境的话可以选择gnome的builder，也可以选择vs code + flatpak extension
+
+clion暂时没有flatpak支持，暂时没琢磨怎么用，intellij-rust比rust-analyzer强很多，vsc扩展的github上已经有人提了移植到intellij的issue，暂时没动静，如果能在clion里用上就好了。
+
+跑题了，构建的时候会在download crates的地方卡住，肯定要配置代理了。这里有两种思路：
+
+1. 直接配置flatpak的http代理，这个网上的方法好像没效果，或者说对于构建这一步来说没效果。
+2. 配置cargo的rsproxy代理，但是网上没有找到任何有关flatpak build rust app cargo proxy的信息，这块玩的国人不多吧。
+
+绕了一个大圈，最后发现解决方法很简单：
+
+rsproxy只能写在toml配置文件里，这个配置文件一般在cargo home的`config`里，这个其实是个全局的配置文件，对所有项目都适用。
+
+而如果想为某个项目单独配置rsproxy，把相应的配置写到工程目录里的`.cargo/config`里即可，例如：
+
+``` toml
+[source.crates-io]
+# To use sparse index, change 'rsproxy' to 'rsproxy-sparse'
+replace-with = 'rsproxy'
+
+[source.rsproxy]
+registry = "https://rsproxy.cn/crates.io-index"
+[source.rsproxy-sparse]
+registry = "sparse+https://rsproxy.cn/index/"
+
+[registries.rsproxy]
+index = "https://rsproxy.cn/crates.io-index"
+
+[net]
+git-fetch-with-cli = true
+```
+
+emm，心疼硬盘，rust本来就是硬盘消耗大户，这flatpak还搞隔离环境，玩得开心就好。
+
+> 另外：都2023年了怎么还在用*.in这种反人类的东西啊，rust-analyzer和intellij-rust都不认识写进去的配置定义，红一片，做成环境变量别的配置不好吗
