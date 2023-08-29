@@ -2,6 +2,21 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://kzs.moe/en-us/about/</loc>
+    <lastmod>2023-08-29T21:17:49+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://kzs.moe/about/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="https://kzs.moe/en-us/about/"
+                />
+  </url><url>
     <loc>https://kzs.moe/en-us/</loc>
     <lastmod>2023-08-14T23:02:58+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -346,31 +361,46 @@
     <lastmod>2023-01-09T08:10:40+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
-  </url><url>
-    <loc>https://kzs.moe/en-us/search.zh/</loc>
-    <lastmod>2023-01-09T08:10:40+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://kzs.moe/search/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="https://kzs.moe/en-us/search/"
+                />
   </url><url>
     <loc>https://kzs.moe/en-us/archives/</loc>
     <lastmod>2023-01-09T08:10:40+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
-  </url><url>
-    <loc>https://kzs.moe/en-us/archives.zh/</loc>
-    <lastmod>2023-01-09T08:10:40+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://kzs.moe/archives/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="https://kzs.moe/en-us/archives/"
+                />
   </url><url>
     <loc>https://kzs.moe/en-us/github/</loc>
     <lastmod>2023-01-09T08:10:40+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
-  </url><url>
-    <loc>https://kzs.moe/en-us/github.zh/</loc>
-    <lastmod>2023-01-09T08:10:40+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://kzs.moe/github/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="https://kzs.moe/en-us/github/"
+                />
   </url><url>
     <loc>https://kzs.moe/en-us/categories/</loc>
     <changefreq>weekly</changefreq>

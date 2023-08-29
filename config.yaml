@@ -153,10 +153,10 @@ $manuMain:
 menu:
   main:
     - *mainMenuHome
-      #- *mainMenuAbout
-      #- *mainMenuLinks
+    - *mainMenuAbout
+      # - *mainMenuLinks
     - *mainMenuArchives
-      #- *mainMenuTwitter
+      # - *mainMenuTwitter
     - *mainMenuGitHub
     - *mainMenuSearch
   # 副导航 / sub-navigation
@@ -294,11 +294,11 @@ params:
 
   # 文章分享功能
   share:
-    twitter: true
-    facebook: true
-    weibo: true
-    copyLinkText: true
-    qrcode: true
+    twitter: false
+    facebook: false
+    weibo: false
+    copyLinkText: false
+    qrcode: false
 
   qrcodeAPI: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data="
 
@@ -325,7 +325,7 @@ params:
   twitter:
     enabled: true
     rsshub: "https://rsshub.rssforever.com" # rsshub url, see https://github.com/DIYgod/RSSHub
-    id: "GenshinImpact" # Twitter ID
+    id: "" # Twitter ID
     # 如果为 true，Hugo 将下载图片和视频并进行优化，如果你在中国大陆地区，请谨慎启用这个选项
     # If enabled, Hugo will download videos and images from the Tweet and optimize them
     imageProcessing: true
@@ -371,7 +371,7 @@ params:
 
   # 显示文章字数
   # show word count
-  wordCount: false
+  wordCount: true
 
   # 开启文章内目录，可以在页面内单独设置
   # Show table of contents, You can enable it separately in the page
@@ -401,7 +401,7 @@ params:
 
   # 开启数学公式
   # katex
-  katex: true
+  katex: false
 
   # 开启返回顶部按钮
   # backtop button
@@ -429,15 +429,15 @@ params:
   opengraph:
     twitter: # see https://developer.twitter.com/en/docs/twitter-for-websites/cards/guides/getting-started
       cardType: summary_large_image # summary | summary_large_image
-      site: "@Ice_Hazymoon"
+      site: ""
     image: "featured.png" # in assets folder | false
 
-  author: Ice-Hazymoon
+  author: realth000
   keywords:
     - Hugo
     - Hugo Theme
     - Luna
-  description: "A simple, performance-first, SEO-friendly Hugo theme"
+  description: " "
 
 build:
   noJSConfigInAssets: true
@@ -452,9 +452,9 @@ languages:
         #font: "Times New Roman,Times,Heti Song,serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol"
       font: "Noto Sans CJK"
       twitter:
-        enabled: true
+        enabled: false
         rsshub: "https://rsshub.rssforever.com"
-        id: "Ice_Hazymoon"
+        id: ""
         imageProcessing: true
       github:
         id: "realth000"

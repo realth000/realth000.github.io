@@ -15,8 +15,7 @@
 <meta name="apple-mobile-web-app-title" content="Search - Distant Vicinity" />
 <meta name="apple-mobile-web-app-status-bar-style" content="white" />
 
-<meta name="twitter:card" content="summary_large_image" /><meta name="twitter:site" content="@Ice_Hazymoon" />
-    <meta name="twitter:creator" content="@Ice_Hazymoon" /><meta name="twitter:title" content="Search - Distant Vicinity" />
+<meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content="Search - Distant Vicinity" />
 <meta name="twitter:description" content="" />
 <meta name="twitter:url" content="https://kzs.moe/en-us/search/" /><meta name="twitter:image" content="" />
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" /><link rel="manifest" href="/en-us/manifest.json" /><link href="/icon.png" rel="shortcut icon" />
@@ -55,6 +54,16 @@
                             class="eva eva-home flex h-8 w-8 items-center justify-center text-3xl leading-none text-gray-500 transition duration-150 ease-[ease] dark:text-darkTextPlaceholder"
                         ></i>
                         <span class="mt-1 block text-xs text-gray-400 dark:text-darkText sm:text-sm md:hidden">Home</span>
+                    </a><a
+                        title="About"
+                        data-active-link="/en-us/about/"
+                        href="/en-us/about/"
+                        class=" relative flex cursor-pointer flex-col items-center text-gray-700 transition duration-150 ease-[ease]"
+                    >
+                        <i
+                            class="eva eva-heart flex h-8 w-8 items-center justify-center text-3xl leading-none text-gray-500 transition duration-150 ease-[ease] dark:text-darkTextPlaceholder"
+                        ></i>
+                        <span class="mt-1 block text-xs text-gray-400 dark:text-darkText sm:text-sm md:hidden">About</span>
                     </a><a
                         title="Archives"
                         data-active-link="/en-us/archives/"
@@ -174,7 +183,7 @@ window.__theme = {
         excludeClasses:["github"],
         excludeNodeNames:[],
     },
-    katex: true ,
+    katex: false ,
     search: true ,
     backtop: true ,
     pangu: true ,
@@ -212,7 +221,7 @@ window.__theme = {
         }
     },}
 </script>
-<script type="text/javascript" src="/ts/main.87f7c8b63611018af8120b2d8a793a74d38e1639b720cb8b25ef14136e2a6b22.js" defer integrity="sha256-h/fItjYRAYr4Egstink6dNOOFjm3IMuLJe8UE24qayI="></script><script>
+<script type="text/javascript" src="/ts/main.aa14e9d7e3c5c7be9f0176490a3641ac4a134a101ff9f1771a12daef4b140865.js" defer integrity="sha256-qhTp1&#43;PFx76fAXZJCjZBrEoTShAf&#43;fF3GhLa70sUCGU="></script><script>
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
             navigator.serviceWorker.register('\/sw.js');
@@ -270,7 +279,25 @@ window.__theme = {
                 />
             </svg>
         </div>
-    </a><div id="i18nlist"></div><noscript>
+    </a><div id="i18nlist"><div
+                style="font-size: 0;"
+                class="
+                    absolute
+                 left-0 top-0 z-50 rounded rounded-tl-none rounded-bl-none p-1.5 dark:bg-darkBgAccent md:bg-white md:shadow-custom"
+            >
+                <input type="checkbox" name="i18nlist-input" id="i18nlist-checkbox" />
+                <label for="i18nlist-checkbox">
+                    <span class="cursor-pointer leading-none group-hover:hidden"><svg class="w-5 h-5 fill-current text-inherit dark:text-darkTextPlaceholder" t="1655231528998" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2176" ><path d="M213.333333 640v85.333333a85.333333 85.333333 0 0 0 78.933334 85.12L298.666667 810.666667h128v85.333333H298.666667a170.666667 170.666667 0 0 1-170.666667-170.666667v-85.333333h85.333333z m554.666667-213.333333l187.733333 469.333333h-91.946666l-51.242667-128h-174.506667l-51.157333 128h-91.904L682.666667 426.666667h85.333333z m-42.666667 123.093333L672.128 682.666667h106.325333L725.333333 549.76zM341.333333 85.333333v85.333334h170.666667v298.666666H341.333333v128H256v-128H85.333333V170.666667h170.666667V85.333333h85.333333z m384 42.666667a170.666667 170.666667 0 0 1 170.666667 170.666667v85.333333h-85.333333V298.666667a85.333333 85.333333 0 0 0-85.333334-85.333334h-128V128h128zM256 256H170.666667v128h85.333333V256z m170.666667 0H341.333333v128h85.333334V256z" p-id="2177"></path></svg></span>
+                </label>
+                <ul class="hidden border border-transparent pb-0 group-hover:block"><li class="mb-1.5 cursor-pointer last:mb-0">
+                            <a data-no-swup href="https://kzs.moe/search/" title="Switch language to 中文"><img
+                                    class="w-6 cursor-pointer rounded-sm border border-gray-50"
+                                    src="/images/i18n/zh-cn.svg"
+                                    alt="zh-cn"
+                                />
+                            </a>
+                        </li></ul>
+            </div></div><noscript>
     <style>
         .dark-mode-switch,
         #run-time,
