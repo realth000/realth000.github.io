@@ -12,7 +12,7 @@ publishDir: "docs"
 
 # 可根据 Git 中的提交生成最近更新记录。
 # use git commit log to generate lastmod record
-enableGitInfo: false
+enableGitInfo: true
 
 # 如果你的博客包含中日韩语，请启用此选项
 # enable CJK language support
@@ -447,7 +447,8 @@ languages:
     contentDir: content/zh-hans
     languageName: 中文
     params:
-      languageIcon: "images/i18n/zh-cn.svg" # in assets folder
+      languageIcon:
+        "images/i18n/zh-cn.svg" # in assets folder
         #font: "Times New Roman,Times,Heti Song,serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol"
       font: "Noto Sans CJK"
       twitter:
