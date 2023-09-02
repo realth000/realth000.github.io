@@ -6,7 +6,16 @@
     <description>Recent content in Posts on Distant Vicinity</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 22 Jul 2023 09:31:42 +0800</lastBuildDate><atom:link href="https://kzs.moe/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 03 Sep 2023 05:37:16 +0800</lastBuildDate><atom:link href="https://kzs.moe/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>(neo)vim使用</title>
+      <link>https://kzs.moe/2023/09/03/neovim%E4%BD%BF%E7%94%A8.html/</link>
+      <pubDate>Sun, 03 Sep 2023 05:37:16 +0800</pubDate>
+      
+      <guid>https://kzs.moe/2023/09/03/neovim%E4%BD%BF%E7%94%A8.html/</guid>
+      <description>(neo)vim键位和使用</description>
+    </item>
+    
     <item>
       <title>Linux技巧笔记</title>
       <link>https://kzs.moe/2023/07/22/linux%E6%8A%80%E5%B7%A7%E7%AC%94%E8%AE%B0.html/</link>
