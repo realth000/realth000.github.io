@@ -6,7 +6,16 @@
     <description>Recent content in Posts on Distant Vicinity</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 03 Sep 2023 05:37:16 +0800</lastBuildDate><atom:link href="https://kzs.moe/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 09 Sep 2023 18:47:56 +0800</lastBuildDate><atom:link href="https://kzs.moe/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>从oh-my-posh到starship</title>
+      <link>https://kzs.moe/2023/09/09/%E4%BB%8Eoh-my-posh%E5%88%B0starship.html/</link>
+      <pubDate>Sat, 09 Sep 2023 18:47:56 +0800</pubDate>
+      
+      <guid>https://kzs.moe/2023/09/09/%E4%BB%8Eoh-my-posh%E5%88%B0starship.html/</guid>
+      <description>同样是prompt，为何放弃oh-my-posh而使用starship</description>
+    </item>
+    
     <item>
       <title>(neo)vim使用</title>
       <link>https://kzs.moe/2023/09/03/neovim%E4%BD%BF%E7%94%A8.html/</link>
