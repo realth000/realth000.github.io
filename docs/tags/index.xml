@@ -6,13 +6,76 @@
     <description>Recent content in Tags on Distant Vicinity</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 22 Jul 2023 09:31:42 +0800</lastBuildDate><atom:link href="https://kzs.moe/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 21 Sep 2023 02:43:16 +0800</lastBuildDate><atom:link href="https://kzs.moe/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>cpp</title>
+      <link>https://kzs.moe/tags/cpp/</link>
+      <pubDate>Thu, 21 Sep 2023 02:43:16 +0800</pubDate>
+      
+      <guid>https://kzs.moe/tags/cpp/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>dart</title>
+      <link>https://kzs.moe/tags/dart/</link>
+      <pubDate>Thu, 21 Sep 2023 02:43:16 +0800</pubDate>
+      
+      <guid>https://kzs.moe/tags/dart/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>flutter</title>
+      <link>https://kzs.moe/tags/flutter/</link>
+      <pubDate>Thu, 21 Sep 2023 02:43:16 +0800</pubDate>
+      
+      <guid>https://kzs.moe/tags/flutter/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>rust</title>
+      <link>https://kzs.moe/tags/rust/</link>
+      <pubDate>Thu, 21 Sep 2023 02:43:16 +0800</pubDate>
+      
+      <guid>https://kzs.moe/tags/rust/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>linux</title>
       <link>https://kzs.moe/tags/linux/</link>
-      <pubDate>Sat, 22 Jul 2023 09:31:42 +0800</pubDate>
+      <pubDate>Sat, 09 Sep 2023 18:47:56 +0800</pubDate>
       
       <guid>https://kzs.moe/tags/linux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>shell</title>
+      <link>https://kzs.moe/tags/shell/</link>
+      <pubDate>Sat, 09 Sep 2023 18:47:56 +0800</pubDate>
+      
+      <guid>https://kzs.moe/tags/shell/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>windows</title>
+      <link>https://kzs.moe/tags/windows/</link>
+      <pubDate>Sat, 09 Sep 2023 18:47:56 +0800</pubDate>
+      
+      <guid>https://kzs.moe/tags/windows/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>vim</title>
+      <link>https://kzs.moe/tags/vim/</link>
+      <pubDate>Sun, 03 Sep 2023 05:37:16 +0800</pubDate>
+      
+      <guid>https://kzs.moe/tags/vim/</guid>
       <description></description>
     </item>
     
@@ -31,15 +94,6 @@
       <pubDate>Mon, 17 Jul 2023 22:47:22 +0800</pubDate>
       
       <guid>https://kzs.moe/tags/ost/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>flutter</title>
-      <link>https://kzs.moe/tags/flutter/</link>
-      <pubDate>Sat, 18 Feb 2023 02:44:46 +0800</pubDate>
-      
-      <guid>https://kzs.moe/tags/flutter/</guid>
       <description></description>
     </item>
     

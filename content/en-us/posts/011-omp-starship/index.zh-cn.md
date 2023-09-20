@@ -3,6 +3,7 @@ title: "从oh-my-posh到starship"
 date: 2023-09-09T18:47:56+08:00
 featured_image: cover.png
 summary: 同样是prompt，为何放弃oh-my-posh而使用starship
+tags: ["linux", "shell", "windows"]
 ---
 
 ## 前言

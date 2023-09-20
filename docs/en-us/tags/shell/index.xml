@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>shell on Distant Vicinity</title>
+    <link>https://kzs.moe/en-us/tags/shell/</link>
+    <description>Recent content in shell on Distant Vicinity</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 09 Sep 2023 18:47:56 +0800</lastBuildDate><atom:link href="https://kzs.moe/en-us/tags/shell/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>从oh-my-posh到starship</title>
+      <link>https://kzs.moe/en-us/2023/09/09/%E4%BB%8Eoh-my-posh%E5%88%B0starship.html/</link>
+      <pubDate>Sat, 09 Sep 2023 18:47:56 +0800</pubDate>
+      
+      <guid>https://kzs.moe/en-us/2023/09/09/%E4%BB%8Eoh-my-posh%E5%88%B0starship.html/</guid>
+      <description>同样是prompt，为何放弃oh-my-posh而使用starship</description>
+    </item>
+    
+  </channel>
+</rss>

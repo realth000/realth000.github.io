@@ -6,7 +6,16 @@
     <description>Recent content in Posts on Distant Vicinity</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 09 Sep 2023 18:47:56 +0800</lastBuildDate><atom:link href="https://kzs.moe/en-us/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 21 Sep 2023 02:43:16 +0800</lastBuildDate><atom:link href="https://kzs.moe/en-us/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>在代码中预处理git信息</title>
+      <link>https://kzs.moe/en-us/2023/09/21/%E5%9C%A8%E4%BB%A3%E7%A0%81%E4%B8%AD%E9%A2%84%E5%A4%84%E7%90%86git%E4%BF%A1%E6%81%AF.html/</link>
+      <pubDate>Thu, 21 Sep 2023 02:43:16 +0800</pubDate>
+      
+      <guid>https://kzs.moe/en-us/2023/09/21/%E5%9C%A8%E4%BB%A3%E7%A0%81%E4%B8%AD%E9%A2%84%E5%A4%84%E7%90%86git%E4%BF%A1%E6%81%AF.html/</guid>
+      <description>比较cpp/dart/rust中如何优雅地将git信息编码到产物里</description>
+    </item>
+    
     <item>
       <title>从oh-my-posh到starship</title>
       <link>https://kzs.moe/en-us/2023/09/09/%E4%BB%8Eoh-my-posh%E5%88%B0starship.html/</link>

@@ -13,9 +13,705 @@
         <link>https://kzs.moe/en-us/</link>
         <managingEditor>realth000</managingEditor>
         <description> </description>
-        <lastBuildDate>Sat, 09 Sep 2023 18:47:56 +0800</lastBuildDate>
+        <lastBuildDate>Thu, 21 Sep 2023 02:43:16 +0800</lastBuildDate>
         <language>en-us</language>
         <generator>Hugo -- gohugo.io</generator><item>
+            <title>在代码中预处理git信息</title>
+            <link>https://kzs.moe/en-us/2023/09/21/%E5%9C%A8%E4%BB%A3%E7%A0%81%E4%B8%AD%E9%A2%84%E5%A4%84%E7%90%86git%E4%BF%A1%E6%81%AF.html/</link>
+            <pubDate>Thu, 21 Sep 2023 02:43:16 +0800</pubDate>
+            <guid>https://kzs.moe/en-us/2023/09/21/%E5%9C%A8%E4%BB%A3%E7%A0%81%E4%B8%AD%E9%A2%84%E5%A4%84%E7%90%86git%E4%BF%A1%E6%81%AF.html/</guid><description>&lt;p&gt;在开发过程中经常需要在编译期做一些处理，此时经常的方案一般是用宏或者其他预定义的功能。&lt;/p&gt;
+&lt;p&gt;在cpp，dart和rust中分别提供了不同程度的能力。&lt;/p&gt;
+&lt;p&gt;比如从环境中拿到一些变量的值，作为变量或者按照条件编译。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;像把git提交的id和时间写入到程序和help或者version文本中。&lt;/li&gt;
+&lt;li&gt;或者根据环境中的变量来改变编译流程。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;以获取git提交信息作为例子，总结一下三种语言提供的能力有何不同。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;git&#34;
+    &gt;git&lt;a href=&#34;#git&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;先说说如何获取提交id这类的信息吧。&lt;/p&gt;
+&lt;p&gt;一般说来关心的git信息只有三种：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Commit hash，或者叫revision，是指每次提交对应的id hash，这玩意可以完全记录下来，也可以记录前面七个字母。
+&lt;ul&gt;
+&lt;li&gt;大概七个字母即可，似乎八个也是正确格式，但是github上显示的短hash是七个字母，这里就也以七个字母为准。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Commit time，提交时间，什么时候提交的。&lt;/li&gt;
+&lt;li&gt;Tag，也就是当前或者最近一次&lt;code&gt;git tag&lt;/code&gt;打上的标签，这个是软件的版本。
+&lt;ul&gt;
+&lt;li&gt;其实还有一点，如果分发不在tag上的提交的话，建议再加上一点额外的信息：记录一下当前提交比最新的tag多几个提交，有点类似patch version的感觉。&lt;/li&gt;
+&lt;li&gt;举个例子：比如昨天提交完，打了一个tag叫&lt;code&gt;v1.2&lt;/code&gt;，今天又提交了一次，那么这次提交比昨天的tag多了一次提交，如果今天的这个提交要作为nightly版本发布的话，最好提供类似&lt;code&gt;v1.2+1&lt;/code&gt;或者&lt;code&gt;v1.2-今天的commit-id&lt;/code&gt;。可以一眼看出多了多少提交。&lt;/li&gt;
+&lt;li&gt;否则的话，虽然有git hash，也会让人迷惑：明明是一样的tag版本，怎么提交id还不一样呢。&lt;/li&gt;
+&lt;li&gt;当然，如果没有nightly版本，所有发布的版本都是正好在tag上，可以不做这个。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;那么如何获取各项信息呢？&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;短的git-hash&#34;
+    &gt;短的git hash&lt;a href=&#34;#%e7%9f%ad%e7%9a%84git-hash&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;运行：&lt;code&gt;git --no-pager show --oneline --format=%h -s HEAD&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;输出：&lt;code&gt;29d6fc0&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;由于高版本的git在输出时会使用pager（就是可以翻页，然后退出的功能，类似less命令），有可能导致在脚本或者构建过程中使用git命令的时候获取不到正确的输出，因此加上&lt;code&gt;--no-pager&lt;/code&gt;保证stdout里的信息的想要的。&lt;/p&gt;
+&lt;p&gt;然后format呢类似date命令的format，详细定义见man手册。&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;长的git-hash&#34;
+    &gt;长的git hash&lt;a href=&#34;#%e9%95%bf%e7%9a%84git-hash&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;运行：&lt;code&gt;git --no-pager show --oneline --format=%H -s HEAD&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;输出：&lt;code&gt;29d6fc099e3042331f8076115752d409ed70b067&lt;/code&gt;&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;git提交时间&#34;
+    &gt;git提交时间&lt;a href=&#34;#git%e6%8f%90%e4%ba%a4%e6%97%b6%e9%97%b4&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;运行：&lt;code&gt;git --no-pager show --oneline --format=%cd --date=format:&amp;quot;%F %T %z&amp;quot; -s HEAD&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;输出：&lt;code&gt;2023-09-07 05:04:03 +0800&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;这里的时间格式就更像date的了，可以自定义，还是详见man手册。&lt;/p&gt;
+
+
+&lt;h3 class=&#34;group &#34; id=&#34;最近的git-tag&#34;
+    &gt;最近的git tag&lt;a href=&#34;#%e6%9c%80%e8%bf%91%e7%9a%84git-tag&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h3&gt;
+
+&lt;p&gt;运行：&lt;code&gt;git describe --abbrev=0 --tags&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;输出：&lt;code&gt;v1.5.0&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;注意如果没有tag，stdout会为空，stderr有错误信息“致命错误：没有发现名称，无法描述任何东西。”，这种情况需要单独处理，比如把版本号手动设置成&lt;code&gt;v0.0.0&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;距离最近的git tag有几次提交：&lt;code&gt;git log --pretty=oneline TAG_ID...COMMIT_ID | wc -l | xargs expr 1 +&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;略复杂一点，&lt;code&gt;TAG_ID&lt;/code&gt;是之前获得的当前最近的tag的名字，比如&lt;code&gt;v1.6.0&lt;/code&gt;，&lt;code&gt;COMMIT_ID&lt;/code&gt;是之前获得的当前提交的commit hash，比如&lt;code&gt;29d6fc0&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;然后这个git命令会把从&lt;code&gt;TAG_ID&lt;/code&gt;到&lt;code&gt;COMMIT_ID&lt;/code&gt;的所有提交打印出来，每个提交占一行，不包括&lt;code&gt;TAG_ID&lt;/code&gt;所在的那一次提交。&lt;/p&gt;
+&lt;p&gt;最后再用&lt;code&gt;wc -l&lt;/code&gt;统计一下行数，就可以作为到&lt;code&gt;TAG_ID的距离&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;那么最后为什么还要用&lt;code&gt;expr&lt;/code&gt;加上1呢？其实是喜好问题，如果加上1，当&lt;code&gt;TAG_ID&lt;/code&gt;和&lt;code&gt;COMMIT_ID&lt;/code&gt;实际是一次提交的时候，获取到的距离是1，最终可以打印类似&lt;code&gt;v1.5.0-release1&lt;/code&gt;。不加&lt;code&gt;expr&lt;/code&gt;的话最终是&lt;code&gt;v1.5.0-release0&lt;/code&gt;。我个人更喜欢这个修订号从1开始，于是加上1了，不加也完全可以。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;因为各种包管理的包版本，在这个小的修订号上都是从1开始。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;这部分的获取方式不唯一，git提供的命令太多了，选一个喜欢的就好。&lt;/p&gt;
+&lt;p&gt;有个地方忘了说，如果环境中git版本很低，不支持pager，那加了&lt;code&gt;--no-pager&lt;/code&gt;反而会报错，不认识这个参数嘛。但是那种情况很少见，因此不考虑了。&lt;/p&gt;
+&lt;p&gt;至少我记得ubuntu1804上都支持&lt;code&gt;--no-pager&lt;/code&gt;。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;cpp&#34;
+    &gt;CPP&lt;a href=&#34;#cpp&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;直接用宏即可，比如make的时候添加参数&lt;code&gt;-DMY_MACRO=1&lt;/code&gt;后源码中会多出一个叫&lt;code&gt;MY_MACRO&lt;/code&gt;的值为1的宏。&lt;/p&gt;
+&lt;p&gt;然后……随便写个例子。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-cpp&#34; data-lang=&#34;cpp&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;#if MY_MACRO
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;#include&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;#34;my_header1.h&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;#else
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;#include&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;#34;my_header2.h&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;#endif
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;里面用&lt;code&gt;#if&lt;/code&gt;和&lt;code&gt;#ifdef&lt;/code&gt;其实都可以，看想用宏表达什么意思吧，是类似int的数值还是bool一样“有或者咩有”。&lt;/p&gt;
+&lt;p&gt;好吧，这个不是今天的重点，重点是如何自动地把这些git信息随着开发自动更新，手动加宏也太丑了。&lt;/p&gt;
+&lt;p&gt;这个时候还是要请出没有人喜欢但是又不得不用的cmake。&lt;/p&gt;
+&lt;p&gt;cmake内可以执行命令，可以获取执行的命令的输出，还可以加宏，完全满足需求。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;23
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;24
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;25
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;26
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;27
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;28
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;29
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;30
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;31
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;32
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;33
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;34
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;35
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;36
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;37
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;38
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;39
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;40
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;41
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;42
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;43
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;44
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;45
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;46
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;47
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;48
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;49
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;50
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;51
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;52
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;53
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;54
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;55
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;56
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;57
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;58
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;59
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-cmake&#34; data-lang=&#34;cmake&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;# Get git info
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;find_package&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;Git&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;QUIET&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#f1fa8c&#34;&gt;GIT_FOUND&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;set&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;GIT_COMMIT_TIME&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;set&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;GIT_COMMIT&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;set&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;GIT_COMMIT_LONG&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#6272a4&#34;&gt;# GIT_BRANCH   = $$system(git rev-parse --abbrev-ref HEAD)
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;execute_process&lt;/span&gt;(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#6272a4&#34;&gt;#COMMAND ${GIT_EXECUTABLE} --no-pager log -1 --pretty=format:%cd --date=format:&amp;#34;%F %T %z&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;COMMAND&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;GIT_EXECUTABLE&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;--no-pager&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;show&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;--oneline&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;--format=%cd&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;--date=format:&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;%F %T %z&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;-s&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;HEAD&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;OUTPUT_VARIABLE&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;GIT_COMMIT_TIME&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;OUTPUT_STRIP_TRAILING_WHITESPACE&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;ERROR_QUIET&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;WORKING_DIRECTORY&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;CMAKE_CURRENT_SOURCE_DIR&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    )
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;execute_process&lt;/span&gt;(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;COMMAND&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;GIT_EXECUTABLE&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;--no-pager&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;show&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;--oneline&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;--format=%h&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;-s&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;HEAD&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;OUTPUT_VARIABLE&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;GIT_COMMIT&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;OUTPUT_STRIP_TRAILING_WHITESPACE&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;ERROR_QUIET&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;WORKING_DIRECTORY&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;CMAKE_CURRENT_SOURCE_DIR&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    )
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;execute_process&lt;/span&gt;(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;COMMAND&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;GIT_EXECUTABLE&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;--no-pager&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;show&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;--oneline&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;--format=%H&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;-s&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;HEAD&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;OUTPUT_VARIABLE&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;GIT_COMMIT_LONG&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;OUTPUT_STRIP_TRAILING_WHITESPACE&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;ERROR_QUIET&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;WORKING_DIRECTORY&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;CMAKE_CURRENT_SOURCE_DIR&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    )
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;execute_process&lt;/span&gt;(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;COMMAND&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;GIT_EXECUTABLE&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;describe&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;--abbrev=0&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;--tags&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;OUTPUT_VARIABLE&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;GIT_VERSION_TAG&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;OUTPUT_STRIP_TRAILING_WHITESPACE&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;ERROR_QUIET&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;WORKING_DIRECTORY&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;CMAKE_CURRENT_SOURCE_DIR&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    )
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;execute_process&lt;/span&gt;(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;COMMAND&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;GIT_EXECUTABLE&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;log&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;--pretty=oneline&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;GIT_VERSION_TAG&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;...&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;GIT_COMMIT&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;COMMAND&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;wc&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;-l&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;COMMAND&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;xargs&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;expr&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;+&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;OUTPUT_VARIABLE&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;GIT_RELEASE_COUNT&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;OUTPUT_STRIP_TRAILING_WHITESPACE&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#6272a4&#34;&gt;#            ERROR_QUIET
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;WORKING_DIRECTORY&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;CMAKE_CURRENT_SOURCE_DIR&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    )
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;add_definitions&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;-DAPP_COMMIT_TIME=&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;GIT_COMMIT_TIME&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;add_definitions&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;-DAPP_COMMIT=&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;${GIT_COMMIT}&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;add_definitions&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;-DAPP_COMMIT_LONG=&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;${GIT_COMMIT_LONG}&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;add_definitions&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;-DAPP_VERSION_TAG=&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;${GIT_VERSION_TAG}&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;add_definitions&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;-DAPP_RELEASE_COUNT=&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;${GIT_RELEASE_COUNT}&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;message&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;STATUS&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;Git commit time:&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;GIT_COMMIT_TIME&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;message&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;STATUS&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;Git commit:&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;GIT_COMMIT&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;message&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;STATUS&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;Git commit full name:&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;GIT_COMMIT_LONG&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;message&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;STATUS&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;Git version tag:&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;GIT_VERSION_TAG&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;message&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;STATUS&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;Git release count:&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;GIT_RELEASE_COUNT&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;}&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;else&lt;/span&gt; ()
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;message&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;WARNING&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;Git not found&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;endif&lt;/span&gt; ()
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;使用的git命令就是刚才说的命令。不同点在于最后的管道要分开写成三个COMMAND。&lt;/p&gt;
+&lt;p&gt;上述配置把git的commit hash以及提交时间定义成宏，之后在源码里直接使用&lt;code&gt;APP_COMMIT_TIME&lt;/code&gt;等宏即可。&lt;/p&gt;
+&lt;p&gt;需要注意的是，这玩意是在cmake里的，也就是说如果只make，不跑cmake，这些宏的定义不会更新。&lt;/p&gt;
+&lt;p&gt;并且，在提交之后，需要重新cmake一次，以生成最新的信息，不然宏的值还是老的。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;dart&#34;
+    &gt;Dart&lt;a href=&#34;#dart&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;dart虽然是个易上手的尽量简单的语言，也提供了类似宏的功能，叫dart define。&lt;/p&gt;
+&lt;p&gt;dart define不是某个包，是语言内置的功能，在&lt;code&gt;fluter run&lt;/code&gt;或者&lt;code&gt;flutter build&lt;/code&gt;的时候，加上参数&lt;code&gt;--dart-define=MY_MACRO=&amp;quot;MACRO_VALUE&amp;quot;&lt;/code&gt;以后，在源码里通过&lt;code&gt;String.fromEnvironment(&amp;quot;MY_MACRO&amp;quot;)&lt;/code&gt;可以获取到值MACRO_VALUE。&lt;/p&gt;
+&lt;p&gt;有一个地方可能会引起疑惑，因为&lt;code&gt;String.fromEnvironment&lt;/code&gt;显然是运行期执行的代码，那么我运行的时候如果手动设置环境变量&lt;code&gt;MY_MACRO=MACRO_VALUE&lt;/code&gt;的话，岂不是把编译时候的覆盖掉了？&lt;/p&gt;
+&lt;p&gt;其实不然，如果编译期指定了&lt;code&gt;MY_MACRO&lt;/code&gt;的值，那么编译的时候&lt;code&gt;String.fromEnvironment&lt;/code&gt;可以获取到，会被编译器优化成写死的值，不需要担心运行时被覆盖。&lt;/p&gt;
+&lt;p&gt;但是直接在命令里加dart define也非常麻烦，那就写个脚本吧。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;23
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;24
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;25
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;26
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;27
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;28
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;#!/bin/bash
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;set&lt;/span&gt; -ex
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;COMMAND&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;APP_VERSION&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;GIT_COMMIT_TIME&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;$(&lt;/span&gt;git --no-pager show --oneline --format&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;%cd --date&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;format:&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;%F %T %z&amp;#34;&lt;/span&gt; -s HEAD&lt;span style=&#34;color:#ff79c6&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;GIT_COMMIT_ID&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;$(&lt;/span&gt;git --no-pager show --oneline --format&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;%h -s HEAD&lt;span style=&#34;color:#ff79c6&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;GIT_COMMIT_ID_LONG&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;$(&lt;/span&gt;git --no-pager show --oneline --format&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;%H -s HEAD&lt;span style=&#34;color:#ff79c6&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;FLUTTER_VERSION&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;$(&lt;/span&gt;flutter --version | sed -n &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;s/Flutter \([0-9\.]*\).*/\1/p&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;DART_VERSION&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;$(&lt;/span&gt;dart --version | sed -n &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;s/Dart SDK version: \([0-9\.]*\).*/\1/p&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;[&lt;/span&gt; -f ../pubspec.yaml &lt;span style=&#34;color:#ff79c6&#34;&gt;]&lt;/span&gt;;&lt;span style=&#34;color:#ff79c6&#34;&gt;then&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;PUBSPEC_FILE&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;../pubspec.yaml&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;elif&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;[&lt;/span&gt; -f pubspec.yaml &lt;span style=&#34;color:#ff79c6&#34;&gt;]&lt;/span&gt;;&lt;span style=&#34;color:#ff79c6&#34;&gt;then&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;PUBSPEC_FILE&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;pubspec.yaml&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;fi&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;APP_VERSION&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;$(&lt;/span&gt;cat &lt;span style=&#34;color:#f1fa8c&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;PUBSPEC_FILE&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;}&lt;/span&gt; | sed -n &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;s/version: \([0-9\.\+]*\).*/\1/p&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;COMMAND&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;flutter &lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;$*&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;COMMAND&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&lt;/span&gt;	--dart-define&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;GIT_COMMIT_TIME&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;GIT_COMMIT_TIME&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&lt;/span&gt;	--dart-define&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;GIT_COMMIT_ID&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;GIT_COMMIT_ID&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&lt;/span&gt;	--dart-define&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;GIT_COMMIT_ID_LONG&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;GIT_COMMIT_ID_LONG&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&lt;/span&gt;	--dart-define&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;FLUTTER_VERSION&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;FLUTTER_VERSION&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&lt;/span&gt;	--dart-define&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;DART_VERSION&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;DART_VERSION&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&lt;/span&gt;	--dart-define&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;APP_VERSION&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;APP_VERSION&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这里不光获取到了git提交的信息，还把flutter和dart的信息也加进去了。&lt;/p&gt;
+&lt;p&gt;用的时候只需要：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-dart&#34; data-lang=&#34;dart&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Text(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#8be9fd&#34;&gt;String&lt;/span&gt;.fromEnvironment(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;GIT_COMMIT_ID&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;defaultValue:&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#39;unknown&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    ),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  )
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;非常方便，而且安全。&lt;/p&gt;
+&lt;p&gt;但是！&lt;/p&gt;
+&lt;p&gt;但是dart的这个define没法做条件编译。&lt;/p&gt;
+&lt;p&gt;虽然有网上的文章说可以条件编译，比如：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-dart&#34; data-lang=&#34;dart&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;xxx.dart&amp;#34;&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  if yyy &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;yyy.dart&amp;#34;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;类似这个，但是只能区分web平台和原生平台，无法区分是windows还是linux还是android。&lt;/p&gt;
+&lt;p&gt;这算个毛线条件编译，如果有条件编译的话，做package的时候就不需要分成好几个package 比如xxx_windows，xxx_linux了。&lt;/p&gt;
+&lt;p&gt;分开太丑了，而且不好调试，也不好维护，有传言说dart会支持元编程，但是现在还不行，等等吧。&lt;/p&gt;
+&lt;p&gt;另外如果是windows平台，还需要写powershell完成这个功能。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;太折磨了，就一个区分平台，有时候明明只有一点区别却非要分成多个package，我现在在做的一个原生的插件就因为这个很难同时在win和linux上编译，仅仅因为ffi的时候参数类型有区别。
+windows是utf16，其他平台是utf8。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;rust&#34;
+    &gt;Rust&lt;a href=&#34;#rust&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;Rust的方案在我看来是上述两个方案的折中吧，既是原生支持的功能，也需要跑一些命令比较麻烦。&lt;/p&gt;
+&lt;p&gt;在Rust里，这部分可以通过build.rs这个功能完成，在里面跑一些命令，获取输出，保存成变量，然后代码里引入，使用。&lt;/p&gt;
+&lt;p&gt;build.rs:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;  1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;  2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;  3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;  4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;  5
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;  6
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;  7
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;  8
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;  9
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 10
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 11
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 12
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 13
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 14
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 15
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 16
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 17
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 18
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 19
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 20
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 21
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 22
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 23
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 24
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 25
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 26
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 27
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 28
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 29
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 30
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 31
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 32
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 33
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 34
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 35
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 36
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 37
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 38
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 39
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 40
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 41
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 42
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 43
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 44
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 45
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 46
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 47
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 48
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 49
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 50
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 51
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 52
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 53
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 54
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 55
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 56
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 57
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 58
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 59
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 60
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 61
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 62
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 63
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 64
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 65
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 66
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 67
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 68
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 69
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 70
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 71
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 72
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 73
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 74
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 75
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 76
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 77
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 78
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 79
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 80
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 81
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 82
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 83
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 84
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 85
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 86
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 87
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 88
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 89
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 90
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 91
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 92
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 93
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 94
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 95
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 96
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 97
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 98
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 99
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;100
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;101
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;102
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;103
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;104
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;105
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;106
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;107
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;108
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;109
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;110
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;111
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;112
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;113
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;114
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;115
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;116
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;117
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;118
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;119
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;120
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;121
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;122
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;123
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-rust&#34; data-lang=&#34;rust&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;use&lt;/span&gt; std::env;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;use&lt;/span&gt; std::ffi::OsStr;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;use&lt;/span&gt; std::fs::OpenOptions;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;use&lt;/span&gt; std::io::Write;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;use&lt;/span&gt; std::path::{Path, PathBuf};
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;use&lt;/span&gt; std::process::Command;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;#[allow(clippy::too_many_lines)]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;fn&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;main&lt;/span&gt;() {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;let&lt;/span&gt; out_dir &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; env::var(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;OUT_DIR&amp;#34;&lt;/span&gt;).unwrap();
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;let&lt;/span&gt; git_commit_time &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; run_command(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;git&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        [
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;--no-pager&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;show&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;--oneline&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;--format=%cd&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;--date=format:%F&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;-s&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;HEAD&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        ],
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    )
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    .&lt;span style=&#34;color:#bd93f9&#34;&gt;0&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;let&lt;/span&gt; git_commit_time_long &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; run_command(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;git&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        [
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;--no-pager&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;show&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;--oneline&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;--format=%cd&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;--date=format:%F %T %z&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;-s&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;HEAD&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        ],
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    )
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    .&lt;span style=&#34;color:#bd93f9&#34;&gt;0&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;let&lt;/span&gt; git_commit_revision_long &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; run_command(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;git&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        [
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;--no-pager&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;show&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;--oneline&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;--format=%H&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;-s&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;HEAD&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        ],
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    )
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    .&lt;span style=&#34;color:#bd93f9&#34;&gt;0&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;let&lt;/span&gt; git_commit_revision &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; run_command(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;git&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        [
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;--no-pager&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;show&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;--oneline&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;--format=%h&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;-s&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;HEAD&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        ],
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    )
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    .&lt;span style=&#34;color:#bd93f9&#34;&gt;0&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;let&lt;/span&gt; git_tag_data &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; run_command(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;git&amp;#34;&lt;/span&gt;, [&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;describe&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;--abbrev=0&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;--tags&amp;#34;&lt;/span&gt;]).&lt;span style=&#34;color:#bd93f9&#34;&gt;0&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;let&lt;/span&gt; git_tag &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;if&lt;/span&gt; git_tag_data.is_empty() {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;String&lt;/span&gt;::from(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;0.0.0&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    } &lt;span style=&#34;color:#ff79c6&#34;&gt;else&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;String&lt;/span&gt;::from_utf8(git_tag_data).unwrap()
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    };
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;let&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;mut&lt;/span&gt; data &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;String&lt;/span&gt;::new();
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    data.push_str(make_trimmed_str_var_from_bytes(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;GIT_COMMIT_TIME&amp;#34;&lt;/span&gt;, git_commit_time).as_str());
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    data.push_str(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        make_trimmed_str_var_from_bytes(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;GIT_COMMIT_TIME_LONG&amp;#34;&lt;/span&gt;, git_commit_time_long).as_str(),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    );
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    data.push_str(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        make_trimmed_str_var_from_bytes(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;GIT_COMMIT_REVISION&amp;#34;&lt;/span&gt;, git_commit_revision).as_str(),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    );
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    data.push_str(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        make_trimmed_str_var_from_bytes(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;GIT_COMMIT_REVISION_LONG&amp;#34;&lt;/span&gt;, git_commit_revision_long)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            .as_str(),
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    );
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    data.push_str(make_trimmed_str_var(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;GIT_TAG_VERSION&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;git_tag).as_str());
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;let&lt;/span&gt; dst_path &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; PathBuf::from(out_dir).join(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;constants.generated.rs&amp;#34;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    generate_file(dst_path, data);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;fn&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;generate_file&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;lt;&lt;/span&gt;P: &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;AsRef&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;lt;&lt;/span&gt;Path&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;gt;&lt;/span&gt;, D: &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;AsRef&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;lt;&lt;/span&gt;[&lt;span style=&#34;color:#8be9fd&#34;&gt;u8&lt;/span&gt;]&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;gt;&amp;gt;&lt;/span&gt;(path: &lt;span style=&#34;color:#50fa7b&#34;&gt;P&lt;/span&gt;, data: &lt;span style=&#34;color:#50fa7b&#34;&gt;D&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;let&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;mut&lt;/span&gt; f &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; OpenOptions::new()
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        .write(&lt;span style=&#34;color:#ff79c6&#34;&gt;true&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        .create(&lt;span style=&#34;color:#ff79c6&#34;&gt;true&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        .truncate(&lt;span style=&#34;color:#ff79c6&#34;&gt;true&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        .open(path)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        .unwrap();
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    f.write_all(data.as_ref()).unwrap();
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;fn&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;run_command&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;lt;&lt;/span&gt;S, I&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;gt;&lt;/span&gt;(command: &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd&#34;&gt;str&lt;/span&gt;, args: &lt;span style=&#34;color:#50fa7b&#34;&gt;I&lt;/span&gt;) -&amp;gt; (&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;Vec&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd&#34;&gt;u8&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;gt;&lt;/span&gt;, &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;Vec&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd&#34;&gt;u8&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;gt;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;where&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    S: &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;AsRef&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;lt;&lt;/span&gt;OsStr&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;gt;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    I: &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;IntoIterator&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;lt;&lt;/span&gt;Item &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; S&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;gt;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;{
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;let&lt;/span&gt; cmd_output &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; Command::new(command).args(args).output().unwrap();
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;let&lt;/span&gt; cmd_stdout &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; cmd_output.stdout;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;let&lt;/span&gt; cmd_stderr &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; cmd_output.stderr;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (cmd_stdout, cmd_stderr)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;fn&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;make_trimmed_str_var&lt;/span&gt;(name: &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd&#34;&gt;str&lt;/span&gt;, value: &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd&#34;&gt;str&lt;/span&gt;) -&amp;gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;String&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    format!(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;pub const &lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;{name}&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;: &amp;amp;&amp;#39;static str = &lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;\&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;{value}&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;\&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;;&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;\n&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;&lt;/span&gt;,)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;fn&lt;/span&gt; &lt;span style=&#34;color:#50fa7b&#34;&gt;make_trimmed_str_var_from_bytes&lt;/span&gt;(name: &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd&#34;&gt;str&lt;/span&gt;, value: &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;Vec&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd&#34;&gt;u8&lt;/span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;gt;&lt;/span&gt;) -&amp;gt; &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;String&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;let&lt;/span&gt; v &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; format!(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;pub const &lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;{name}&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;: &amp;amp;&amp;#39;static str = &lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;\&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;{}&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;\&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;;&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;\n&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;String&lt;/span&gt;::from_utf8(value).unwrap().trim()
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    );
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    v
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;因为重复的代码太多，还稍微封装了一下。&lt;/p&gt;
+&lt;p&gt;处理得比较粗糙吧，如果任何一处报错了就直接panic，但是无所谓，按说就不应该panic的。&lt;/p&gt;
+&lt;p&gt;每次build的时候，会把生成的代码放到&lt;code&gt;target/debug/build/app_name-hash/out/constants.generated.rs&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;生成类似如下的代码：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-rust&#34; data-lang=&#34;rust&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;const&lt;/span&gt; GIT_COMMIT_TIME: &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;&amp;#39;static&lt;/span&gt; &lt;span style=&#34;color:#8be9fd&#34;&gt;str&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;2023-09-20&amp;#34;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;const&lt;/span&gt; GIT_COMMIT_TIME_LONG: &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;&amp;#39;static&lt;/span&gt; &lt;span style=&#34;color:#8be9fd&#34;&gt;str&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;2023-09-20 17:30:39 +0800&amp;#34;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;const&lt;/span&gt; GIT_COMMIT_REVISION: &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;&amp;#39;static&lt;/span&gt; &lt;span style=&#34;color:#8be9fd&#34;&gt;str&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;856d8bc&amp;#34;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;const&lt;/span&gt; GIT_COMMIT_REVISION_LONG: &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;&amp;#39;static&lt;/span&gt; &lt;span style=&#34;color:#8be9fd&#34;&gt;str&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;856d8bce9cef73cf134414384319c3bf57dad35c&amp;#34;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;const&lt;/span&gt; GIT_TAG_VERSION: &lt;span style=&#34;color:#ff79c6&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;&amp;#39;static&lt;/span&gt; &lt;span style=&#34;color:#8be9fd&#34;&gt;str&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;0.0.0&amp;#34;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;不需要手动设置&lt;code&gt;OUT_DIR&lt;/code&gt;的值，也不要设置。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;然后这样去用：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
+&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10
+&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-rust&#34; data-lang=&#34;rust&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;mod&lt;/span&gt; constants {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#ff79c6&#34;&gt;#![allow(dead_code)]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    include!(concat!(env!(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;OUT_DIR&amp;#34;&lt;/span&gt;), &lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;/constants.generated.rs&amp;#34;&lt;/span&gt;));
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ff79c6&#34;&gt;use&lt;/span&gt; self::constants::{GIT_COMMIT_REVISION, GIT_COMMIT_TIME, GIT_TAG_VERSION};
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;lazy_static! {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#ff79c6&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;ref&lt;/span&gt; VERSION: &lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;String&lt;/span&gt; &lt;span style=&#34;color:#ff79c6&#34;&gt;=&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        format!(&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;{GIT_TAG_VERSION}&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;{GIT_COMMIT_REVISION}&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;{GIT_COMMIT_TIME}&lt;/span&gt;&lt;span style=&#34;color:#f1fa8c&#34;&gt;&amp;#34;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;定义一个当前模块的子模块，叫constants，名字其实随便，也不用担心重名因为是直接引用的内部的变量。&lt;/p&gt;
+&lt;p&gt;然后引入需要用的那些常量，&lt;code&gt;GIT_COMMIT_TIME&lt;/code&gt;等，然后就随便用了。这里因为需要static周期的变量，用了lazy_static。&lt;/p&gt;
+&lt;p&gt;怎么说呢，这个做法还比较优雅吧，也不算丑。&lt;/p&gt;
+&lt;p&gt;我这里测试，不管是intellij-rust还是rust-analyzer，在打开项目以后，编制索引的时候会把这些变量编出来，这样也不会报错找不到定义。&lt;/p&gt;
+&lt;p&gt;感觉完爆之前在&lt;a
+    class=&#34;link&#34;
+    href=&#34;../009-linux-tricks/index.zh-cn.md#flatpak%e7%bc%96%e8%af%91%e6%97%b6%e9%85%8d%e7%bd%aecargo%e7%9a%84rsproxy&#34;&gt;flatpak设置rust代理&lt;/a
+&gt;
+里提到的*.in，因为那种方案是把这些变量放到里meson.build里，ide感知不到。&lt;/p&gt;
+
+
+&lt;h2 class=&#34;group &#34; id=&#34;总结&#34;
+    &gt;总结&lt;a href=&#34;#%e6%80%bb%e7%bb%93&#34;
+        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
+&gt;&lt;/h2&gt;
+
+&lt;p&gt;三种语言各有优劣吧。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;cpp的用cmake，宏用起来简单，好配置，功能也强，大多数人也熟悉，但是注意编之前先跑cmake刷新变量的值。&lt;/li&gt;
+&lt;li&gt;dart的就更简单了，跑脚本甚至手动加都行，也足够安全，但是没法条件编译，功能很弱，跨平台的话还需要写不同的脚本。&lt;/li&gt;
+&lt;li&gt;rust的功能很强，和ide集成也和cpp/cmake无异，也可以条件编译，甚至集成外部的代码，只是写起来麻烦一些。&lt;/li&gt;
+&lt;/ul&gt;
+</description></item><item>
             <title>从oh-my-posh到starship</title>
             <link>https://kzs.moe/en-us/2023/09/09/%E4%BB%8Eoh-my-posh%E5%88%B0starship.html/</link>
             <pubDate>Sat, 09 Sep 2023 18:47:56 +0800</pubDate>
@@ -2718,260 +3414,5 @@
 &lt;li&gt;我只制作了中文和英文两种翻译所以switch只有两条分支。&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;QTranslator&lt;/code&gt;需要在声明application之后。&lt;/li&gt;
 &lt;/ul&gt;
-</description></item><item>
-            <title>CMake实践记录</title>
-            <link>https://kzs.moe/en-us/2023/01/10/cmake%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95.html/</link>
-            <pubDate>Tue, 10 Jan 2023 22:09:12 +0800</pubDate>
-            <guid>https://kzs.moe/en-us/2023/01/10/cmake%E5%AE%9E%E8%B7%B5%E8%AE%B0%E5%BD%95.html/</guid><description>&lt;p&gt;作为一门比shell的语法还x疼的“语言”，不动动笔杆子真不行。&lt;/p&gt;
-&lt;p&gt;以下基本以&lt;a
-    class=&#34;link&#34;
-    href=&#34;https://github.com/flameshot-org/flameshot&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;flameshot&lt;/a
-&gt;
-为例来学习。&lt;/p&gt;
-
-
-&lt;h2 class=&#34;group &#34; id=&#34;覆盖掉cmakecache中缓存的option&#34;
-    &gt;覆盖掉CMakeCache中缓存的option&lt;a href=&#34;#%e8%a6%86%e7%9b%96%e6%8e%89cmakecache%e4%b8%ad%e7%bc%93%e5%ad%98%e7%9a%84option&#34;
-        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h2&gt;
-
-&lt;p&gt;不推荐使用&lt;code&gt;option(OPTION_NAME &amp;quot;Option description&amp;quot; OPTION_STATE)&lt;/code&gt;，因为更改option状态时会被CMakeCache里的旧Option状态覆盖，且对subdirectory内的CMakeLists.txt作用效果不好。&lt;/p&gt;
-&lt;p&gt;推荐做法：&lt;code&gt;set(OPTION_NAME OPTION_STATE CACHE OPTION_TYPE &amp;quot;Option description&amp;quot; FORCE)&lt;/code&gt;：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;OPTION_NAME：option名称。&lt;/li&gt;
-&lt;li&gt;OPTION_STATE：option状态，一般为&lt;code&gt;ON&lt;/code&gt;或&lt;code&gt;OFF&lt;/code&gt;，推荐使用全大写。&lt;/li&gt;
-&lt;li&gt;CACHE：表示写入到CMakeCache里。&lt;/li&gt;
-&lt;li&gt;FORCE：表示强制覆盖CMakeCache里的值。&lt;/li&gt;
-&lt;/ul&gt;
-
-
-&lt;h2 class=&#34;group &#34; id=&#34;cmakeliststxt内添加编译时变量&#34;
-    &gt;CMakeLists.txt内添加编译时变量&lt;a href=&#34;#cmakeliststxt%e5%86%85%e6%b7%bb%e5%8a%a0%e7%bc%96%e8%af%91%e6%97%b6%e5%8f%98%e9%87%8f&#34;
-        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h2&gt;
-
-&lt;p&gt;语法：&lt;code&gt;add_compile_options(&amp;quot;...&amp;quot;)&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;例如MSVC开启强制utf-8：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
-&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
-&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
-&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
-&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;add_compile_options(&amp;#34;$&amp;lt;$&amp;lt;C_COMPILER_ID:MSVC&amp;gt;:/utf-8&amp;gt;&amp;#34;)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;add_compile_options(&amp;#34;$&amp;lt;$&amp;lt;CXX_COMPILER_ID:MSVC&amp;gt;:/utf-8&amp;gt;&amp;#34;)
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;题外话，对应的在QMake内开启的方法为在&lt;code&gt;.pro&lt;/code&gt;内添加：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
-&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
-&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
-&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
-&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
-&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;win32-msvc* {
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  QMAKE_CXXFLAGS += /utf-8
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;h2 class=&#34;group &#34; id=&#34;添加宏marco&#34;
-    &gt;添加宏（MARCO）&lt;a href=&#34;#%e6%b7%bb%e5%8a%a0%e5%ae%8fmarco&#34;
-        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h2&gt;
-
-&lt;p&gt;语法：&lt;code&gt;add_definitions(-DMARCO_NAME)&lt;/code&gt;
-相当于编译时有了宏MARCO_NAME。&lt;/p&gt;
-&lt;p&gt;那么如何把宏去掉呢？&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;remove_definitions(-DMARCO_NAME)&lt;/code&gt;&lt;/p&gt;
-
-
-&lt;h2 class=&#34;group &#34; id=&#34;includeoutputlink的顺序&#34;
-    &gt;include、output、link的顺序&lt;a href=&#34;#includeoutputlink%e7%9a%84%e9%a1%ba%e5%ba%8f&#34;
-        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h2&gt;
-
-&lt;p&gt;先&lt;code&gt;include_directories&lt;/code&gt;，然后&lt;code&gt;add_excutable&lt;/code&gt;，再&lt;code&gt;add_subdirectories&lt;/code&gt;，最后&lt;code&gt;target_link_libraries&lt;/code&gt;。&lt;/p&gt;
-
-
-&lt;h2 class=&#34;group &#34; id=&#34;cmake使用qt5库&#34;
-    &gt;CMake使用Qt5库&lt;a href=&#34;#cmake%e4%bd%bf%e7%94%a8qt5%e5%ba%93&#34;
-        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h2&gt;
-
-&lt;p&gt;需要按以下几步走。&lt;/p&gt;
-
-
-&lt;h3 class=&#34;group &#34; id=&#34;打开额外compiler开关&#34;
-    &gt;打开额外Compiler开关&lt;a href=&#34;#%e6%89%93%e5%bc%80%e9%a2%9d%e5%a4%96compiler%e5%bc%80%e5%85%b3&#34;
-        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h3&gt;
-
-&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
-&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
-&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
-&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
-&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
-&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-cmake&#34; data-lang=&#34;cmake&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;set&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;CMAKE_AUTOMOC&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;ON&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;set&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;CMAKE_AUTORCC&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;ON&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;set&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;CMAKE_AUTOUIC&lt;/span&gt; &lt;span style=&#34;color:#f1fa8c&#34;&gt;ON&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;分别编译Qt的元对象系统（信号槽，或者说使用了&lt;code&gt;Q_OBJECT&lt;/code&gt;宏的地方）、Qt的资源文件&lt;code&gt;*.qrc&lt;/code&gt;和Qt的UI文件&lt;code&gt;*.ui&lt;/code&gt;。&lt;/p&gt;
-
-
-&lt;h3 class=&#34;group &#34; id=&#34;设定cmake的modules&#34;
-    &gt;设定CMake的Modules&lt;a href=&#34;#%e8%ae%be%e5%ae%9acmake%e7%9a%84modules&#34;
-        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h3&gt;
-
-&lt;p&gt;在尽量开头的位置设置&lt;code&gt;CMAKE_PREFIX_PATH&lt;/code&gt;到Qt自带的cmake目录，如：&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;set(CMAKE_PATH_PREFIX /opt/Qt5.15.2/5.15.2/gcc_64/lib/cmake)&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;实际操作过程中推荐这样写：&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;set(CMAKE_PATH_PREFIX ${QT_CMAKE_PATH})&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;并在执行&lt;code&gt;cmake&lt;/code&gt;前&lt;code&gt;export&lt;/code&gt;下：&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;export QT_CMAKE_PATH=/opt/Qt5.15.2/5.15.2/gcc_64/lib/cmake&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;（Windows下，使用QtCreator不需要&lt;code&gt;export&lt;/code&gt;，如果用命令行的话使用git的bash，有&lt;code&gt;export&lt;/code&gt;）&lt;/p&gt;
-
-
-&lt;h3 class=&#34;group &#34; id=&#34;检查qt库cmake-modules的安装情况&#34;
-    &gt;检查Qt库(CMake modules)的安装情况&lt;a href=&#34;#%e6%a3%80%e6%9f%a5qt%e5%ba%93cmake-modules%e7%9a%84%e5%ae%89%e8%a3%85%e6%83%85%e5%86%b5&#34;
-        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h3&gt;
-
-&lt;p&gt;以使用QtCore、QtGui、QtWidgets为例，设定了&lt;code&gt;CMAKE_PATH_PREFIX&lt;/code&gt;后：&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;find_package(Qt5 CONFIG REQUIRED Core Gui Widgets)&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;PS：似乎还有一种语法：&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)&lt;/code&gt;&lt;/p&gt;
-
-
-&lt;h3 class=&#34;group &#34; id=&#34;链接qt动态库&#34;
-    &gt;链接Qt动态库&lt;a href=&#34;#%e9%93%be%e6%8e%a5qt%e5%8a%a8%e6%80%81%e5%ba%93&#34;
-        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h3&gt;
-
-&lt;p&gt;基本在最后位置：&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;target_link_libraries(${BIN_NAME} Qt5::Core Qt5::Gui Qt5::Widgets)&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;上面的语句默认链接debug版本的动态库，若要链接release版本，增加&lt;code&gt;optimized&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;target_link_libraries(${BIN_NAME} optimized Qt5::Core Qt5::Gui Qt5::Widgets)&lt;/code&gt;&lt;/p&gt;
-
-
-&lt;h2 class=&#34;group &#34; id=&#34;包含子目录&#34;
-    &gt;包含子目录&lt;a href=&#34;#%e5%8c%85%e5%90%ab%e5%ad%90%e7%9b%ae%e5%bd%95&#34;
-        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h2&gt;
-
-&lt;ol&gt;
-&lt;li&gt;在上层目录中，首先&lt;code&gt;add_executable(BIN_NAME)&lt;/code&gt;，之后&lt;code&gt;add_subdirectories(sub_dir)&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;在子目录&lt;code&gt;sub_dir&lt;/code&gt;中，&lt;code&gt;target_sources(BIN_NAME srcfile1 srcfile2 ...)&lt;/code&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-
-&lt;h2 class=&#34;group &#34; id=&#34;target_sources的用法&#34;
-    &gt;target_sources的用法&lt;a href=&#34;#target_sources%e7%9a%84%e7%94%a8%e6%b3%95&#34;
-        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h2&gt;
-
-&lt;p&gt;&lt;code&gt;target_sources&lt;/code&gt;不仅是添加源文件，同样可以添加&lt;code&gt;*.qrc&lt;/code&gt;、&lt;code&gt;*.ui&lt;/code&gt;（前提是相关Compiler已打开）。&lt;/p&gt;
-
-
-&lt;h2 class=&#34;group &#34; id=&#34;区分系统平台&#34;
-    &gt;区分系统平台&lt;a href=&#34;#%e5%8c%ba%e5%88%86%e7%b3%bb%e7%bb%9f%e5%b9%b3%e5%8f%b0&#34;
-        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h2&gt;
-
-&lt;p&gt;立即推：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
-&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
-&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
-&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
-&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
-&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4
-&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5
-&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6
-&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7
-&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;8
-&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;9
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
-&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-cmake&#34; data-lang=&#34;cmake&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;if&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;WIN32&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;# do something...
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;elif&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;UNIX&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;# do something...
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;elif&lt;/span&gt;(&lt;span style=&#34;color:#f1fa8c&#34;&gt;APPLE&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;# do someting...
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;else&lt;/span&gt;()
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;# 醒醒吧
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#6272a4&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8be9fd;font-style:italic&#34;&gt;endif&lt;/span&gt;()
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;h2 class=&#34;group &#34; id=&#34;qtcreator中could-not-load-cache的解决方法&#34;
-    &gt;QtCreator中could not load cache的解决方法&lt;a href=&#34;#qtcreator%e4%b8%adcould-not-load-cache%e7%9a%84%e8%a7%a3%e5%86%b3%e6%96%b9%e6%b3%95&#34;
-        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h2&gt;
-
-&lt;p&gt;可怜的qtc，bug满身，对Qml而言是，对CMake更是。&lt;/p&gt;
-&lt;p&gt;现在还坚持用qtc的原因只有方便看文档和上色丰富简单又好看了吧。&lt;/p&gt;
-&lt;p&gt;清除-重新构建后总是报错：could not load cache怎么办？&lt;/p&gt;
-&lt;p&gt;找到左边项目-CMake-&lt;code&gt;Re-configure with Initial Parameters&lt;/code&gt;，点一下即可重新编译。&lt;/p&gt;
-
-
-&lt;h2 class=&#34;group &#34; id=&#34;windows平台rc文件的使用&#34;
-    &gt;Windows平台rc文件的使用&lt;a href=&#34;#windows%e5%b9%b3%e5%8f%b0rc%e6%96%87%e4%bb%b6%e7%9a%84%e4%bd%bf%e7%94%a8&#34;
-        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h2&gt;
-
-&lt;p&gt;使用&lt;code&gt;target_sources&lt;/code&gt;添加即可。&lt;/p&gt;
-&lt;p&gt;注意：编码格式在设置了UTF-8以后无比不要用UTF-8-BOM，否则在编译时会报错。&lt;/p&gt;
-&lt;p&gt;关于&lt;code&gt;*.rc&lt;/code&gt;文件的格式，参考&lt;a
-    class=&#34;link&#34;
-    href=&#34;https://github.com/flameshot-org/flameshot/blob/master/data/flameshot.rc&#34;target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;flameshot.rc&lt;/a
-&gt;
-&lt;/p&gt;
-
-
-&lt;h2 class=&#34;group &#34; id=&#34;windows平台关闭控制台&#34;
-    &gt;Windows平台关闭控制台&lt;a href=&#34;#windows%e5%b9%b3%e5%8f%b0%e5%85%b3%e9%97%ad%e6%8e%a7%e5%88%b6%e5%8f%b0&#34;
-        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h2&gt;
-
-&lt;p&gt;使用&lt;code&gt;WIN32&lt;/code&gt;参数：&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;add_executable(KeyContainer WIN32)&lt;/code&gt;&lt;/p&gt;
-
-
-&lt;h3 class=&#34;group &#34; id=&#34;解决cannot-find-source-file-maincpp&#34;
-    &gt;解决Cannot find source file: main.cpp&lt;a href=&#34;#%e8%a7%a3%e5%86%b3cannot-find-source-file-maincpp&#34;
-        &gt;&lt;i class=&#34;eva eva-link ml-3 align-middle text-theme opacity-0 transition ease-in-out group-hover:opacity-100&#34;&gt;&lt;/i&gt;&lt;/a
-&gt;&lt;/h3&gt;
-
-&lt;p&gt;目录结构如下：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;
-&lt;table style=&#34;border-spacing:0;padding:0;margin:0;border:0;&#34;&gt;&lt;tr&gt;&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;&#34;&gt;
-&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1
-&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2
-&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3
-&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4
-&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5
-&lt;/span&gt;&lt;span style=&#34;white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td style=&#34;vertical-align:top;padding:0;margin:0;border:0;;width:100%&#34;&gt;
-&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;├─CMakeLists.txt
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;└─src
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    │─CMakeLists.txt
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    └─core
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        │─CMakeLists.txt
-&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        │─main.cpp
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;CMakeLists一层一层add_subdirectory。&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;add_executable&lt;/code&gt;时报错：Cannot find source file: main.cpp。&lt;/p&gt;
-&lt;p&gt;意外发现将CMake最低要求版本&lt;code&gt;cmake_minimum_required&lt;/code&gt;设置到&amp;gt;=3.13，qtc默认给的是3.5。&lt;/p&gt;
-&lt;p&gt;题外话：直接在文件夹里cmake .没有这个报错，所以……彩鸡qtc。&lt;/p&gt;
 </description></item></channel>
 </rss>

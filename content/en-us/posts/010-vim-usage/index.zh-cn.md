@@ -3,6 +3,7 @@ title: "(neo)vim使用"
 date: 2023-09-03T05:37:16+08:00
 featured_image: cover.png
 summary: "(neo)vim键位和使用"
+tags: ["vim"]
 ---
 
 > 键位太多了吧不能忍了，一拳把地球打爆！！
