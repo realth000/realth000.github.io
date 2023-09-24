@@ -2,6 +2,91 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://kzs.moe/</loc>
+    <lastmod>2023-09-25T01:23:17+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="https://kzs.moe/en-us/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="ja"
+                href="https://kzs.moe/ja/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://kzs.moe/"
+                />
+  </url><url>
+    <loc>https://kzs.moe/tags/gal/</loc>
+    <lastmod>2023-09-25T01:23:17+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="https://kzs.moe/en-us/tags/gal/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://kzs.moe/tags/gal/"
+                />
+  </url><url>
+    <loc>https://kzs.moe/posts/</loc>
+    <lastmod>2023-09-25T01:23:17+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="https://kzs.moe/en-us/posts/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://kzs.moe/posts/"
+                />
+  </url><url>
+    <loc>https://kzs.moe/tags/</loc>
+    <lastmod>2023-09-25T01:23:17+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="https://kzs.moe/en-us/tags/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="ja"
+                href="https://kzs.moe/ja/tags/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://kzs.moe/tags/"
+                />
+  </url><url>
+    <loc>https://kzs.moe/2023/09/24/%E5%88%9B%E4%BD%9C%E5%BD%BC%E5%A5%B3%E7%9A%84%E4%B8%8D%E7%AD%89%E5%BC%8F.html/</loc>
+    <lastmod>2023-09-25T01:23:17+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="https://kzs.moe/en-us/2023/09/24/%E5%88%9B%E4%BD%9C%E5%BD%BC%E5%A5%B3%E7%9A%84%E4%B8%8D%E7%AD%89%E5%BC%8F.html/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://kzs.moe/2023/09/24/%E5%88%9B%E4%BD%9C%E5%BD%BC%E5%A5%B3%E7%9A%84%E4%B8%8D%E7%AD%89%E5%BC%8F.html/"
+                />
+  </url><url>
     <loc>https://kzs.moe/tags/cpp/</loc>
     <lastmod>2023-09-21T04:19:37+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -32,26 +117,6 @@
                 href="https://kzs.moe/tags/dart/"
                 />
   </url><url>
-    <loc>https://kzs.moe/</loc>
-    <lastmod>2023-09-21T04:19:37+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en-us"
-                href="https://kzs.moe/en-us/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="ja"
-                href="https://kzs.moe/ja/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh-cn"
-                href="https://kzs.moe/"
-                />
-  </url><url>
     <loc>https://kzs.moe/tags/flutter/</loc>
     <lastmod>2023-09-21T04:19:37+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -67,21 +132,6 @@
                 href="https://kzs.moe/tags/flutter/"
                 />
   </url><url>
-    <loc>https://kzs.moe/posts/</loc>
-    <lastmod>2023-09-21T04:19:37+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en-us"
-                href="https://kzs.moe/en-us/posts/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh-cn"
-                href="https://kzs.moe/posts/"
-                />
-  </url><url>
     <loc>https://kzs.moe/tags/rust/</loc>
     <lastmod>2023-09-21T04:19:37+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -95,26 +145,6 @@
                 rel="alternate"
                 hreflang="zh-cn"
                 href="https://kzs.moe/tags/rust/"
-                />
-  </url><url>
-    <loc>https://kzs.moe/tags/</loc>
-    <lastmod>2023-09-21T04:19:37+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en-us"
-                href="https://kzs.moe/en-us/tags/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="ja"
-                href="https://kzs.moe/ja/tags/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh-cn"
-                href="https://kzs.moe/tags/"
                 />
   </url><url>
     <loc>https://kzs.moe/2023/09/21/%E5%9C%A8%E4%BB%A3%E7%A0%81%E4%B8%AD%E9%A2%84%E5%A4%84%E7%90%86git%E4%BF%A1%E6%81%AF.html/</loc>
@@ -250,21 +280,6 @@
                 rel="alternate"
                 hreflang="zh-cn"
                 href="https://kzs.moe/2023/07/22/linux%E6%8A%80%E5%B7%A7%E7%AC%94%E8%AE%B0.html/"
-                />
-  </url><url>
-    <loc>https://kzs.moe/tags/gal/</loc>
-    <lastmod>2023-08-14T23:02:58+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en-us"
-                href="https://kzs.moe/en-us/tags/gal/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh-cn"
-                href="https://kzs.moe/tags/gal/"
                 />
   </url><url>
     <loc>https://kzs.moe/2023/07/17/gal-ost-%E6%94%B6%E9%9B%86%E8%AE%B0%E5%BD%95.html/</loc>
