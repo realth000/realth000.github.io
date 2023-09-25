@@ -52,6 +52,9 @@ jobs:
       - name: Install theme dependencies
         run: |
           npm install -g postcss-cli
+          pushd themes/hugo-theme-luna
+          npm install --production
+          popd
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v3
