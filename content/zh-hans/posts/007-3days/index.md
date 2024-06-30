@@ -1,7 +1,7 @@
 ---
 title: "3days的循环与永恒的等待"
 date: 2023-07-17T08:20:32+08:00
-feature_image: cover.jpg
+featured_image: cover.jpg
 summary: "三天的等待也和永恒无异"
 tags: ["gal"]
 ---

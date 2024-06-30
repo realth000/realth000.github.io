@@ -1,6 +1,7 @@
 ---
 title: "简单学习riverpod"
 date: 2023-02-05T02:55:15+08:00
+featured_image: cover.png
 tags: ["flutter", "riverpod"]
 ---
 
