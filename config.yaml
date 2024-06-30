@@ -451,11 +451,6 @@ languages:
         "images/i18n/zh-cn.svg" # in assets folder
         #font: "Times New Roman,Times,Heti Song,serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol"
       font: "Noto Sans CJK"
-      twitter:
-        enabled: false
-        rsshub: "https://rsshub.rssforever.com"
-        id: ""
-        imageProcessing: true
       github:
         id: "realth000"
         minStars: 0
@@ -473,31 +468,6 @@ languages:
         giscus:
           <<: *giscus
           lang: "zh-CN"
-  en-us:
-    contentDir: content/en-us
-    languageName: English
-    params:
-      languageIcon: "images/i18n/en-us.svg" # in assets folder
-  ja:
-    contentDir: content/ja
-    languageName: 日本語
-    params:
-      languageIcon: "images/i18n/ja.svg"
-      font: "'-apple-system', BlinkMacSystemFont, 'Yu Gothic', '游ゴシック', YuGothic, '游ゴシック体', 'Noto Sans Japanese', 'ヒラギノ角ゴ Pro W3', 'メイリオ', 'Hiragino Kaku Gothic ProN', 'MS PGothic', Osaka, 'sans-serif'"
-      announcement:
-        enabled: true
-        file: "README.ja.md"
-      comments:
-        enabled: false
-        provider: "giscus"
-        giscus:
-          <<: *giscus
-          lang: "ja"
-    menu:
-      main:
-        - *mainMenuHome
-        - *mainMenuArchives
-        - *mainMenuSearch
 
 staticDir:
   - static

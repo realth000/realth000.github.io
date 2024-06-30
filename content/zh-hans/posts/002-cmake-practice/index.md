@@ -1,0 +1,173 @@
+---
+title: "CMake实践记录"
+date: 2023-01-10T22:09:12+08:00
+tags: ["cmake"]
+---
+
+作为一门比shell的语法还x疼的“语言”，不动动笔杆子真不行。
+
+以下基本以[flameshot](https://github.com/flameshot-org/flameshot)为例来学习。
+
+## 覆盖掉CMakeCache中缓存的option
+
+不推荐使用``option(OPTION_NAME "Option description" OPTION_STATE)``，因为更改option状态时会被CMakeCache里的旧Option状态覆盖，且对subdirectory内的CMakeLists.txt作用效果不好。
+
+推荐做法：``set(OPTION_NAME OPTION_STATE CACHE OPTION_TYPE "Option description" FORCE)``：
+
+* OPTION_NAME：option名称。
+* OPTION_STATE：option状态，一般为``ON``或``OFF``，推荐使用全大写。
+* CACHE：表示写入到CMakeCache里。
+* FORCE：表示强制覆盖CMakeCache里的值。
+
+## CMakeLists.txt内添加编译时变量
+
+语法：``add_compile_options("...")``
+
+例如MSVC开启强制utf-8：
+
+```cmake
+add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
+add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+```
+
+题外话，对应的在QMake内开启的方法为在``.pro``内添加：
+
+```qmake
+win32-msvc* {
+  QMAKE_CXXFLAGS += /utf-8
+}
+```
+
+## 添加宏（MARCO）
+
+语法：``add_definitions(-DMARCO_NAME)``
+相当于编译时有了宏MARCO_NAME。
+
+那么如何把宏去掉呢？
+
+``remove_definitions(-DMARCO_NAME)``
+
+## include、output、link的顺序
+
+先``include_directories``，然后``add_excutable``，再``add_subdirectories``，最后``target_link_libraries``。
+
+## CMake使用Qt5库
+
+需要按以下几步走。
+
+### 打开额外Compiler开关
+
+```cmake
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+```
+
+分别编译Qt的元对象系统（信号槽，或者说使用了``Q_OBJECT``宏的地方）、Qt的资源文件``*.qrc``和Qt的UI文件``*.ui``。
+
+### 设定CMake的Modules
+
+在尽量开头的位置设置``CMAKE_PREFIX_PATH``到Qt自带的cmake目录，如：
+
+``set(CMAKE_PATH_PREFIX /opt/Qt5.15.2/5.15.2/gcc_64/lib/cmake)``
+
+实际操作过程中推荐这样写：
+
+``set(CMAKE_PATH_PREFIX ${QT_CMAKE_PATH})``
+
+并在执行``cmake``前``export``下：
+
+``export QT_CMAKE_PATH=/opt/Qt5.15.2/5.15.2/gcc_64/lib/cmake``
+
+（Windows下，使用QtCreator不需要``export``，如果用命令行的话使用git的bash，有``export``）
+
+### 检查Qt库(CMake modules)的安装情况
+
+以使用QtCore、QtGui、QtWidgets为例，设定了``CMAKE_PATH_PREFIX``后：
+
+``find_package(Qt5 CONFIG REQUIRED Core Gui Widgets)``
+
+PS：似乎还有一种语法：
+
+``find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)``
+
+### 链接Qt动态库
+
+基本在最后位置：
+
+``target_link_libraries(${BIN_NAME} Qt5::Core Qt5::Gui Qt5::Widgets)``
+
+上面的语句默认链接debug版本的动态库，若要链接release版本，增加``optimized``
+
+``target_link_libraries(${BIN_NAME} optimized Qt5::Core Qt5::Gui Qt5::Widgets)``
+
+## 包含子目录
+
+1. 在上层目录中，首先``add_executable(BIN_NAME)``，之后``add_subdirectories(sub_dir)``
+2. 在子目录``sub_dir``中，``target_sources(BIN_NAME srcfile1 srcfile2 ...)``
+
+## target_sources的用法
+
+``target_sources``不仅是添加源文件，同样可以添加``*.qrc``、``*.ui``（前提是相关Compiler已打开）。
+
+## 区分系统平台
+
+立即推：
+
+```cmake
+if(WIN32)
+# do something...
+elif(UNIX)
+# do something...
+elif(APPLE)
+# do someting...
+else()
+# 醒醒吧
+endif()
+```
+
+## QtCreator中could not load cache的解决方法
+
+可怜的qtc，bug满身，对Qml而言是，对CMake更是。
+
+现在还坚持用qtc的原因只有方便看文档和上色丰富简单又好看了吧。
+
+清除-重新构建后总是报错：could not load cache怎么办？
+
+找到左边项目-CMake-``Re-configure with Initial Parameters``，点一下即可重新编译。
+
+## Windows平台rc文件的使用
+
+使用``target_sources``添加即可。
+
+注意：编码格式在设置了UTF-8以后无比不要用UTF-8-BOM，否则在编译时会报错。
+
+关于``*.rc``文件的格式，参考[flameshot.rc](https://github.com/flameshot-org/flameshot/blob/master/data/flameshot.rc)
+
+## Windows平台关闭控制台
+
+使用``WIN32``参数：
+
+``add_executable(KeyContainer WIN32)``
+
+### 解决Cannot find source file: main.cpp
+
+目录结构如下：
+
+```tree
+├─CMakeLists.txt
+└─src
+    │─CMakeLists.txt
+    └─core
+        │─CMakeLists.txt
+        │─main.cpp
+
+```
+
+CMakeLists一层一层add_subdirectory。
+
+``add_executable``时报错：Cannot find source file: main.cpp。
+
+意外发现将CMake最低要求版本``cmake_minimum_required``设置到>=3.13，qtc默认给的是3.5。
+
+题外话：直接在文件夹里cmake .没有这个报错，所以……彩鸡qtc。
