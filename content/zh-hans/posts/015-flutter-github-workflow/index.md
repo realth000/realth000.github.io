@@ -39,7 +39,7 @@ tags: ["flutter", "github", "workflow"]
 
 ```yaml
 env:
-  CI_FLUTTER_VERSION: '3.16.x'
+  CI_FLUTTER_VERSION: '3.22.x'
 
 jobs:
   build-linux-android:
@@ -50,7 +50,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '11'
+          java-version: '17'
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{env.CI_FLUTTER_VERSION}}
@@ -78,6 +78,7 @@ jobs:
 5. `flutter-version`可以选`stable`，这样就不需要手动指定flutter版本号了，但是作为依赖还是显示指定比较好。
 6. 同理`ubuntu-latest`和`windows-latest`也可以改，改旧一点也没关系，甚至更好，不然老平台无法支持，但是我就偷个懒用最新的了。
 7. 只有linux上启用了`cache`把flutter安装包缓存到github action内，这样可以减少编译时间，但是windows上这么缓存甚至会增加编译时长所以仅在linux上缓存。
+8. 自flutter 3.22版本开始，一些插件需要java17，如果是老版本可以用java11。
 
 ### 编译
 
@@ -155,7 +156,7 @@ if (keystorePropertiesFile.exists()) {
 然后在下方的 `android {}`里面的`defaultConfig{}`和`buildTypes{}`之间加一块代码：
 
 ```gradle
-signingConfig {
+signingConfigs {
     release {
         keyAlias keystoreProperties['keyAlias']
         keyPassword keystoreProperties['keyPassword']
