@@ -200,7 +200,7 @@ help.c:718:                           "\nThe most similar commands are",
 
 似乎有点长，有个关键词：levenshtein distance，算半个老朋友嘛~~how old are you?~~。
 
-    <br>
+    <br />
 
         我记得，用一句话概括这个算法就是：
 
@@ -208,11 +208,11 @@ help.c:718:                           "\nThe most similar commands are",
 
         ``cmd``是命令行输入中跟在``git``后面的第一个参数，``main_cmds`` 包含``git``提供的参数（或者叫subcommand吧）,``common_cmds``似乎是包含了help信息的参数列表。~~说实话，没看懂，大概明白得了。~~``i``是遍历``main_cmds.names``时使用的index，``n``是遍历``common_cmds``时使用的index。
 
-    <br>
+    <br />
 
         先手动查，如果是已知命令，那就把对应距离改成0。否则计算逻辑距离。
 
-    <br>
+    <br />
 
         计算逻辑距离：
 
@@ -272,10 +272,10 @@ help.c:718:                           "\nThe most similar commands are",
 
         我记得``shutdown``支持``today``，``tomorrow``这种单词，刚才试了试怎么不认识。不能是我记错了吧？
 
-    <br>
+    <br />
 
         查了查似乎``at``命令可以这样玩，下次再写吧。
 
-    <br>
+    <br />
 
         一定是我太困了，该睡了，晚安。
