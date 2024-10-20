@@ -1,0 +1,550 @@
+---
+title: "Flutter中的富文本编辑器-01"
+date: 2024-01-02T17:58:26+08:00
+#featured_image: cover.png
+tags: ["flutter"]
+summary: 介绍flutter官方富文本编辑器示例的结构
+---
+
+## 缘由
+
+近期由于个人项目需要，要做一个支持BBCode的富文本编辑器，可能不需要支持太多功能，但至少粗体、斜体、表情、链接是需要的。
+
+Flutter自带的官方例子有一个示例，本系列文章会从这个示例看看如何在flutter里写一个简易的富文本编辑器。
+
+* [官方示例在线体验](https://flutter.github.io/samples/rich_text_editor.html)
+* [官方示例源码地址](https://github.com/flutter/samples/tree/main/simplistic_editor)
+
+## 结构
+
+直接clone：
+
+```bash
+gcl https://github.com/flutter/samples --depth=1 flutter_examples
+```
+
+然后用IDE打开里面的`simplistic_editor`文件夹。
+
+首先看看依赖`pubspec.yaml`：
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.2
+
+dev_dependencies:
+  analysis_defaults:
+    path: ../analysis_defaults
+  flutter_test:
+    sdk: flutter
+```
+
+挺干净的嘛，什么也没带。
+
+看看目录结构：
+
+```bash
+✿ tree lib
+lib
+├── app_state.dart
+├── app_state_manager.dart
+├── basic_text_field.dart
+├── basic_text_input_client.dart
+├── formatting_toolbar.dart
+├── main.dart
+├── replacements.dart
+└── text_editing_delta_history_view.dart
+```
+
+还好还好，就这几个文件，而且大概能看出来是干嘛的。
+
+代码量呢？
+
+```bash
+✿ cloc lib
+       8 text files.
+       8 unique files.
+       0 files ignored.
+
+github.com/AlDanial/cloc v 1.98  T=0.01 s (832.2 files/s, 302505.9 lines/s)
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+Dart                             8            282            252           2374
+-------------------------------------------------------------------------------
+SUM:                             8            282            252           2374
+-------------------------------------------------------------------------------
+```
+
+What's up，怎么两千多行，这下慢慢看吧。~~没事，两千多行说明示例挺完整的，这把稳了。~~
+
+## 入口
+
+入口`main.dart`，其中核心为`_MyHomePageState`：
+
+> 已删去部分不重要的代码，下文不再赘述。
+
+```dart
+class _MyHomePageState extends State<MyHomePage> {
+  late ReplacementTextEditingController _replacementTextEditingController;
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _replacementTextEditingController = ReplacementTextEditingController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _replacementTextEditingController =
+        AppStateManager.of(context).appState.replacementsController;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.title)),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Center(
+          child: Column(
+            children: [
+              const FormattingToolbar(),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 35.0),
+                  child: BasicTextField(
+                    controller: _replacementTextEditingController,
+                    style: const TextStyle(
+                      fontSize: 18.0,
+                      color: Colors.black,
+                    ),
+                    focusNode: _focusNode,
+                  ),
+                ),
+              ),
+              const Expanded(child: TextEditingDeltaHistoryView()),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+用到的组件：
+
+* `ReplacementTextEditingController`：用文本的实际样式替换原有的纯文本样式，也就是给文字加特效，如粗体斜体颜色。
+* `AppStateManager`: 持有`AppState`的`InheritedWidget`，供全局共享状态。
+* `BasicTextField`：展示内容输出的`StatefulWidget`，将样式传给内部的`BasicTextInputClient`，同时定义了各种手势操作的回调。这部分是内容最多的，内部的client占了一千余行。
+
+下面先从简单和底层的部分讲起。
+
+## ReplacementTextEditingController
+
+先上注释里的描述：
+
+```dart
+/// A [TextEditingController] that contains a list of [TextEditingInlineSpanReplacement]s that
+/// insert custom [InlineSpan]s in place of matched [TextRange]s.
+///
+/// This controller must be passed [TextEditingInlineSpanReplacement], each of which contains
+/// a [TextRange] to match with and a generator function to generate an [InlineSpan] to replace
+/// the matched [TextRange]s with based on the matched string.
+///
+/// See [TextEditingInlineSpanReplacement] for example replacements to provide this class with.
+```
+
+简而言之，这个controller的功能为：将一串纯文本按照文字位置和该位置上对应的样式，将纯文本渲染成带有样式外观的富文本。实际渲染时不是一个文字一个文字渲染，而是一段一段的，每一段内的样式相同，这样一段一段渲染。
+
+而记载了“哪一段文字具有什么样的样式”这件事是由`TextEditingInlineSpanReplacement`承担：
+
+```dart
+class ReplacementTextEditingController extends TextEditingController {
+
+  /// 初始化时会给上文本及其样式信息。
+  ReplacementTextEditingController({
+    super.text,
+    List<TextEditingInlineSpanReplacement>? replacements,
+    this.composingRegionReplaceable = true,
+  }) : replacements = replacements ?? [];
+
+  /// 当前所有的替换样式。
+  List<TextEditingInlineSpanReplacement>? replacements;
+
+  /// 先放一放，没搞懂是干嘛的。
+  final bool composingRegionReplaceable;
+
+  /// 应用变更好理解，但是为什么直接add就可以，需要先看看后面的内容才能解答。
+  void applyReplacement(TextEditingInlineSpanReplacement replacement) {
+    if (replacements == null) {
+      replacements = [];
+      replacements!.add(replacement);
+    } else {
+      replacements!.add(replacement);
+    }
+  }
+
+  /// 会把这个参数里的[delta]变更应用到[replacements]里。
+  /// 不是简单的加进去，而是根据入参来改变现有的样式信息。
+  /// 这个入参有类型，分为插入，删除和替换。根据操作类型的不同和每个替换样式对应的文本位置的
+  /// 不同，检查当前拥有的所有的样式，来进行变更。
+  ///
+  /// 这部分源码里有个详细的说明，讲解不同的操作类型和已有文本位置如何更改，暂时没看明白，
+  /// 后面再讲。
+  void syncReplacementRanges(TextEditingDelta delta) {
+    List<TextEditingInlineSpanReplacement> toRemove = [];
+    List<TextEditingInlineSpanReplacement> toAdd = [];
+
+    for (int i = 0; i < replacements!.length; i++) {
+      // ...
+    }
+  }
+
+  /// 返回[TextSpan]，build经过替换的富文本，返回。
+  @override
+  TextSpan buildTextSpan({
+    required BuildContext context,
+    TextStyle? style,
+    required bool withComposing,
+  }) {
+    // ...
+  }
+```
+
+目前来看，controller做的功能只有：
+
+* 保存当前现有的文本样式。
+* 对用户输入（或者说外部的）变更进行响应，根据变更，更新自己持有的全文的文本样式。
+* 根据持有的文本样式，返回一个大的富文本`TextSpan`。
+
+## TextEditingInlineSpanReplacement
+
+代表一块文本区域和该文本区域的样式，实际持有的成员为：
+
+* `TextRange`：就是一个`(start, end)`的范围标记。
+* `InlineSpanGenerator`：实际是`InlineSpan Function(String, TextRange)`这样的回调，函数体记载了文本该附加的样式。
+
+除此以外，包含对刚才说的操作（添加，删除，替换）的回调`onDelete`，`onInsertion`，`onReplacement`，`onNonTextUpdate`。
+
+### 操作类型
+
+> 有关操作类型是如何定义的，可直接在在线demo上体验。
+
+* 添加：键盘输入，添加了文本。
+* 删除：键盘按退格键删除了文本。
+* 替换：粘贴进来了文本，或者复制/剪切走了文本。哪怕粘贴的时候没有选中任何文字，看上去是在两个文字中间插入了剪切板里的文字，也看作是替换。
+* 光标移动：这个刚才没讲，包含通过键盘和鼠标移动光标位置，以及全选。
+
+到此，该讲对应的回调，来解释刚才在controller里`syncReplacementRanges`留下的疑问。
+
+### onInsertion
+
+从键盘插入文本时发生，不包含粘贴，复制，剪切这三种情况。
+
+```dart
+  TextEditingInlineSpanReplacement? onInsertion(
+      TextEditingDeltaInsertion delta) {
+    final int insertionOffset = delta.insertionOffset;
+    final int insertedLength = delta.textInserted.length;
+
+    if (range.end == insertionOffset) {
+      if (expand) {
+        return copy(
+          range: TextRange(
+            start: range.start,
+            end: range.end + insertedLength,
+          ),
+        );
+      } else {
+        return copy(
+          range: TextRange(
+            start: range.start,
+            end: range.end,
+          ),
+        );
+      }
+    }
+    if (range.start < insertionOffset && range.end < insertionOffset) {
+      return copy(
+        range: TextRange(
+          start: range.start,
+          end: range.end,
+        ),
+      );
+    } else if (range.start >= insertionOffset && range.end > insertionOffset) {
+      return copy(
+        range: TextRange(
+          start: range.start + insertedLength,
+          end: range.end + insertedLength,
+        ),
+      );
+    } else if (range.start < insertionOffset && range.end > insertionOffset) {
+      return copy(
+        range: TextRange(
+          start: range.start,
+          end: range.end + insertedLength,
+        ),
+      );
+    }
+
+    return null;
+  }
+```
+
+参数`TextEditingDeltaInsertion`是flutter自带的类，代表一次插入操作，包含的信息有：
+
+* `oldText`：在这次插入发生前的文本。
+* `textInserted`：这次插入的文本，通常是一个字符。如果是中文或其他输入法的话，候选词会先insertsion，然后用户选择的最终文本会以replacement的形式上屏。
+* `insertionOffset`：在`oldText`的哪个位置发生的插入事件。这个位置指的是插入开始的位置。
+
+比如：从abc变成a123bc，`oldText`是abc ，`textInserted`是abc ，`insertionOffset`是整数1。
+
+更新方式：
+
+* 如果插入的位置刚好是当前范围结束的地方，而且`expand`为true，将插入的这部分文本也加到当前的style里。这是很典型的做法，像word里如果当前光标前面的文本有一些样式，插入的文本也会有这些样式。（不然写一个字更新一次样式也太蠢了）
+* 如果`end < offset`，也就是插到后面了，并且没挨着，将什么都不做。
+* 如果`start >= offset && end > offset`，说明文本插入到当前块前面了，需要给`start`和`end`都加上插入文本的长度，也就是往后挪了挪。
+* 如果`start < offset && end > offset`，文本是插到当前块内部，`start`不变，`end`加上插入文本的长度。
+
+### onDelete
+
+当使用键盘的退格键删除文本时触发`onDelete`回调。
+
+```dart
+  TextEditingInlineSpanReplacement? onDelete(TextEditingDeltaDeletion delta) {
+    final TextRange deletedRange = delta.deletedRange;
+    final int deletedLength = delta.textDeleted.length;
+
+    if (range.start >= deletedRange.start &&
+        (range.start < deletedRange.end && range.end > deletedRange.end)) {
+      return copy(
+        range: TextRange(
+          start: deletedRange.end - deletedLength,
+          end: range.end - deletedLength,
+        ),
+      );
+    } else if ((range.start < deletedRange.start &&
+            range.end > deletedRange.start) &&
+        range.end <= deletedRange.end) {
+      return copy(
+        range: TextRange(
+          start: range.start,
+          end: deletedRange.start,
+        ),
+      );
+    } else if (range.start < deletedRange.start &&
+        range.end > deletedRange.end) {
+      return copy(
+        range: TextRange(
+          start: range.start,
+          end: range.end - deletedLength,
+        ),
+      );
+    } else if (range.start >= deletedRange.start &&
+        range.end <= deletedRange.end) {
+      return null;
+    } else if (range.start > deletedRange.start &&
+        range.start >= deletedRange.end) {
+      return copy(
+        range: TextRange(
+          start: range.start - deletedLength,
+          end: range.end - deletedLength,
+        ),
+      );
+    } else if (range.end <= deletedRange.start &&
+        range.end < deletedRange.end) {
+      return copy(
+        range: TextRange(
+          start: range.start,
+          end: range.end,
+        ),
+      );
+    }
+
+    return null;
+  }
+```
+
+参数`TextEditingDeltaDeletion`构成：
+
+* `oldText`: 删除前的文本。
+* `deletedRange`: `oldText`中被删除的部分的起止标记。
+
+更新方式：
+
+* 当`offset.start <= start < offset.end < end`时，当前块左边部分被删除，当前区域会向左移并且缩短，变成`\(offset.start, end - offset.length\)`。
+* 代码写的是`start = offset.end - offset.length`，实际直接`start = offset.start`应该也一样。
+* 当`start < offset.start < end < offset.end`时，从中间某个位置开始，后面的均被删除，当前区域会缩短成`\(start, offset.start\)`。
+* 当`start < offset.start && offset.end < end`时，中间有一段被删除，变成，`\(start, end - offset.length\)`。
+* 当`offset.start <= start && end <= offset.end`时，当前块被完全删除，返回null。
+* 当`offset.start < start && end <= start`时，被删除部分在当前块的左边，只需要向左移，变成`\(start - offset.length, end - offset.length\)`。
+* 当`end <= offset.start && end < offset.end`时，被删除部分在当前块的右边，什么也不用做。
+
+### onReplacement
+
+参数`TextEditingDeltaReplacement`，包含：
+
+* `oldText`。
+* `replacementText`：替换进去的文本。
+* `replacedRange`：被替换掉的位置范围。
+
+这部分代码略长：
+
+```dart
+  List<TextEditingInlineSpanReplacement>? onReplacement(
+      TextEditingDeltaReplacement delta) {
+    final TextRange replacedRange = delta.replacedRange;
+    final bool replacementShortenedText =
+        delta.replacementText.length < delta.textReplaced.length;
+    final bool replacementLengthenedText =
+        delta.replacementText.length > delta.textReplaced.length;
+    final bool replacementEqualLength =
+        delta.replacementText.length == delta.textReplaced.length;
+    final int changedOffset = replacementShortenedText
+        ? delta.textReplaced.length - delta.replacementText.length
+        : delta.replacementText.length - delta.textReplaced.length;
+
+    if (range.start >= replacedRange.start &&
+        (range.start < replacedRange.end && range.end > replacedRange.end)) {
+      if (replacementShortenedText) {
+        return [
+          copy(
+            range: TextRange(
+              start: replacedRange.end - changedOffset,
+              end: range.end - changedOffset,
+            ),
+          ),
+        ];
+      } else if (replacementLengthenedText) {
+        return [
+          copy(
+            range: TextRange(
+              start: replacedRange.end + changedOffset,
+              end: range.end + changedOffset,
+            ),
+          ),
+        ];
+      } else if (replacementEqualLength) {
+        return [
+          copy(
+            range: TextRange(
+              start: replacedRange.end,
+              end: range.end,
+            ),
+          ),
+        ];
+      }
+    } else if ((range.start < replacedRange.start &&
+            range.end > replacedRange.start) &&
+        range.end <= replacedRange.end) {
+      return [
+        copy(
+          range: TextRange(
+            start: range.start,
+            end: replacedRange.start,
+          ),
+        ),
+      ];
+    } else if (range.start < replacedRange.start &&
+        range.end > replacedRange.end) {
+      if (replacementShortenedText) {
+        return [
+          copy(
+            range: TextRange(
+              start: range.start,
+              end: replacedRange.start,
+            ),
+          ),
+          copy(
+            range: TextRange(
+              start: replacedRange.end - changedOffset,
+              end: range.end - changedOffset,
+            ),
+          ),
+        ];
+      } else if (replacementLengthenedText) {
+        return [
+          copy(
+            range: TextRange(
+              start: range.start,
+              end: replacedRange.start,
+            ),
+          ),
+          copy(
+            range: TextRange(
+              start: replacedRange.end + changedOffset,
+              end: range.end + changedOffset,
+            ),
+          ),
+        ];
+      } else if (replacementEqualLength) {
+        return [
+          copy(
+            range: TextRange(
+              start: range.start,
+              end: replacedRange.start,
+            ),
+          ),
+          copy(
+            range: TextRange(
+              start: replacedRange.end,
+              end: range.end,
+            ),
+          ),
+        ];
+      }
+    } else if (range.start >= replacedRange.start &&
+        range.end <= replacedRange.end) {
+      // remove attribute.
+      return null;
+    } else if (range.start > replacedRange.start &&
+        range.start >= replacedRange.end) {
+      if (replacementShortenedText) {
+        return [
+          copy(
+            range: TextRange(
+              start: range.start - changedOffset,
+              end: range.end - changedOffset,
+            ),
+          ),
+        ];
+      } else if (replacementLengthenedText) {
+        return [
+          copy(
+            range: TextRange(
+              start: range.start + changedOffset,
+              end: range.end + changedOffset,
+            ),
+          ),
+        ];
+      } else if (replacementEqualLength) {
+        return [this];
+      }
+    } else if (range.end <= replacedRange.start &&
+        range.end < replacedRange.end) {
+      return [
+        copy(
+          range: TextRange(
+            start: range.start,
+            end: range.end,
+          ),
+        ),
+      ];
+    }
+
+    return null;
+  }
+```
+
+## 总结
+
+以上是入口组件这部分，剩下的内容慢慢讲。
