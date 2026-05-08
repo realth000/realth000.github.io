@@ -25,7 +25,9 @@ jobs:
       - id: configurepages
         uses: actions/configure-pages@v5
       - name: Build pages
-        run: ./build.sh
+        run: |
+          git submodule update --init --recursive --force
+          ./build.sh
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./miko-blog/dist
