@@ -1,4 +1,3 @@
-[submodule "themes/hugo-theme-luna"]
-	path = themes/hugo-theme-luna
-	url = https://github.com/Ice-Hazymoon/hugo-theme-luna
-	branch = master
+[submodule "miko-blog"]
+	path = miko-blog
+	url = https://github.com/realth000/miko-blog
