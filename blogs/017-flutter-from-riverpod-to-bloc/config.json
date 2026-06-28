@@ -1,0 +1,11 @@
+{
+    "title": "从riverpod到bloc",
+    "date": "2024-01-06",
+    "tags": [
+        "flutter",
+        "bloc",
+        "riverpod"
+    ],
+    "draft": false,
+    "summary": "关于从riverpod迁移到bloc这件事"
+}

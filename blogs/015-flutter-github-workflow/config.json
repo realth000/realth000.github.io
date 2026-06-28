@@ -1,0 +1,11 @@
+{
+    "title": "github action搭建flutter流水线",
+    "date": "2023-12-30",
+    "tags": [
+        "flutter",
+        "github",
+        "workflow"
+    ],
+    "draft": false,
+    "summary": "搭建构建和发布flutter应用的流水线"
+}

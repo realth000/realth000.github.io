@@ -1,0 +1,12 @@
+{
+    "title": "在代码中预处理git信息",
+    "date": "2023-09-21",
+    "tags": [
+        "cpp",
+        "dart",
+        "flutter",
+        "rust"
+    ],
+    "draft": false,
+    "summary": "比较cpp/dart/rust中如何优雅地将git信息编码到产物里"
+}

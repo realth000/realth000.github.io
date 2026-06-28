@@ -1,0 +1,10 @@
+{
+    "title": "riverpod学习（二）设置一个合适的state",
+    "date": "2023-10-15",
+    "tags": [
+        "flutter",
+        "riverpod"
+    ],
+    "draft": false,
+    "summary": "如何存储和表示state才能用起来顺手"
+}

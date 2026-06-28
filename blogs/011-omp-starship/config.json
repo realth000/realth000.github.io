@@ -1,0 +1,11 @@
+{
+    "title": "从oh-my-posh到starship",
+    "date": "2023-09-09",
+    "tags": [
+        "linux",
+        "shell",
+        "windows"
+    ],
+    "draft": false,
+    "summary": "同样是prompt，为何放弃oh-my-posh而使用starship"
+}
