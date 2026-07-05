@@ -9,7 +9,12 @@ export default defineConfig({
       site_name: '澄沨的漫游茶记',
       url: 'https://champhoon.xyz/',
       description: 'Stay hungry, Stay foolish.',
-    }
+    },
+    {
+      site_name: '帆影的博客',
+      url: 'https://fanyingfx.github.io/blog/',
+      description: undefined,
+    },
   ],
   friendsInviteUrl: 'https://github.com',
   projects: [
