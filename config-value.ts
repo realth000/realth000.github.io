@@ -4,6 +4,8 @@ import { defineConfig } from '../config'
 export default defineConfig({
   siteName: 'Distant Vicinity',
   slogan: '渺小，遥远，却无可代替',
+  githubUsername: 'realth000',
+  sourceCodeUrl: 'https://github.com/realth000/realth000.github.io',
   friends: [
     {
       site_name: '澄沨的漫游茶记',
